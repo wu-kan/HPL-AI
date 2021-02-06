@@ -5,6 +5,7 @@ AC_CONFIG_SRCDIR([include/hplai.h])
 AC_CONFIG_HEADERS([include/hplai_config.h])
 
 AX_PROG_CC_MPI
+
 AC_PROG_CXX
 
 AC_PROG_RANLIB
