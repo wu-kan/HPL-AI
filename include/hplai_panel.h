@@ -5,13 +5,29 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hplai.h"
-#include "hplai_pgesv.h"
+#include "hpl_panel.h"
+#include "hplai_misc.h"
+#include "hplai_grid.h"
 /*
  * ---------------------------------------------------------------------
  * Data Structures
  * ---------------------------------------------------------------------
  */
+typedef struct HPLAI_S_pmat
+{
+#ifdef HPL_CALL_VSIPL
+   vsip_block_d        * block;
+#endif
+   HPLAI_T_AFLOAT     * A;            /* pointer to local piece of A */
+   HPLAI_T_AFLOAT     * X;             /* pointer to solution vector */
+   int                 n;                      /* global problem size */
+   int                 nb;                         /* blocking factor */
+   int                 ld;                 /* local leading dimension */
+   int                 mp;                    /* local number of rows */
+   int                 nq;                 /* local number of columns */
+   int                 info;                    /* computational flag */
+} HPLAI_T_pmat;
+
 typedef struct HPLAI_S_panel
 {
    struct HPL_S_grid   * grid;             /* ptr to the process grid */

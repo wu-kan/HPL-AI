@@ -5,7 +5,7 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#inlcude "hpl_pfact.h"
+#include "hpl_pfact.h"
 #include "hplai_misc.h"
 #include "hplai_blas.h"
 

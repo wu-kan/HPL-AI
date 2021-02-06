@@ -16,21 +16,6 @@
 #include "hplai_panel.h"
 #include "hplai_pfact.h"
 
-typedef struct HPLAI_S_pmat
-{
-#ifdef HPL_CALL_VSIPL
-   vsip_block_d        * block;
-#endif
-   HPLAI_T_AFLOAT     * A;            /* pointer to local piece of A */
-   HPLAI_T_AFLOAT     * X;             /* pointer to solution vector */
-   int                 n;                      /* global problem size */
-   int                 nb;                         /* blocking factor */
-   int                 ld;                 /* local leading dimension */
-   int                 mp;                    /* local number of rows */
-   int                 nq;                 /* local number of columns */
-   int                 info;                    /* computational flag */
-} HPLAI_T_pmat;
-
 void                             HPLAI_pdgesv
 STDC_ARGS( (
    HPL_T_grid *,
