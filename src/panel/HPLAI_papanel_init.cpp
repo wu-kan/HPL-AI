@@ -18,7 +18,7 @@ extern "C"
 void HPLAI_papanel_init
 (
    HPL_T_grid *                     GRID,
-   HPL_T_palg *                     ALGO,
+   HPLAI_T_palg *                   ALGO,
    const int                        M,
    const int                        N,
    const int                        JB,

@@ -12,15 +12,15 @@ extern "C"
 void HPLAI_papanel_new
 (
    HPL_T_grid *                     GRID,
-   HPL_T_palg *                     ALGO,
+   HPLAI_T_palg *                   ALGO,
    const int                        M,
    const int                        N,
    const int                        JB,
-   HPLAI_T_pmat *                  A,
+   HPLAI_T_pmat *                   A,
    const int                        IA,
    const int                        JA,
    const int                        TAG,
-   HPLAI_T_panel * *               PANEL
+   HPLAI_T_panel * *                PANEL
 )
 #else
 void HPLAI_papanel_new

@@ -15,6 +15,7 @@ comm/HPLAI_copyL.cpp \
 grid/HPLAI_broadcast_afloat.cpp \
 panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
+pfact/HPLAI_pafact.cpp \
 pgesv/HPLAI_pdgesv.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPLAI_patrsv.cpp
 
 libhpl_a_SOURCES = \
