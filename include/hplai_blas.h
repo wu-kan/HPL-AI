@@ -5,7 +5,8 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hplai.h"
+#include "hpl_blas.h"
+#include "hplai_misc.h"
 
 #if (HPL_CALL_CBLAS)
 
@@ -95,13 +96,6 @@ void HPLAI_ascal
     STDC_ARGS((
         const int,
         const HPLAI_T_AFLOAT,
-        HPLAI_T_AFLOAT *,
-        const int));
-void HPLAI_aswap
-    STDC_ARGS((
-        const int,
-        HPLAI_T_AFLOAT *,
-        const int,
         HPLAI_T_AFLOAT *,
         const int));
 void HPLAI_agemv

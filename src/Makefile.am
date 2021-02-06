@@ -3,9 +3,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/../include
 lib_LIBRARIES = libhpl.a libhplai.a
 
 libhplai_a_SOURCES = \
-blas/HPLAI_blas.cpp blas/HPLAI_atrsv.cpp blas/HPLAI_atrsm.cpp blas/HPLAI_iaamax.cpp \
-blas/HPLAI_aaxpy.cpp blas/HPLAI_acopy.cpp blas/HPLAI_agemm.cpp blas/HPLAI_agemv.cpp \
-blas/HPLAI_ager.cpp blas/HPLAI_ascal.cpp blas/HPLAI_aswap.cpp \
+auxil/HPLAI_alatcpy.cpp auxil/HPLAI_alacpy.cpp auxil/HPLAI_alamch.cpp \
+blas/HPLAI_blas.cpp \
+blas/HPLAI_ascal.cpp blas/HPLAI_atrsm.cpp blas/HPLAI_atrsv.cpp blas/HPLAI_iaamax.cpp \
+blas/HPLAI_agemv.cpp blas/HPLAI_aaxpy.cpp \
+blas/HPLAI_acopy.cpp blas/HPLAI_agemm.cpp blas/HPLAI_ager.cpp \
 comm/HPLAI_send.cpp comm/HPLAI_recv.cpp \
 grid/HPLAI_broadcast_afloat.cpp \
 panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \

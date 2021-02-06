@@ -12,18 +12,10 @@ extern "C"
  */
 #include "hpl.h"
 
-/*
- * ---------------------------------------------------------------------
- * typedef definitions
- * ---------------------------------------------------------------------
- */
-#ifndef HPLAI_T_AFLOAT
-#define HPLAI_T_AFLOAT float
-#endif
-
+#include "hplai_misc.h"
 #include "hplai_blas.h"
-#include "hplai_comm.h"
-#include "hplai_grid.h"
+#include "hplai_auxil.h"
+
 #include "hplai_panel.h"
 #include "hplai_pgesv.h"
 

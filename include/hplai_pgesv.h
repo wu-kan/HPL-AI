@@ -5,8 +5,9 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#include <math.h>
-#include "hplai.h"
+#include "hpl_pgesv.h"
+#include "hplai_grid.h"
+#include "hplai_comm.h"
 
 typedef struct HPLAI_S_pmat
 {
