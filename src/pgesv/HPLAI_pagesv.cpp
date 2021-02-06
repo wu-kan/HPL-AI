@@ -12,15 +12,15 @@ extern "C"
 void HPLAI_pagesv
 (
    HPL_T_grid *                     GRID,
-   HPL_T_palg *                     ALGO,
-   HPLAI_T_pmat *                  A
+   HPLAI_T_palg *                   ALGO,
+   HPLAI_T_pmat *                   A
 )
 #else
 void HPLAI_pdgesv
 ( GRID, ALGO, A )
    HPL_T_grid *                     GRID;
-   HPL_T_palg *                     ALGO;
-   HPLAI_T_pmat *                  A;
+   HPLAI_T_palg *                   ALGO;
+   HPLAI_T_pmat *                   A;
 #endif
 {
 /* ..

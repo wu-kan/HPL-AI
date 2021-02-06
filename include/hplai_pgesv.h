@@ -26,25 +26,25 @@ STDC_ARGS( (
 void                             HPLAI_pagesv0
 STDC_ARGS( (
    HPL_T_grid *,
-   HPL_T_palg *,
+   HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
 void                             HPLAI_pagesvK1
 STDC_ARGS( (
    HPL_T_grid *,
-   HPL_T_palg *,
+   HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
 void                             HPLAI_pagesvK2
 STDC_ARGS( (
    HPL_T_grid *,
-   HPL_T_palg *,
+   HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
 void                             HPLAI_pagesv
 STDC_ARGS( (
    HPL_T_grid *,
-   HPL_T_palg *,
+   HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
  

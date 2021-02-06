@@ -19,7 +19,7 @@ void HPLAI_pagesv0
 void HPLAI_pagesv0
 ( GRID, ALGO, A )
    HPL_T_grid *                     GRID;
-   HPL_T_palg *                     ALGO;
+   HPLAI_T_palg *                     ALGO;
    HPLAI_T_pmat *                   A;
 #endif
 {
@@ -40,7 +40,7 @@ void HPLAI_pagesv0
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
- * ALGO    (global input)                HPL_T_palg *
+ * ALGO    (global input)                HPLAI_T_palg *
  *         On entry,  ALGO  points to  the data structure containing the
  *         algorithmic parameters.
  *
