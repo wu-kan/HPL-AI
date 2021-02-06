@@ -1,53 +1,12 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
 /*
  * Include files
  */
-#include "hpl.h"
+#include "hplai.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #ifdef HPL_NO_MPI_DATATYPE  /* The user insists to not use MPI types */
 #ifndef HPL_COPY_L       /* and also want to avoid the copy of L ... */
@@ -56,13 +15,13 @@
 #endif
 
 #ifdef STDC_HEADERS
-int HPL_binit_1ring
+int HPLAI_binit_1ring
 (
-   HPL_T_panel *              PANEL
+   HPLAI_T_panel *              PANEL
 )
 #else
-int HPL_binit_1ring( PANEL )
-   HPL_T_panel *              PANEL;
+int HPLAI_binit_1ring( PANEL )
+   HPLAI_T_panel *              PANEL;
 #endif
 {
 #ifdef HPL_USE_MPI_DATATYPE
@@ -86,7 +45,7 @@ int HPL_binit_1ring( PANEL )
 /*
  * Create the MPI user-defined data type
  */
-   ierr = HPL_packL( PANEL, 0, PANEL->len, 0 );
+   ierr = HPLAI_packL( PANEL, 0, PANEL->len, 0 );
  
    return( ( ierr == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE ) );
 #else
@@ -108,20 +67,20 @@ int HPL_binit_1ring( PANEL )
 #else
 
 #define   _M_BUFF     (void *)(PANEL->L2)
-#define   _M_COUNT    PANEL->len
-#define   _M_TYPE     MPI_DOUBLE
+#define   _M_COUNT    (1LL * sizeof(HPLAI_T_AFLOAT) * PANEL->len)
+#define   _M_TYPE     MPI_BYTE
 
 #endif
 
 #ifdef STDC_HEADERS
-int HPL_bcast_1ring
+int HPLAI_bcast_1ring
 (
-   HPL_T_panel                * PANEL,
+   HPLAI_T_panel                * PANEL,
    int                        * IFLAG
 )
 #else
-int HPL_bcast_1ring( PANEL, IFLAG )
-   HPL_T_panel                * PANEL;
+int HPLAI_bcast_1ring( PANEL, IFLAG )
+   HPLAI_T_panel                * PANEL;
    int                        * IFLAG;
 #endif
 {
@@ -184,13 +143,13 @@ int HPL_bcast_1ring( PANEL, IFLAG )
 }
 
 #ifdef STDC_HEADERS
-int HPL_bwait_1ring
+int HPLAI_bwait_1ring
 (
-   HPL_T_panel *              PANEL
+   HPLAI_T_panel *              PANEL
 )
 #else
-int HPL_bwait_1ring( PANEL )
-   HPL_T_panel *              PANEL;
+int HPLAI_bwait_1ring( PANEL )
+   HPLAI_T_panel *              PANEL;
 #endif
 {
 #ifdef HPL_USE_MPI_DATATYPE
@@ -214,3 +173,7 @@ int HPL_bwait_1ring( PANEL )
    return( HPL_SUCCESS );
 #endif
 }
+
+#ifdef __cplusplus
+}
+#endif
