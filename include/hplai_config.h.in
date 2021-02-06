@@ -12,6 +12,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define if you have the MPI library. */
+#undef HAVE_MPI
+
 /* Define to 1 if you have the <mpi.h> header file. */
 #undef HAVE_MPI_H
 
