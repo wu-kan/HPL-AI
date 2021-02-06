@@ -1,4 +1,3 @@
-make clean
 aclocal
 autoconf
 autoheader
@@ -8,3 +7,5 @@ automake --add-missing
 make -j
 cd testing/ptest
 mpiexec -n 4 ../xhplai
+cd ../..
+git clean -d -f -q -x
