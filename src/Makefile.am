@@ -17,7 +17,8 @@ panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_in
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
 pfact/HPLAI_pafact.cpp \
 pgesv/HPLAI_pdgesv.cpp \
-pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPLAI_patrsv.cpp
+pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPL_pdgesvK2.c \
+pgesv/HPLAI_patrsv.cpp
 
 libhpl_a_SOURCES = \
 auxil/HPL_dlatcpy.c auxil/HPL_fprintf.c auxil/HPL_dlacpy.c auxil/HPL_dlamch.c \
