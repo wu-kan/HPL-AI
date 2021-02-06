@@ -8,7 +8,9 @@ blas/HPLAI_blas.cpp \
 blas/HPLAI_ascal.cpp blas/HPLAI_atrsm.cpp blas/HPLAI_atrsv.cpp blas/HPLAI_iaamax.cpp \
 blas/HPLAI_agemv.cpp blas/HPLAI_aaxpy.cpp \
 blas/HPLAI_acopy.cpp blas/HPLAI_agemm.cpp blas/HPLAI_ager.cpp \
-comm/HPLAI_send.cpp comm/HPLAI_recv.cpp \
+comm/HPLAI_sdrv.cpp comm/HPLAI_send.cpp comm/HPLAI_recv.cpp comm/HPLAI_bcast.cpp \
+comm/HPLAI_binit.cpp comm/HPLAI_bwait.cpp comm/HPLAI_blong.cpp comm/HPLAI_1ring.cpp \
+comm/HPLAI_1rinM.cpp comm/HPLAI_2rinM.cpp comm/HPLAI_2ring.cpp comm/HPLAI_blonM.cpp comm/HPLAI_packL.cpp \
 grid/HPLAI_broadcast_afloat.cpp \
 panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
