@@ -61,6 +61,10 @@ STDC_ARGS( (
    const int,
    const int
 ) );
+void                             HPLAI_copyL
+STDC_ARGS( (
+   HPLAI_T_panel *
+) );
  
 int HPLAI_binit_1ring STDC_ARGS( ( HPLAI_T_panel *        ) );
 int HPLAI_bcast_1ring STDC_ARGS( ( HPLAI_T_panel *, int * ) );
