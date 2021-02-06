@@ -34,5 +34,5 @@ make -j
 
 ```bash
 cd testing/ptest
-mpiexec -n 4 ../xhpl_ai
+mpiexec -n 4 ../xhplai
 ```

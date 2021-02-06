@@ -3,15 +3,15 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 xhpl_LDADD = ../src/libhpl.a
 
-xhpl_ai_LDADD = ../src/libhpl_ai.a ../src/libhpl.a
+xhplai_LDADD = ../src/libhplai.a ../src/libhpl.a
 
-bin_PROGRAMS = xhpl xhpl_ai
+bin_PROGRAMS = xhpl xhplai
 
-xhpl_ai_SOURCES =  \
+xhplai_SOURCES =  \
 matgen/HPL_jumpit.c matgen/HPL_rand.c matgen/HPL_setran.c matgen/HPL_xjumpm.c \
 matgen/HPL_lmul.c matgen/HPL_ladd.c \
-pmatgen/HPL_AI_pdmatgen.cpp \
-ptest/HPL_AI_pddriver.cpp ptest/HPL_AI_pdinfo.cpp ptest/HPL_AI_pdtest.cpp \
+pmatgen/HPLAI_pdmatgen.cpp \
+ptest/HPLAI_pddriver.cpp ptest/HPLAI_pdinfo.cpp ptest/HPLAI_pdtest.cpp \
 ptimer/HPL_ptimer.c ptimer/HPL_ptimer_cputime.c ptimer/HPL_ptimer_walltime.c
 
 xhpl_SOURCES =  \

@@ -8,4 +8,4 @@ automake --add-missing
     CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING"
 make -j
 cd testing/ptest
-mpiexec -n 4 ../xhpl_ai
+mpiexec -n 4 ../xhplai

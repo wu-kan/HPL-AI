@@ -1,8 +1,8 @@
 AC_PREREQ([2.69])
 
-AC_INIT(hpl_ai, 2.3, i@wu-kan.cn)
-AC_CONFIG_SRCDIR([include/hpl_ai.h])
-AC_CONFIG_HEADERS([include/hpl_ai_config.h])
+AC_INIT(hplai, 2.3, i@wu-kan.cn)
+AC_CONFIG_SRCDIR([include/hplai.h])
+AC_CONFIG_HEADERS([include/hplai_config.h])
 
 AX_PROG_CC_MPI
 AC_PROG_CXX

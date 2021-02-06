@@ -1,16 +1,16 @@
 AM_CPPFLAGS = -I$(top_srcdir)/../include
 
-lib_LIBRARIES = libhpl.a libhpl_ai.a
+lib_LIBRARIES = libhpl.a libhplai.a
 
-libhpl_ai_a_SOURCES = \
-blas/HPL_AI_blas.cpp blas/HPL_AI_atrsv.cpp blas/HPL_AI_atrsm.cpp blas/HPL_AI_iaamax.cpp \
-blas/HPL_AI_aaxpy.cpp blas/HPL_AI_acopy.cpp blas/HPL_AI_agemm.cpp blas/HPL_AI_agemv.cpp \
-blas/HPL_AI_ager.cpp blas/HPL_AI_ascal.cpp blas/HPL_AI_aswap.cpp \
-comm/HPL_AI_send.cpp comm/HPL_AI_recv.cpp \
-grid/HPL_AI_broadcast_afloat.cpp \
-panel/HPL_AI_papanel_disp.cpp panel/HPL_AI_papanel_free.cpp panel/HPL_AI_papanel_init.cpp panel/HPL_AI_papanel_new.cpp \
+libhplai_a_SOURCES = \
+blas/HPLAI_blas.cpp blas/HPLAI_atrsv.cpp blas/HPLAI_atrsm.cpp blas/HPLAI_iaamax.cpp \
+blas/HPLAI_aaxpy.cpp blas/HPLAI_acopy.cpp blas/HPLAI_agemm.cpp blas/HPLAI_agemv.cpp \
+blas/HPLAI_ager.cpp blas/HPLAI_ascal.cpp blas/HPLAI_aswap.cpp \
+comm/HPLAI_send.cpp comm/HPLAI_recv.cpp \
+grid/HPLAI_broadcast_afloat.cpp \
+panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
-pgesv/HPL_AI_pdgesv.cpp pgesv/HPL_AI_pagesv.cpp pgesv/HPL_AI_patrsv.cpp
+pgesv/HPLAI_pdgesv.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPLAI_patrsv.cpp
 
 libhpl_a_SOURCES = \
 auxil/HPL_dlatcpy.c auxil/HPL_fprintf.c auxil/HPL_dlacpy.c auxil/HPL_dlamch.c \
