@@ -2,7 +2,7 @@ make clean
 aclocal
 autoconf
 autoheader
-automake
+automake --add-missing
 ./configure \
     LIBS="-lmpi" \
     CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING"

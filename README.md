@@ -1,4 +1,4 @@
-# HPL_AI
+# HPL-AI
 
 ## 开发环境
 
@@ -18,7 +18,7 @@ spack load openblas@0.3.13%gcc@7.5.0
 aclocal
 autoconf
 autoheader
-automake
+automake --add-missing
 ```
 
 ## 编译过程
