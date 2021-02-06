@@ -6,8 +6,15 @@
  * ---------------------------------------------------------------------
  */
 #include "hpl_pgesv.h"
+
+#include "hplai_misc.h"
+#include "hplai_blas.h"
+#include "hplai_auxil.h"
+
 #include "hplai_grid.h"
 #include "hplai_comm.h"
+#include "hplai_panel.h"
+#include "hplai_pfact.h"
 
 typedef struct HPLAI_S_pmat
 {
