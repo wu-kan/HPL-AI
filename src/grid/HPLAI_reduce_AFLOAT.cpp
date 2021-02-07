@@ -49,23 +49,26 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-int HPL_reduce
+int HPLAI_reduce_AFLOAT
 (
    void *                           BUFFER,
    const int                        COUNT,
-   const HPL_T_TYPE                 DTYPE,
-   const HPL_T_OP                   OP,
+   const HPLAI_T_OP_AFLOAT          OP,
    const int                        ROOT,
    MPI_Comm                         COMM
 )
 #else
-int HPL_reduce
-( BUFFER, COUNT, DTYPE, OP, ROOT, COMM )
+int HPLAI_reduce_AFLOAT
+( BUFFER, COUNT, OP, ROOT, COMM )
    void *                           BUFFER;
    const int                        COUNT;
-   const HPL_T_TYPE                 DTYPE;
-   const HPL_T_OP                   OP;
+   const HPLAI_T_OP_AFLOAT          OP;
    const int                        ROOT;
    MPI_Comm                         COMM;
 #endif
@@ -74,7 +77,7 @@ int HPL_reduce
  * Purpose
  * =======
  *
- * HPL_reduce performs a global reduce operation across all processes of
+ * HPLAI_reduce_AFLOAT performs a global reduce operation across all processes of
  * a group.  Note that the input buffer is  used as workarray and in all
  * processes but the accumulating process corrupting the original data.
  *
@@ -90,9 +93,6 @@ int HPL_reduce
  * COUNT   (global input)                const int
  *         On entry,  COUNT  indicates the number of entries in  BUFFER.
  *         COUNT must be at least zero.
- *
- * DTYPE   (global input)                const HPL_T_TYPE
- *         On entry,  DTYPE  specifies the type of the buffers operands.
  *
  * OP      (global input)                const HPL_T_OP 
  *         On entry, OP is a pointer to the local combine function.
@@ -122,25 +122,21 @@ int HPL_reduce
    mpierr = MPI_Comm_rank( COMM, &rank );
    i = size - 1; while( i > 1 ) { i >>= 1; d++; }
 
-   if( DTYPE == HPL_INT )
-      buffer = (void *)( (int *)   malloc( (size_t)(COUNT) * 
-                                           sizeof( int    ) ) );
-   else
-      buffer = (void *)( (double *)malloc( (size_t)(COUNT) *
-                                           sizeof( double ) ) );
+      buffer = (void *)( (HPLAI_T_AFLOAT *)malloc( (size_t)(COUNT) *
+                                           sizeof( HPLAI_T_AFLOAT ) ) );
 
    if( !( buffer ) )
-   { HPL_pabort( __LINE__, "HPL_reduce", "Memory allocation failed" ); }
+   { HPL_pabort( __LINE__, "HPLAI_reduce_AFLOAT", "Memory allocation failed" ); }
 
    if( ( mydist = MModSub( rank, ROOT, size ) ) == 0 )
    {
       do
       {
-         mpierr = MPI_Recv( buffer, COUNT, HPL_2_MPI_TYPE( DTYPE ),
+         mpierr = MPI_Recv( buffer, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
                             MModAdd( ROOT, ip2, size ), tag, COMM,
                             &status );
          if( mpierr != MPI_SUCCESS ) hplerr = mpierr;
-         OP( COUNT, buffer, BUFFER, DTYPE );
+         OP( COUNT, buffer, BUFFER);
          ip2 <<= 1; d--;
       } while( d );
    }
@@ -155,15 +151,15 @@ int HPL_reduce
             if( mydist & ip2 )
             {
                partner = MModAdd( ROOT, partner, size );
-               mpierr = MPI_Send( BUFFER, COUNT, HPL_2_MPI_TYPE( DTYPE ),
+               mpierr = MPI_Send( BUFFER, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
                                   partner, tag, COMM );
             }
             else if( partner < size )
             {
                partner = MModAdd( ROOT, partner, size );
-               mpierr  = MPI_Recv( buffer, COUNT, HPL_2_MPI_TYPE( DTYPE ),
+               mpierr  = MPI_Recv( buffer, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
                                    partner, tag, COMM, &status );
-               OP( COUNT, buffer, BUFFER, DTYPE );
+               OP( COUNT, buffer, BUFFER);
             }
             if( mpierr != MPI_SUCCESS ) hplerr = mpierr;
          }
@@ -174,6 +170,10 @@ int HPL_reduce
 
    return( hplerr );
 /*
- * End of HPL_reduce
+ * End of HPLAI_reduce_AFLOAT
  */
 }
+
+#ifdef __cplusplus
+}
+#endif
