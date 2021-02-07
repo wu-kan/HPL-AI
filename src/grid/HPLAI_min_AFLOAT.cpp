@@ -49,28 +49,31 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-void HPL_min
+void HPLAI_min_AFLOAT
 (
    const int                        N,
    const void *                     IN,
-   void *                           INOUT,
-   const HPL_T_TYPE                 DTYPE
+   void *                           INOUT
 )
 #else
-void HPL_min
+void HPLAI_min_AFLOAT
 ( N, IN, INOUT, DTYPE )
    const int                        N;
    const void *                     IN;
-   void *                           INOUT;
-   const HPL_T_TYPE                 DTYPE;
+   void *                           INOUT
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_min combines (min) two buffers.
+ * HPLAI_min_AFLOAT combines (min) two buffers.
  * 
  *
  * Arguments
@@ -97,22 +100,16 @@ void HPL_min
  * .. Local Variables ..
  */
    register int               i;
-/* ..
- * .. Executable Statements ..
- */
-   if( DTYPE == HPL_INT )
    {
-      const int       * a = (const int *)(IN);
-      int             * b = (int *)(INOUT);
-      for( i = 0; i < N; i++ ) b[i] = Mmin( a[i], b[i] );
-   }
-   else
-   {
-      const double    * a = (const double *)(IN);
-      double          * b = (double *)(INOUT);
+      const HPLAI_T_AFLOAT    * a = (const HPLAI_T_AFLOAT *)(IN);
+      HPLAI_T_AFLOAT          * b = (HPLAI_T_AFLOAT *)(INOUT);
       for( i = 0; i < N; i++ ) b[i] = Mmin( a[i], b[i] );
    }
 /*
- * End of HPL_min
+ * End of HPLAI_min_AFLOAT
  */
 }
+
+#ifdef __cplusplus
+}
+#endif

@@ -49,28 +49,31 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-void HPL_max
+void HPLAI_max_AFLOAT
 (
    const int                        N,
    const void *                     IN,
-   void *                           INOUT,
-   const HPL_T_TYPE                 DTYPE
+   void *                           INOUT
 )
 #else
-void HPL_max
+void HPLAI_max_AFLOAT
 ( N, IN, INOUT, DTYPE )
    const int                        N;
    const void *                     IN;
-   void *                           INOUT;
-   const HPL_T_TYPE                 DTYPE;
+   void *                           INOUT
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_max combines (max) two buffers.
+ * HPLAI_max_AFLOAT combines (max) two buffers.
  * 
  *
  * Arguments
@@ -97,22 +100,16 @@ void HPL_max
  * .. Local Variables ..
  */
    register int               i;
-/* ..
- * .. Executable Statements ..
- */
-   if( DTYPE == HPL_INT )
    {
-      const int       * a = (const int *)(IN);
-      int             * b = (int *)(INOUT);
-      for( i = 0; i < N; i++ ) b[i] = Mmax( a[i], b[i] );
-   }
-   else
-   {
-      const double    * a = (const double *)(IN);
-      double          * b = (double *)(INOUT);
+      const HPLAI_T_AFLOAT    * a = (const HPLAI_T_AFLOAT *)(IN);
+      HPLAI_T_AFLOAT          * b = (HPLAI_T_AFLOAT *)(INOUT);
       for( i = 0; i < N; i++ ) b[i] = Mmax( a[i], b[i] );
    }
 /*
- * End of HPL_max
+ * End of HPLAI_max_AFLOAT
  */
 }
+
+#ifdef __cplusplus
+}
+#endif
