@@ -47,7 +47,7 @@
 /*
  * Include files
  */
-#include "hpl.h"
+#include "hplai.h"
 /*
  * Define default value for unrolling factor
  */

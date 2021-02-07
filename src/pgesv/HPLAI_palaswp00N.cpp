@@ -47,7 +47,7 @@
 /*
  * Include files
  */
-#include "hpl.h"
+#include "hplai.h"
 
 #ifdef STDC_HEADERS
 void HPL_pdlaswp00N

@@ -47,7 +47,7 @@
 /*
  * Include files
  */
-#include "hpl.h"
+#include "hplai.h"
 
 #define   I_SEND    0
 #define   I_RECV    1
