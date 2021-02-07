@@ -12,7 +12,9 @@ comm/HPLAI_sdrv.cpp comm/HPLAI_send.cpp comm/HPLAI_recv.cpp comm/HPLAI_bcast.cpp
 comm/HPLAI_binit.cpp comm/HPLAI_bwait.cpp comm/HPLAI_blong.cpp comm/HPLAI_1ring.cpp \
 comm/HPLAI_1rinM.cpp comm/HPLAI_2rinM.cpp comm/HPLAI_2ring.cpp comm/HPLAI_blonM.cpp comm/HPLAI_packL.cpp \
 comm/HPLAI_copyL.cpp \
-grid/HPLAI_broadcast_afloat.cpp \
+grid/HPLAI_reduce_AFLOAT.cpp grid/HPLAI_sum_AFLOAT.cpp \
+grid/HPLAI_all_reduce_AFLOAT.cpp grid/HPLAI_broadcast_AFLOAT.cpp grid/HPLAI_max_AFLOAT.cpp \
+grid/HPLAI_min_AFLOAT.cpp \
 panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
 pfact/HPLAI_pafact.cpp \

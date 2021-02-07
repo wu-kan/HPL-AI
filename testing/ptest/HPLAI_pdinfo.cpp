@@ -16,7 +16,7 @@ void HPLAI_pdinfo
    int *                            N,
    int *                            NBS,
    int *                            NB,
-   HPL_T_ORDER *                    PMAPPIN,
+   HPLAI_T_ORDER *                    PMAPPIN,
    int *                            NPQS,
    int *                            P,
    int *                            Q,
@@ -47,7 +47,7 @@ void HPLAI_pdinfo
    int *                            N;
    int *                            NBS;
    int *                            NB;
-   HPL_T_ORDER *                    PMAPPIN;
+   HPLAI_T_ORDER *                    PMAPPIN;
    int *                            NPQS;
    int *                            P;
    int *                            Q;
@@ -110,7 +110,7 @@ void HPLAI_pdinfo
  *         des of the  MPI machine configuration.  PMAPPIN  defaults  to
  *         row-major ordering.
  *
- * PMAPPIN (global output)               HPL_T_ORDER *
+ * PMAPPIN (global output)               HPLAI_T_ORDER *
  *         On entry, NB is an array of dimension HPL_MAX_PARAM. On exit,
  *         the first NBS entries of this array contain the values of the
  *         various distribution blocking factors, to run the code with.
@@ -333,7 +333,7 @@ void HPLAI_pdinfo
  */
       (void) fgets( line, HPL_LINE_MAX - 2, infp );
       (void) sscanf( line, "%s", num );
-      *PMAPPIN = ( atoi( num ) == 1 ? HPL_COLUMN_MAJOR : HPL_ROW_MAJOR );
+      *PMAPPIN = ( atoi( num ) == 1 ? HPLAI_COLUMN_MAJOR : HPLAI_ROW_MAJOR );
 
       (void) fgets( line, HPL_LINE_MAX - 2, infp );
       (void) sscanf( line, "%s", num ); *NPQS = atoi( num );
@@ -601,7 +601,7 @@ label_error:
    if( rank == 0 )
    {
       iwork[ 0] = *NS;      iwork[ 1] = *NBS;
-      iwork[ 2] = ( *PMAPPIN == HPL_ROW_MAJOR ? 0 : 1 );
+      iwork[ 2] = ( *PMAPPIN == HPLAI_ROW_MAJOR ? 0 : 1 );
       iwork[ 3] = *NPQS;    iwork[ 4] = *NPFS;     iwork[ 5] = *NBMS;
       iwork[ 6] = *NDVS;    iwork[ 7] = *NRFS;     iwork[ 8] = *NTPS;
       iwork[ 9] = *NDHS;    iwork[10] = *TSWAP;    iwork[11] = *L1NOTRAN;
@@ -611,7 +611,7 @@ label_error:
    if( rank != 0 )
    {
       *NS       = iwork[ 0]; *NBS   = iwork[ 1];
-      *PMAPPIN  = ( iwork[ 2] == 0 ?  HPL_ROW_MAJOR : HPL_COLUMN_MAJOR );
+      *PMAPPIN  = ( iwork[ 2] == 0 ?  HPLAI_ROW_MAJOR : HPLAI_COLUMN_MAJOR );
       *NPQS     = iwork[ 3]; *NPFS  = iwork[ 4]; *NBMS     = iwork[ 5];
       *NDVS     = iwork[ 6]; *NRFS  = iwork[ 7]; *NTPS     = iwork[ 8];
       *NDHS     = iwork[ 9]; *TSWAP = iwork[10]; *L1NOTRAN = iwork[11];
@@ -796,9 +796,9 @@ label_error:
  * Process mapping
  */
       HPL_fprintf( TEST->outfp,       "\nPMAP   :" );
-      if(      *PMAPPIN == HPL_ROW_MAJOR    )
+      if(      *PMAPPIN == HPLAI_ROW_MAJOR    )
          HPL_fprintf( TEST->outfp, " Row-major process mapping" );
-      else if( *PMAPPIN == HPL_COLUMN_MAJOR )
+      else if( *PMAPPIN == HPLAI_COLUMN_MAJOR )
          HPL_fprintf( TEST->outfp, " Column-major process mapping" );
 /*
  * Process grid

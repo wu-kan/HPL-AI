@@ -52,7 +52,7 @@
 #ifdef STDC_HEADERS
 double HPL_pdlange
 (
-   const HPL_T_grid *               GRID,
+   const HPLAI_T_grid *               GRID,
    const HPL_T_NORM                 NORM,
    const int                        M,
    const int                        N,
@@ -63,7 +63,7 @@ double HPL_pdlange
 #else
 double HPL_pdlange
 ( GRID, NORM, M, N, NB, A, LDA )
-   const HPL_T_grid *               GRID;
+   const HPLAI_T_grid *               GRID;
    const HPL_T_NORM                 NORM;
    const int                        M;
    const int                        N;
@@ -91,7 +91,7 @@ double HPL_pdlange
  * Arguments
  * =========
  *
- * GRID    (local input)                 const HPL_T_grid *
+ * GRID    (local input)                 const HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -131,7 +131,7 @@ double HPL_pdlange
 /* ..
  * .. Executable Statements ..
  */
-   (void) HPL_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
+   (void) HPLAI_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
    Rcomm = GRID->row_comm; Ccomm = GRID->col_comm;
    Acomm = GRID->all_comm;
 

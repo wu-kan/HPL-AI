@@ -113,7 +113,7 @@ void HPL_pdlaswp00T
  * .. Local Variables ..
  */
    MPI_Comm                  comm;
-   HPL_T_grid                * grid;
+   HPLAI_T_grid                * grid;
    double                    * A, * U, * W;
    void                       * vptr = NULL;
    int                       * ipID, * lindxA, * lindxAU, * llen,

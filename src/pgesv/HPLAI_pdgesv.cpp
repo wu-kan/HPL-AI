@@ -67,7 +67,7 @@ static double sign(double x)
 }
 
 static void HPL_pLdtrsv(
-    HPL_T_grid *GRID,
+    HPLAI_T_grid *GRID,
     HPL_T_pmat *AMAT)
 {
     /* 
@@ -101,7 +101,7 @@ static void HPL_pLdtrsv(
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPL_T_grid *
+ * GRID    (local input)                 HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -136,7 +136,7 @@ static void HPL_pLdtrsv(
     A = AMAT->A;
     XR = AMAT->X;
 
-    (void)HPL_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
+    (void)HPLAI_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
     Rcomm = GRID->row_comm;
     Rmsgid = MSGID_BEGIN_PTRSV;
     Ccomm = GRID->col_comm;
@@ -382,7 +382,7 @@ static void HPL_pLdtrsv(
  *   R = [R, v]
  */
 static void givens_rotations(
-    HPL_T_grid *GRID, /* processes grid information */
+    HPLAI_T_grid *GRID, /* processes grid information */
     HPL_T_pmat *A,    /* local A */
     double *v,        /* kth column of H */
     double *w,        /* rhs */
@@ -529,7 +529,7 @@ static void givens_rotations(
  *   s.t. Pkx = (I-2uuT)x = [x0,x1,..,xk-1,alpha,0,..0], alpha != 0
  */
 static void generateHouseholder(
-    HPL_T_grid *GRID, /* processes grid information */
+    HPLAI_T_grid *GRID, /* processes grid information */
     HPL_T_pmat *A,    /* local A */
     const double *x,  /* local object vector pointer */
     double *u,        /* local result Householder Vector */
@@ -590,7 +590,7 @@ static void generateHouseholder(
  *    y = Pkx = (I-2uuT)x = x - 2u(x, u)
  */
 static void applyHouseholder(
-    HPL_T_grid *GRID, /* processes grid information */
+    HPLAI_T_grid *GRID, /* processes grid information */
     HPL_T_pmat *A,    /* local A */
     const double *x,  /* local object vector pointer */
     const double *u,  /* local result Householder Vector */
@@ -638,7 +638,7 @@ static void applyHouseholder(
  * needed to perform to make v distributed along different columns like x.
  */
 static void redB2X(
-    HPL_T_grid *GRID,
+    HPLAI_T_grid *GRID,
     HPL_T_pmat *A,   /* local A */
     const double *v, /* the vector to be redistributed, size: mp */
     double *vc       /* the target space, size: nq */
@@ -672,7 +672,7 @@ static void redB2X(
  * needed to perform to make v distributed along different columns like b.
  */
 static void redX2B(
-    HPL_T_grid *GRID,
+    HPLAI_T_grid *GRID,
     HPL_T_pmat *A,   /* local A */
     const double *v, /* the vector to be redistributed, size: nq */
     double *vc       /* the target space, size: mp */
@@ -703,7 +703,7 @@ static void redX2B(
  * 
  */
 static int HPL_pgmres(
-    HPL_T_grid *GRID,
+    HPLAI_T_grid *GRID,
     HPL_T_pmat *A,       /* local A */
     HPL_T_pmat *factors, /* local LU factors */
     const double *b,     /* local rhs */
@@ -915,10 +915,10 @@ static int HPL_pgmres(
             tmp = w[k + 1];
             /* store the current error */
             currenterror = fabs(tmp);
-            // HPL_barrier(GRID->all_comm);
+            // HPLAI_barrier(GRID->all_comm);
             // if (GRID->iam == 0)
             // HPL_fprintf(stdout, "Err: %.16f, start = %d\n", currenterror, start);fflush(stdout);
-            // HPL_barrier(GRID->all_comm);
+            // HPLAI_barrier(GRID->all_comm);
             /* check if the solution is good enough */
             if (currenterror < TOL)
             {
@@ -1010,11 +1010,11 @@ static int HPL_pgmres(
         // HPL_all_reduce(&norm, 1, HPL_DOUBLE, HPL_sum, GRID->col_comm);
         // norm = sqrt(norm);
 
-        // HPL_barrier(GRID->all_comm);
+        // HPLAI_barrier(GRID->all_comm);
         // if (GRID->iam == 0)
         //     HPL_fprintf(stdout, "currenterror = %.16f, norm = %.16f\n", currenterror, norm);
         // fflush(stdout);
-        // HPL_barrier(GRID->all_comm);
+        // HPLAI_barrier(GRID->all_comm);
 
         /* if the error is small enough, stop. 
             otherwise another iteration will be initiated. */
@@ -1061,7 +1061,7 @@ static int HPL_pgmres(
 }
 
 void HPL_pir(
-    HPL_T_grid *GRID,
+    HPLAI_T_grid *GRID,
     HPL_T_palg *ALGO,
     HPL_T_pmat *A,
     HPLAI_T_pmat *FA,
@@ -1083,7 +1083,7 @@ void HPL_pir(
    * Arguments
    * =========
    *
-   * GRID    (local input)                 HPL_T_grid *
+   * GRID    (local input)                 HPLAI_T_grid *
    *         On entry,  GRID  points  to the data structure containing the
    *         process grid information.
    *
@@ -1252,12 +1252,12 @@ extern "C"
 
 #ifdef STDC_HEADERS
 void HPLAI_pdgesv(
-    HPL_T_grid *GRID,
+    HPLAI_T_grid *GRID,
     HPL_T_palg *ALGO,
     HPL_T_pmat *A)
 #else
 void HPLAI_pdgesv(GRID, ALGO, A)
-    HPL_T_grid *GRID;
+    HPLAI_T_grid *GRID;
 HPL_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif

@@ -12,7 +12,7 @@ extern "C"
 void HPLAI_pdtest
 (
    HPL_T_test *                     TEST,
-   HPL_T_grid *                     GRID,
+   HPLAI_T_grid *                     GRID,
    HPL_T_palg *                     ALGO,
    const int                        N,
    const int                        NB
@@ -21,7 +21,7 @@ void HPLAI_pdtest
 void HPLAI_pdtest
 ( TEST, GRID, ALGO, N, NB )
    HPL_T_test *                     TEST;
-   HPL_T_grid *                     GRID;
+   HPLAI_T_grid *                     GRID;
    HPL_T_palg *                     ALGO;
    const int                        N;
    const int                        NB;
@@ -57,7 +57,7 @@ void HPLAI_pdtest
  *         by one; if the test is skipped, kskip is incremented by one.
  *         ktest is left unchanged.
  *
- * GRID    (local input)                 HPL_T_grid *
+ * GRID    (local input)                 HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -95,7 +95,7 @@ void HPLAI_pdtest
 /* ..
  * .. Executable Statements ..
  */
-   (void) HPL_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
+   (void) HPLAI_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
 
    mat.n  = N; mat.nb = NB; mat.info = 0;
    mat.mp = HPL_numroc( N, NB, NB, myrow, 0, nprow );
@@ -152,7 +152,7 @@ void HPLAI_pdtest
 /*
  * Solve linear system
  */
-   HPL_ptimer_boot(); (void) HPL_barrier( GRID->all_comm );
+   HPL_ptimer_boot(); (void) HPLAI_barrier( GRID->all_comm );
    time( &current_time_start );
    HPL_ptimer( 0 );
    HPLAI_pdgesv( GRID, ALGO, &mat );
@@ -210,7 +210,7 @@ void HPLAI_pdtest
       if( wtime[0] > HPL_rzero ) {
          HPL_fprintf( TEST->outfp,
              "W%c%1d%c%c%1d%c%1d%12d %5d %5d %5d %18.2f    %19.4e\n",
-             ( GRID->order == HPL_ROW_MAJOR ? 'R' : 'C' ),
+             ( GRID->order == HPLAI_ROW_MAJOR ? 'R' : 'C' ),
              ALGO->depth, ctop, crfact, ALGO->nbdiv, cpfact, ALGO->nbmin,
              N, NB, nprow, npcol, wtime[0], Gflops );
          HPL_fprintf( TEST->outfp,

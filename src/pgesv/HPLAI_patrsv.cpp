@@ -11,13 +11,13 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_patrsv
 (
-   HPL_T_grid *                     GRID,
+   HPLAI_T_grid *                     GRID,
    HPLAI_T_pmat *                     AMAT
 )
 #else
 void HPLAI_patrsv
 ( GRID, AMAT )
-   HPL_T_grid *                     GRID;
+   HPLAI_T_grid *                     GRID;
    HPLAI_T_pmat *                     AMAT;
 #endif
 {
@@ -52,7 +52,7 @@ void HPLAI_patrsv
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPL_T_grid *
+ * GRID    (local input)                 HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -83,7 +83,7 @@ void HPLAI_patrsv
    if( ( n = AMAT->n ) <= 0 ) return;
    nb = AMAT->nb; lda = AMAT->ld; A = AMAT->A; XR = AMAT->X;
 
-   (void) HPL_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
+   (void) HPLAI_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
    Rcomm = GRID->row_comm; Rmsgid = MSGID_BEGIN_PTRSV;
    Ccomm = GRID->col_comm; Cmsgid = MSGID_BEGIN_PTRSV + 1;
    GridIsNot1xQ = ( nprow > 1 ); GridIsNotPx1 = ( npcol > 1 );
@@ -242,7 +242,7 @@ void HPLAI_patrsv
  * Replicate last solution block
  */
    if( mycol == colprev )
-      (void) HPLAI_broadcast_afloat( (void *)(XR), kbprev, rowprev,
+      (void) HPLAI_broadcast_AFLOAT( (void *)(XR), kbprev, rowprev,
                             Ccomm );
 
    if( Wfr  ) free( W  );

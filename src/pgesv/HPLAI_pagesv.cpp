@@ -11,14 +11,14 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_pagesv
 (
-   HPL_T_grid *                     GRID,
+   HPLAI_T_grid *                     GRID,
    HPLAI_T_palg *                   ALGO,
    HPLAI_T_pmat *                   A
 )
 #else
 void HPLAI_pdgesv
 ( GRID, ALGO, A )
-   HPL_T_grid *                     GRID;
+   HPLAI_T_grid *                     GRID;
    HPLAI_T_palg *                   ALGO;
    HPLAI_T_pmat *                   A;
 #endif

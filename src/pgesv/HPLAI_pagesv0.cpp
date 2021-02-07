@@ -11,14 +11,14 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_pagesv0
 (
-   HPL_T_grid *                     GRID,
+   HPLAI_T_grid *                     GRID,
    HPLAI_T_palg *                   ALGO,
    HPLAI_T_pmat *                   A
 )
 #else
 void HPLAI_pagesv0
 ( GRID, ALGO, A )
-   HPL_T_grid *                     GRID;
+   HPLAI_T_grid *                     GRID;
    HPLAI_T_palg *                     ALGO;
    HPLAI_T_pmat *                   A;
 #endif
@@ -36,7 +36,7 @@ void HPLAI_pagesv0
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPL_T_grid *
+ * GRID    (local input)                 HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *

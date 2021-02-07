@@ -17,7 +17,7 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_papanel_init
 (
-   HPL_T_grid *                     GRID,
+   HPLAI_T_grid *                     GRID,
    HPLAI_T_palg *                   ALGO,
    const int                        M,
    const int                        N,
@@ -31,7 +31,7 @@ void HPLAI_papanel_init
 #else
 void HPLAI_papanel_init
 ( GRID, ALGO, M, N, JB, A, IA, JA, TAG, PANEL )
-   HPL_T_grid *                     GRID;
+   HPLAI_T_grid *                     GRID;
    HPL_T_palg *                     ALGO;
    const int                        M;
    const int                        N;
@@ -53,7 +53,7 @@ void HPLAI_papanel_init
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPL_T_grid *
+ * GRID    (local input)                 HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *

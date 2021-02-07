@@ -27,7 +27,7 @@ extern "C"
  * Generate matrix A with alpha and beta parameters given.
  */
 static void generateA(
-    const HPL_T_grid *GRID,
+    const HPLAI_T_grid *GRID,
     const int N,
     const int NB,
     double *A,
@@ -109,7 +109,7 @@ static void calculate_ab(
  *  Matrix A is generated based on the method proposed by Fasi M..
  */
 static void HPLAI_generateA(
-    const HPL_T_grid *GRID,
+    const HPLAI_T_grid *GRID,
     const int N,
     const int NB,
     double *A,
@@ -140,7 +140,7 @@ static void HPLAI_generateA(
  * 
  */
 static void HPLAI_generateB(
-    const HPL_T_grid *GRID,
+    const HPLAI_T_grid *GRID,
     const int N,
     const int NB,
     double *B,
@@ -161,7 +161,7 @@ static void HPLAI_generateB(
    /* ..
  * .. Executable Statements ..
  */
-   (void)HPL_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
+   (void)HPLAI_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
 
    /*
  * tarcol is the process column containing b
@@ -223,7 +223,7 @@ static void HPLAI_generateB(
 
 #ifdef STDC_HEADERS
 void HPLAI_pdmatgen(
-    const HPL_T_grid *GRID,
+    const HPLAI_T_grid *GRID,
     const int M,
     const int N,
     const int NB,
@@ -232,7 +232,7 @@ void HPLAI_pdmatgen(
     const int ISEED)
 #else
 void HPLAI_pdmatgen(GRID, M, N, NB, A, LDA, ISEED)
-    const HPL_T_grid *GRID;
+    const HPLAI_T_grid *GRID;
 const int M;
 const int N;
 const int NB;
@@ -254,7 +254,7 @@ const int ISEED;
  * Arguments
  * =========
  *
- * GRID    (local input)                 const HPL_T_grid *
+ * GRID    (local input)                 const HPLAI_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -301,7 +301,7 @@ const int ISEED;
    /* ..
  * .. Executable Statements ..
  */
-   (void)HPL_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
+   (void)HPLAI_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
 
    if (N == M + 1)
    {

@@ -11,7 +11,7 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_papanel_new
 (
-   HPL_T_grid *                     GRID,
+   HPLAI_T_grid *                     GRID,
    HPLAI_T_palg *                   ALGO,
    const int                        M,
    const int                        N,
@@ -25,7 +25,7 @@ void HPLAI_papanel_new
 #else
 void HPLAI_papanel_new
 ( GRID, ALGO, M, N, JB, A, IA, JA, TAG, PANEL )
-   HPL_T_grid *                     GRID;
+   HPLAI_T_grid *                     GRID;
    HPL_T_palg *                     ALGO;
    const int                        M;
    const int                        N;

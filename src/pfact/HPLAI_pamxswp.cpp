@@ -122,7 +122,7 @@ void HPL_pdmxswp
  */
    double                     gmax, tmp1;
    double                     * A0, * Wmx, * Wwork;
-   HPL_T_grid                 * grid;
+   HPLAI_T_grid                 * grid;
    MPI_Comm                   comm;
    unsigned int               hdim, ip2, ip2_, ipow, k, mask;
    int                        Np2, cnt_, cnt0, i, icurrow, lda, mydist,
