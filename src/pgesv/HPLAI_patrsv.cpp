@@ -25,7 +25,7 @@ void HPLAI_patrsv
  * Purpose
  * =======
  *
- * HPL_pdtrsv solves an upper triangular system of linear equations.
+ * HPLAI_patrsv solves an upper triangular system of linear equations.
  *  
  * The rhs is the last column of the N by N+1 matrix A. The solve starts
  * in the process  column owning the  Nth  column of A, so the rhs b may
@@ -77,8 +77,8 @@ void HPLAI_patrsv
 /* ..
  * .. Executable Statements ..
  */
-#ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_PTRSV );
+#ifdef HPLAI_DETAILED_TIMING
+   HPL_timer( HPL_TIMING_PTRSV );
 #endif
    if( ( n = AMAT->n ) <= 0 ) return;
    nb = AMAT->nb; lda = AMAT->ld; A = AMAT->A; XR = AMAT->X;
@@ -111,7 +111,7 @@ void HPLAI_patrsv
    Rmsgid = ( Rmsgid + 2 >
               MSGID_END_PTRSV ? MSGID_BEGIN_PTRSV : Rmsgid + 2 );
    if( mycol != Alcol )
-   { for( tmp1=0; tmp1 < Anp; tmp1++ ) XC[tmp1] = HPL_rzero; }
+   { for( tmp1=0; tmp1 < Anp; tmp1++ ) XC[tmp1] = HPLAI_rzero; }
 /*
  * Set up lookahead
  */
@@ -120,7 +120,7 @@ void HPLAI_patrsv
    {
       W = (HPLAI_T_AFLOAT*)malloc( (size_t)(Mmin( n1, Anp )) * sizeof( HPLAI_T_AFLOAT ) );
       if( W == NULL )
-      { HPL_pabort( __LINE__, "HPLAI_patrsv", "Memory allocation failed" ); }
+      { HPLAI_pabort( __LINE__, "HPLAI_patrsv", "Memory allocation failed" ); }
       Wfr = 1;
    }
 
@@ -181,7 +181,7 @@ void HPLAI_patrsv
          {
             tmp1 = Anpprev - n1pprev;
             HPLAI_agemv( HplColumnMajor, HplNoTrans, n1pprev, kbprev,
-                       -HPL_rone, Aprev+tmp1, lda, Xdprev, 1, HPL_rone,
+                       -HPLAI_rone, Aprev+tmp1, lda, Xdprev, 1, HPLAI_rone,
                        XC+tmp1, 1 );
             if( GridIsNotPx1 )
                (void) HPLAI_send( XC+tmp1, n1pprev, Alcol, Rmsgid, Rcomm );
@@ -204,7 +204,7 @@ void HPLAI_patrsv
          if( n1pprev > 0 )
          {
             (void) HPLAI_recv( W, n1pprev, colprev, Rmsgid, Rcomm );
-            HPLAI_aaxpy( n1pprev, HPL_rone, W, 1, XC+Anpprev-n1pprev, 1 );
+            HPLAI_aaxpy( n1pprev, HPLAI_rone, W, 1, XC+Anpprev-n1pprev, 1 );
          }
       }
 /*
@@ -220,8 +220,8 @@ void HPLAI_patrsv
 *  Finish previous update
 */
       if( ( mycol == colprev ) && ( ( tmp1 = Anpprev - n1pprev ) > 0 ) )
-         HPLAI_agemv( HplColumnMajor, HplNoTrans, tmp1, kbprev, -HPL_rone,
-                    Aprev, lda, Xdprev, 1, HPL_rone, XC, 1 );
+         HPLAI_agemv( HplColumnMajor, HplNoTrans, tmp1, kbprev, -HPLAI_rone,
+                    Aprev, lda, Xdprev, 1, HPLAI_rone, XC, 1 );
 /*
 *  Save info of current step and update info for the next step
 */
@@ -246,8 +246,8 @@ void HPLAI_patrsv
                             Ccomm );
 
    if( Wfr  ) free( W  );
-#ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_PTRSV );
+#ifdef HPLAI_DETAILED_TIMING
+   HPL_timer( HPL_TIMING_PTRSV );
 #endif
 /*
  * End of HPLAI_patrsv

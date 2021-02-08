@@ -50,9 +50,9 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_plindx0
+void HPLAI_plindx0
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        K,
    int *                            IPID,
    int *                            LINDXA,
@@ -60,9 +60,9 @@ void HPL_plindx0
    int *                            LLEN
 )
 #else
-void HPL_plindx0
+void HPLAI_plindx0
 ( PANEL, K, IPID, LINDXA, LINDXAU, LLEN )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        K;
    int *                            IPID;
    int *                            LINDXA;
@@ -74,7 +74,7 @@ void HPL_plindx0
  * Purpose
  * =======
  *
- * HPL_plindx0 computes two local arrays  LINDXA and  LINDXAU  containing
+ * HPLAI_plindx0 computes two local arrays  LINDXA and  LINDXAU  containing
  * the  local  source and final destination position  resulting from the
  * application of row interchanges.
  *  
@@ -188,7 +188,7 @@ void HPL_plindx0
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -276,6 +276,6 @@ void HPL_plindx0
       }
    }
 /*
- * End of HPL_plindx0
+ * End of HPLAI_plindx0
  */
 }

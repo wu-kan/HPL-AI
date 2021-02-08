@@ -50,16 +50,16 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_pipid
+void HPLAI_pipid
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    int *                            K,
    int *                            IPID
 )
 #else
-void HPL_pipid
+void HPLAI_pipid
 ( PANEL, K, IPID )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    int *                            K;
    int *                            IPID;
 #endif
@@ -68,7 +68,7 @@ void HPL_pipid
  * Purpose
  * =======
  *
- * HPL_pipid computes an array  IPID  that contains the source and final
+ * HPLAI_pipid computes an array  IPID  that contains the source and final
  * destination  of  matrix rows  resulting  from  the  application  of N
  * interchanges  as computed by the  LU  factorization  with row partial
  * pivoting. The array IPID is such that the row of global index IPID(i)
@@ -112,7 +112,7 @@ void HPL_pipid
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -135,7 +135,7 @@ void HPL_pipid
  */
    int                        dst, fndd, fnds, ia, i, j, jb, lst, off,
                               src;
-   double                     * dpiv;
+   HPLAI_T_AFLOAT                     * dpiv;
 /* ..
  * .. Executable Statements ..
  */
@@ -182,6 +182,6 @@ void HPL_pipid
       *K += off;
    }
 /*
- * End of HPL_pipid
+ * End of HPLAI_pipid
  */
 }

@@ -87,6 +87,12 @@ typedef void (*HPLAI_T_RFA_FUN)
 typedef void (*HPLAI_T_UPD_FUN)
 (  HPLAI_T_panel *,   int *,           HPLAI_T_panel *,   const int ); 
 
+#define HPLAI_SWAP00 HPL_SWAP00
+#define HPLAI_SWAP01 HPL_SWAP01
+#define HPLAI_SW_MIX HPL_SW_MIX
+#define HPLAI_NO_SWP HPL_NO_SWP
+#define HPLAI_T_SWAP HPL_T_SWAP
+
 typedef struct HPLAI_S_palg
 {
    HPL_T_TOP           btopo;               /* row broadcast topology */
@@ -98,7 +104,7 @@ typedef struct HPLAI_S_palg
    HPLAI_T_PFA_FUN     pffun;              /* panel fact function ptr */
    HPLAI_T_RFA_FUN     rffun;          /* recursive fact function ptr */
    HPLAI_T_UPD_FUN     upfun;                      /* update function */
-   HPL_T_SWAP          fswap;                   /* Swapping algorithm */
+   HPLAI_T_SWAP        fswap;                   /* Swapping algorithm */
    int                 fsthr;                   /* Swapping threshold */
    int                 equil;                        /* Equilibration */
    int                 align;              /* data alignment constant */

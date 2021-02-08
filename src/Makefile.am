@@ -30,8 +30,13 @@ pfact/HPLAI_pamxswp.cpp pfact/HPLAI_pafact.cpp pfact/HPLAI_alocmax.cpp \
 pfact/HPLAI_papancrT.cpp pfact/HPLAI_papancrN.cpp \
 pfact/HPLAI_alocswpN.cpp pfact/HPLAI_alocswpT.cpp \
 pgesv/HPLAI_pdgesv.cpp \
-pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPL_pdgesvK2.c \
-pgesv/HPLAI_patrsv.cpp
+pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPLAI_pagesvK2.cpp \
+pgesv/HPLAI_patrsv.cpp \
+pgesv/HPLAI_paupdateNN.cpp pgesv/HPLAI_paupdateNT.cpp pgesv/HPLAI_paupdateTN.cpp pgesv/HPLAI_paupdateTT.cpp \
+pgesv/HPLAI_equil.cpp pgesv/HPLAI_pipid.cpp pgesv/HPLAI_plindx0.cpp \
+pgesv/HPLAI_plindx10.cpp pgesv/HPLAI_plindx1.cpp \
+pgesv/HPLAI_rollN.cpp pgesv/HPLAI_rollT.cpp pgesv/HPLAI_spreadN.cpp pgesv/HPLAI_spreadT.cpp \
+pgesv/HPLAI_palaswp00N.cpp pgesv/HPLAI_palaswp00T.cpp pgesv/HPLAI_palaswp01N.cpp pgesv/HPLAI_palaswp01T.cpp
 
 libhpl_a_SOURCES = \
 auxil/HPL_dlatcpy.c auxil/HPL_fprintf.c auxil/HPL_dlacpy.c auxil/HPL_dlamch.c \

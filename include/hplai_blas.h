@@ -8,6 +8,12 @@
 #include "hpl_blas.h"
 #include "hplai_misc.h"
 
+#define HPLAI_ORDER HPL_ORDER
+#define HPLAI_TRANS HPL_TRANS
+#define HPLAI_UPLO HPL_UPLO
+#define HPLAI_DIAG HPL_DIAG
+#define HPLAI_SIDE HPL_SIDE
+
 #if (HPL_CALL_CBLAS)
 
 //float---

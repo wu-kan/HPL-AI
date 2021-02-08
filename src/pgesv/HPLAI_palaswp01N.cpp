@@ -50,19 +50,19 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_pdlaswp01N
+void HPLAI_palaswp01N
 (
-   HPL_T_panel *                    PBCST,
+   HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        NN
 )
 #else
-void HPL_pdlaswp01N
+void HPLAI_palaswp01N
 ( PBCST, IFLAG, PANEL, NN )
-   HPL_T_panel *                    PBCST;
+   HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        NN;
 #endif
 {
@@ -70,7 +70,7 @@ void HPL_pdlaswp01N
  * Purpose
  * =======
  *
- * HPL_pdlaswp01N applies the  NB  row interchanges to  NN columns of the
+ * HPLAI_palaswp01N applies the  NB  row interchanges to  NN columns of the
  * trailing submatrix and broadcast a column panel.
  *  
  * A "Spread then roll" algorithm performs  the swap :: broadcast  of the
@@ -83,7 +83,7 @@ void HPL_pdlaswp01N
  *  
  * where  NB  is the number of rows of the row panel U,  N is the global
  * number of columns being updated,  lat and bdwth  are the latency  and
- * bandwidth  of  the  network  for  double  precision real words.  K is
+ * bandwidth  of  the  network  for  HPLAI_T_AFLOAT  precision real words.  K is
  * a constant in (2,3] that depends on the achieved bandwidth  during  a
  * simultaneous  message exchange  between two processes.  An  empirical
  * optimistic value of K is typically 2.4.
@@ -91,7 +91,7 @@ void HPL_pdlaswp01N
  * Arguments
  * =========
  *
- * PBCST   (local input/output)          HPL_T_panel *
+ * PBCST   (local input/output)          HPLAI_T_panel *
  *         On entry,  PBCST  points to the data structure containing the
  *         panel (to be broadcast) information.
  *
@@ -100,7 +100,7 @@ void HPL_pdlaswp01N
  *         already been completed.  If not,  probing will occur, and the
  *         outcome will be contained in IFLAG on exit.
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -114,7 +114,7 @@ void HPL_pdlaswp01N
 /*
  * .. Local Variables ..
  */
-   double                    * A, * U;
+   HPLAI_T_AFLOAT                    * A, * U;
    int                       * ipID, * iplen, * ipmap, * ipmapm1,
                              * iwork, * lindxA = NULL, * lindxAU,
                              * permU;
@@ -130,8 +130,8 @@ void HPL_pdlaswp01N
  * Quick return if there is nothing to do
  */
    if( ( n <= 0 ) || ( jb <= 0 ) ) return;
-#ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+#ifdef HPLAI_DETAILED_TIMING
+   HPL_timer( HPL_TIMING_LASWP );
 #endif
 /*
  * Decide whether equilibration should be performed or not
@@ -158,31 +158,31 @@ void HPL_pdlaswp01N
 
    if( *iflag == -1 )    /* no index arrays have been computed so far */
    {
-      HPL_pipid(   PANEL,  ipl, ipID );
-      HPL_plindx1( PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
+      HPLAI_pipid(   PANEL,  ipl, ipID );
+      HPLAI_plindx1( PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
                    ipmap, ipmapm1, permU, iwork );
       *iflag = 1;
    }
-   else if( *iflag == 0 ) /* HPL_pdlaswp00N called before: reuse ipID */
+   else if( *iflag == 0 ) /* HPLAI_palaswp00N called before: reuse ipID */
    {
-      HPL_plindx1( PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
+      HPLAI_plindx1( PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
                    ipmap, ipmapm1, permU, iwork );
       *iflag = 1;
    }
    else if( ( *iflag == 1 ) && ( equil != 0 ) )
-   {   /* HPL_pdlaswp01N was call before only re-compute IPLEN, IPMAP */
-      HPL_plindx10( PANEL, *ipl, ipID, iplen, ipmap, ipmapm1 );
+   {   /* HPLAI_palaswp01N was call before only re-compute IPLEN, IPMAP */
+      HPLAI_plindx10( PANEL, *ipl, ipID, iplen, ipmap, ipmapm1 );
       *iflag = 1;
    }
 /*
  * Copy into U the rows to be spread (local to icurrow)
  */
    if( myrow == icurrow )
-   { HPL_dlaswp01N( *ipA, n, A, lda, U, LDU, lindxA, lindxAU ); }
+   { HPLAI_alaswp01N( *ipA, n, A, lda, U, LDU, lindxA, lindxAU ); }
 /*
  * Spread U - optionally probe for column panel
  */
-   HPL_spreadN( PBCST, IFLAG, PANEL, HplRight, n, U, LDU, 0, iplen,
+   HPLAI_spreadN( PBCST, IFLAG, PANEL, HplRight, n, U, LDU, 0, iplen,
                 ipmap, ipmapm1 );
 /*
  * Local exchange (everywhere but in process row icurrow)
@@ -190,28 +190,28 @@ void HPL_pdlaswp01N
    if( myrow != icurrow )
    {
       k = ipmapm1[myrow];
-      HPL_dlaswp06N( iplen[k+1]-iplen[k], n, A, lda, Mptr( U, iplen[k],
+      HPLAI_alaswp06N( iplen[k+1]-iplen[k], n, A, lda, Mptr( U, iplen[k],
                      0, LDU ), LDU, lindxA );
    }
 /*
  * Equilibration
  */
    if( equil != 0 )
-      HPL_equil( PBCST, IFLAG, PANEL, HplNoTrans, n, U, LDU, iplen,
+      HPLAI_equil( PBCST, IFLAG, PANEL, HplNoTrans, n, U, LDU, iplen,
                  ipmap, ipmapm1, iwork );
 /*
  * Rolling phase
  */
-   HPL_rollN( PBCST, IFLAG, PANEL, n, U, LDU, iplen, ipmap, ipmapm1 );
+   HPLAI_rollN( PBCST, IFLAG, PANEL, n, U, LDU, iplen, ipmap, ipmapm1 );
 /*
  * Permute U in every process row
  */
-   HPL_dlaswp00N( jb, n, U, LDU, permU );
+   HPLAI_alaswp00N( jb, n, U, LDU, permU );
 
-#ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+#ifdef HPLAI_DETAILED_TIMING
+   HPL_timer( HPL_TIMING_LASWP );
 #endif
 /*
- * End of HPL_pdlaswp01N
+ * End of HPLAI_palaswp01N
  */
 }

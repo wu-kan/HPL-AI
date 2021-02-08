@@ -50,14 +50,14 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_spreadT
+void HPLAI_spreadT
 (
-   HPL_T_panel *                    PBCST,
+   HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
-   HPL_T_panel *                    PANEL,
-   const enum HPL_SIDE              SIDE,
+   HPLAI_T_panel *                    PANEL,
+   const enum HPLAI_SIDE              SIDE,
    const int                        N,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
    const int                        SRCDIST,
    const int *                      IPLEN,
@@ -65,14 +65,14 @@ void HPL_spreadT
    const int *                      IPMAPM1
 )
 #else
-void HPL_spreadT
+void HPLAI_spreadT
 ( PBCST, IFLAG, PANEL, SIDE, N, U, LDU, SRCDIST, IPLEN, IPMAP, IPMAPM1 )
-   HPL_T_panel *                    PBCST;
+   HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
-   HPL_T_panel *                    PANEL;
-   const enum HPL_SIDE              SIDE;
+   HPLAI_T_panel *                    PANEL;
+   const enum HPLAI_SIDE              SIDE;
    const int                        N;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
    const int                        SRCDIST;
    const int *                      IPLEN;
@@ -84,7 +84,7 @@ void HPL_spreadT
  * Purpose
  * =======
  *
- * HPL_spreadT spreads  the local array containing local pieces of U, so
+ * HPLAI_spreadT spreads  the local array containing local pieces of U, so
  * that on exit to this function,  a piece of  U  is contained in every
  * process row.  The array  IPLEN  contains the number of columns of U,
  * that should be spread on any given process row.  This function  also
@@ -95,7 +95,7 @@ void HPL_spreadT
  * Arguments
  * =========
  *
- * PBCST   (local input/output)          HPL_T_panel *
+ * PBCST   (local input/output)          HPLAI_T_panel *
  *         On entry,  PBCST  points to the data structure containing the
  *         panel (to be broadcast) information.
  *
@@ -104,11 +104,11 @@ void HPL_spreadT
  *         already been completed.  If not,  probing will occur, and the
  *         outcome will be contained in IFLAG on exit.
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel (to be spread) information.
  *
- * SIDE    (global input)                const enum HPL_SIDE
+ * SIDE    (global input)                const enum HPLAI_SIDE
  *         On entry, SIDE specifies whether the local piece of U located
  *         in process IPMAP[SRCDIST] should be spread to the right or to
  *         the left. This feature is used by the equilibration process.
@@ -117,7 +117,7 @@ void HPL_spreadT
  *         On entry,  N  specifies the local number of rows of U. N must
  *         be at least zero.
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry,  U  is an array of dimension (LDU,*) containing the
  *         local pieces of U.
  *
@@ -259,7 +259,7 @@ void HPL_spreadT
 /*
  * Probe for column panel - forward it when available
  */
-         if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+         if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
  
       } while( ip2 > 0 );
    }
@@ -359,14 +359,14 @@ void HPL_spreadT
 /*
  * Probe for column panel - forward it when available
  */
-         if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+         if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
  
       } while( ip2 > 0 );
    }
 
    if( ierr != MPI_SUCCESS )
-   { HPL_pabort( __LINE__, "HPL_spreadT", "MPI call failed" ); }
+   { HPLAI_pabort( __LINE__, "HPLAI_spreadT", "MPI call failed" ); }
 /*
- * End of HPL_spreadT
+ * End of HPLAI_spreadT
  */
 }

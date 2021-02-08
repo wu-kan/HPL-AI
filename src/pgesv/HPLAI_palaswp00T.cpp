@@ -50,19 +50,19 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_pdlaswp00T
+void HPLAI_palaswp00T
 (
-   HPL_T_panel *                    PBCST,
+   HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        NN
 )
 #else
-void HPL_pdlaswp00T
+void HPLAI_palaswp00T
 ( PBCST, IFLAG, PANEL, NN )
-   HPL_T_panel *                    PBCST;
+   HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        NN;
 #endif
 {
@@ -70,7 +70,7 @@ void HPL_pdlaswp00T
  * Purpose
  * =======
  *
- * HPL_pdlaswp00T applies the  NB  row interchanges to  NN columns of the
+ * HPLAI_palaswp00T applies the  NB  row interchanges to  NN columns of the
  * trailing submatrix and broadcast a column panel.
  *  
  * Bi-directional  exchange  is used to perform the  swap :: broadcast of
@@ -83,13 +83,13 @@ void HPL_pdlaswp00T
  *  
  * where  NB  is the number of rows of the row panel U,  N is the global
  * number of columns being updated,  lat and bdwth  are the latency  and
- * bandwidth  of  the  network  for  double  precision real words.  Mono
- * directional links will double this communication cost.
+ * bandwidth  of  the  network  for  HPLAI_T_AFLOAT  precision real words.  Mono
+ * directional links will HPLAI_T_AFLOAT this communication cost.
  *
  * Arguments
  * =========
  *
- * PBCST   (local input/output)          HPL_T_panel *
+ * PBCST   (local input/output)          HPLAI_T_panel *
  *         On entry,  PBCST  points to the data structure containing the
  *         panel (to be broadcast) information.
  *
@@ -98,7 +98,7 @@ void HPL_pdlaswp00T
  *         already been completed.  If not,  probing will occur, and the
  *         outcome will be contained in IFLAG on exit.
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel (to be broadcast and swapped) information.
  *
@@ -114,7 +114,7 @@ void HPL_pdlaswp00T
  */
    MPI_Comm                  comm;
    HPLAI_T_grid                * grid;
-   double                    * A, * U, * W;
+   HPLAI_T_AFLOAT                    * A, * U, * W;
    void                       * vptr = NULL;
    int                       * ipID, * lindxA, * lindxAU, * llen,
                              * llen_sv;
@@ -134,8 +134,8 @@ void HPL_pdlaswp00T
  */
    if( ( n <= 0 ) || ( jb <= 0 ) ) return;
 
-#ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+#ifdef HPLAI_DETAILED_TIMING
+   HPL_timer( HPL_TIMING_LASWP );
 #endif
 /*
  * Retrieve parameters from the PANEL data structure
@@ -151,11 +151,11 @@ void HPL_pdlaswp00T
  */
    vptr = (void*)malloc( ( (size_t)(align) + 
                            ((size_t)(jb) * (size_t)(ldW))) * 
-                           sizeof(double) );
+                           sizeof(HPLAI_T_AFLOAT) );
    if( vptr == NULL )
-   { HPL_pabort( __LINE__, "HPL_pdlaswp00T", "Memory allocation failed" ); }
+   { HPLAI_pabort( __LINE__, "HPLAI_palaswp00T", "Memory allocation failed" ); }
 
-   W = (double *)HPL_PTR( vptr, ((size_t)(align) * sizeof(double) ) );
+   W = (HPLAI_T_AFLOAT *)HPLAI_PTR( vptr, ((size_t)(align) * sizeof(HPLAI_T_AFLOAT) ) );
 /*
  * Construct ipID and its local counter parts lindxA, lindxAU -  llen is
  * the number of rows/columns that I have in workspace and that I should
@@ -168,13 +168,13 @@ void HPL_pdlaswp00T
 
    if( *iflag == -1 )    /* no index arrays have been computed so far */
    {
-      HPL_pipid(   PANEL,  ipl, ipID );
-      HPL_plindx0( PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv );
+      HPLAI_pipid(   PANEL,  ipl, ipID );
+      HPLAI_plindx0( PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv );
       *iflag = 0;
    }
-   else if( *iflag == 1 ) /* HPL_pdlaswp01T called before: reuse ipID */
+   else if( *iflag == 1 ) /* HPLAI_palaswp01T called before: reuse ipID */
    {
-      HPL_plindx0( PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv );
+      HPLAI_plindx0( PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv );
       *iflag = 0;
    }
 /*
@@ -191,16 +191,16 @@ void HPL_pdlaswp00T
  */
    if( myrow == icurrow ) 
    {
-      HPL_dlaswp01T( ipA, n, A, lda, U, LDU, lindxA, lindxAU );
+      HPLAI_alaswp01T( ipA, n, A, lda, U, LDU, lindxA, lindxAU );
    }
    else
    {
-      HPL_dlaswp02N( ipA, n, A, lda, W, W+1, ldW, lindxA, lindxAU );
+      HPLAI_alaswp02N( ipA, n, A, lda, W, W+1, ldW, lindxA, lindxAU );
    }
 /*
  * Probe for column panel - forward it when available 
  */
-   if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+   if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
 /*
  * Algorithm for bi-directional data exchange:
  *
@@ -250,25 +250,25 @@ void HPL_pdlaswp00T
 
       if( mydist == 0 )  /* I am the current row: I send U and recv W */
       {
-         (void) HPL_sdrv( U, usize, Cmsgid, W, llen[partner] * ldW,
+         (void) HPLAI_sdrv( U, usize, Cmsgid, W, llen[partner] * ldW,
                           Cmsgid, partner, comm );
          if( llen[partner] > 0 )
-            HPL_dlaswp03T( llen[partner], n, U, LDU, W, W+1, ldW );
+            HPLAI_alaswp03T( llen[partner], n, U, LDU, W, W+1, ldW );
       }
       else if( mydist == ip2 )
       {                      /* I recv U for later Bcast, I send my W */
-         (void) HPL_sdrv( W, llen[myrow]*ldW, Cmsgid, U, usize,
+         (void) HPLAI_sdrv( W, llen[myrow]*ldW, Cmsgid, U, usize,
                           Cmsgid, partner, comm );
       }
       else               /* None of us is icurrow, we exchange our Ws */
       {
          if( ( mydist & ip2 ) != 0 ) 
          {
-            (void) HPL_send( W, llen[myrow]*ldW, partner, Cmsgid, comm );
+            (void) HPLAI_send( W, llen[myrow]*ldW, partner, Cmsgid, comm );
          }
          else
          {
-            (void) HPL_recv( Mptr( W, 0, ipW, ldW ), llen[partner]*ldW,
+            (void) HPLAI_recv( Mptr( W, 0, ipW, ldW ), llen[partner]*ldW,
                              partner, Cmsgid, comm );
             if( llen[partner] > 0 ) ipW += llen[partner];
          }
@@ -286,7 +286,7 @@ void HPL_pdlaswp00T
 /*
  * Probe for column panel - forward it when available 
  */
-   if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+   if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
 /*
  * power of 2 part of the processes collection:  only processes [0..ip2)
  * are working;  some of them  (mydist >> (k+1) == 0) either send or re-
@@ -315,24 +315,24 @@ void HPL_pdlaswp00T
          {
             if( ( mydist >> (unsigned int)(k) ) == 0 )
             {
-               (void) HPL_sdrv( U, usize, Cmsgid, Mptr( W, 0, ipW,
+               (void) HPLAI_sdrv( U, usize, Cmsgid, Mptr( W, 0, ipW,
                                 ldW ), llen[partner]*ldW, Cmsgid,
                                 partner, comm );
-               HPL_dlaswp03T( llen[partner], n, U, LDU, Mptr( W, 0, ipW,
+               HPLAI_alaswp03T( llen[partner], n, U, LDU, Mptr( W, 0, ipW,
                               ldW ), Mptr( W, 1, ipW, ldW ), ldW );
                ipW += llen[partner];
             }
             else
             {
-               (void) HPL_sdrv( W, llen[myrow]*ldW, Cmsgid, U, usize,
+               (void) HPLAI_sdrv( W, llen[myrow]*ldW, Cmsgid, U, usize,
                                 Cmsgid, partner, comm );
-               HPL_dlaswp04T( ipA, llen[myrow], n, U, LDU, A, lda, W,
+               HPLAI_alaswp04T( ipA, llen[myrow], n, U, LDU, A, lda, W,
                               W+1, ldW, lindxA, lindxAU );
             }
          }
          else
          {
-            (void) HPL_sdrv( W, llen[myrow]*ldW, Cmsgid, Mptr( W, 0,
+            (void) HPLAI_sdrv( W, llen[myrow]*ldW, Cmsgid, Mptr( W, 0,
                              ipW, ldW ), llen[partner]*ldW, Cmsgid,
                              partner, comm );
             ipW += llen[partner];
@@ -357,7 +357,7 @@ void HPL_pdlaswp00T
 /*
  * Probe for column panel - forward it when available 
  */
-         if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+         if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
       }
    }
    else
@@ -381,13 +381,13 @@ void HPL_pdlaswp00T
                partner = (int)(mydis_ ^ ip2_);
                if( ( mydis_ & ip2_ ) != 0 )
                {
-                  (void) HPL_recv( U, usize, MModAdd( root, partner,
+                  (void) HPLAI_recv( U, usize, MModAdd( root, partner,
                                    nprow ), Cmsgid, comm );
 
                }
                else if( partner < size_ )
                {
-                  (void) HPL_send( U, usize, MModAdd( root, partner,
+                  (void) HPLAI_send( U, usize, MModAdd( root, partner,
                                    nprow ), Cmsgid, comm );
                }
             }
@@ -395,7 +395,7 @@ void HPL_pdlaswp00T
 /*
  * Probe for column panel - forward it when available 
  */
-            if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+            if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
 
          } while( ip2_ > 0 );
       }
@@ -403,7 +403,7 @@ void HPL_pdlaswp00T
  * Every process in [ip2..nprow) (relatively to icurrow) grabs its piece
  * of A.
  */
-      HPL_dlaswp05T( ipA, n, A, lda, U, LDU, lindxA, lindxAU );
+      HPLAI_alaswp05T( ipA, n, A, lda, U, LDU, lindxA, lindxAU );
    }
 /*
  * If  nprow  is not a power of 2,  proc[i-ip2]  sends  global result to
@@ -413,21 +413,21 @@ void HPL_pdlaswp00T
    {
       partner = MModAdd( icurrow, partner, nprow );
       if( ( mydist & ip2 ) != 0 )
-      { (void) HPL_recv( U, usize, partner, Cmsgid, comm ); }
+      { (void) HPLAI_recv( U, usize, partner, Cmsgid, comm ); }
       else
-      { (void) HPL_send( U, usize, partner, Cmsgid, comm ); }
+      { (void) HPLAI_send( U, usize, partner, Cmsgid, comm ); }
    }
 
    if( vptr ) free( vptr );
 /*
  * Probe for column panel - forward it when available 
  */
-   if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+   if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
 
-#ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+#ifdef HPLAI_DETAILED_TIMING
+   HPL_timer( HPL_TIMING_LASWP );
 #endif
 /*
- * End of HPL_pdlaswp00T
+ * End of HPLAI_palaswp00T
  */
 }

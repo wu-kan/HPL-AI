@@ -8,7 +8,26 @@
 #include "hpl_comm.h"
 #include "hplai_misc.h"
 #include "hplai_panel.h"
-
+/*
+ * ---------------------------------------------------------------------
+ * #typedefs and data structures
+ * ---------------------------------------------------------------------
+ */
+#define HPLAI_1RING HPL_1RING
+#define HPLAI_1RING_M HPL_1RING_M
+#define HPLAI_2RING HPL_2RING
+#define HPLAI_2RING_M HPL_2RING_M
+#define HPLAI_BLONG HPL_BLONG
+#define HPLAI_BLONG_M HPL_BLONG_M
+#define HPLAI_T_TOP HPL_T_TOP
+/*
+ * ---------------------------------------------------------------------
+ * #define macro constants
+ * ---------------------------------------------------------------------
+ */
+#define    HPLAI_FAILURE            HPL_FAILURE
+#define    HPLAI_SUCCESS            HPL_SUCCESS
+#define    HPLAI_KEEP_TESTING       HPL_KEEP_TESTING
 /*
  * ---------------------------------------------------------------------
  * comm function prototypes

@@ -50,9 +50,9 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_plindx1
+void HPLAI_plindx1
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        K,
    const int *                      IPID,
    int *                            IPA,
@@ -65,9 +65,9 @@ void HPL_plindx1
    int *                            IWORK
 )
 #else
-void HPL_plindx1
+void HPLAI_plindx1
 ( PANEL, K, IPID, IPA, LINDXA, LINDXAU, IPLEN, IPMAP, IPMAPM1, PERMU, IWORK )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        K;
    const int *                      IPID;
    int *                            IPA;
@@ -84,7 +84,7 @@ void HPL_plindx1
  * Purpose
  * =======
  *
- * HPL_plindx1 computes two local arrays  LINDXA and  LINDXAU  containing
+ * HPLAI_plindx1 computes two local arrays  LINDXA and  LINDXAU  containing
  * the  local  source and final destination position  resulting from the
  * application of row interchanges.  In addition, this function computes
  * three arrays IPLEN, IPMAP and IPMAPM1  that contain  the  logarithmic
@@ -93,7 +93,7 @@ void HPL_plindx1
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -170,7 +170,7 @@ void HPL_plindx1
 /*
  * Logarithmic sort of the processes - compute IPMAP, IPLEN and IPMAPM1
  */
-   HPL_plindx10( PANEL, K, IPID, IPLEN, IPMAP, IPMAPM1 );
+   HPLAI_plindx10( PANEL, K, IPID, IPLEN, IPMAP, IPMAPM1 );
 /*
  * Compute the local arrays  LINDXA  and  LINDXAU  containing  the local
  * source and final destination position resulting from  the application
@@ -263,13 +263,13 @@ void HPL_plindx1
  * Simplify iwork and PERMU, return in PERMU the sequence of permutation
  * that need to be apply to U after it has been broadcast.
  */
-   HPL_perm( jb, iwork, PERMU, IWORK );
+   HPLAI_perm( jb, iwork, PERMU, IWORK );
 /*
  * Reset IPLEN to its correct value
  */
    for( i = nprow; i > 0; i-- ) IPLEN[i] = IPLEN[i-1];
    IPLEN[0] = 0; 
 /*
- * End of HPL_plindx1
+ * End of HPLAI_plindx1
  */
 }

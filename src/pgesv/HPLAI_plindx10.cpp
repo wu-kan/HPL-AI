@@ -50,9 +50,9 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_plindx10
+void HPLAI_plindx10
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        K,
    const int *                      IPID,
    int *                            IPLEN,
@@ -60,9 +60,9 @@ void HPL_plindx10
    int *                            IPMAPM1
 )
 #else
-void HPL_plindx10
+void HPLAI_plindx10
 ( PANEL, K, IPID, IPLEN, IPMAP, IPMAPM1 )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        K;
    const int *                      IPID;
    int *                            IPLEN;
@@ -74,13 +74,13 @@ void HPL_plindx10
  * Purpose
  * =======
  *
- * HPL_plindx10 computes  three arrays  IPLEN,  IPMAP  and  IPMAPM1  that
+ * HPLAI_plindx10 computes  three arrays  IPLEN,  IPMAP  and  IPMAPM1  that
  * contain the logarithmic mapping information for the spreading phase.
  *
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -148,8 +148,8 @@ void HPL_plindx10
  * Logarithmic sort of the processes - compute IPMAP, IPLEN and IPMAPM1
  * (the inverse of IPMAP)
  */
-   HPL_logsort( nprow, icurrow, IPLEN, IPMAP, IPMAPM1 );
+   HPLAI_logsort( nprow, icurrow, IPLEN, IPMAP, IPMAPM1 );
 /*
- * End of HPL_plindx10
+ * End of HPLAI_plindx10
  */
 }

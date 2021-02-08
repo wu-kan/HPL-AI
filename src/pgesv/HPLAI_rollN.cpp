@@ -53,26 +53,26 @@
 #define   I_RECV    1
 
 #ifdef STDC_HEADERS
-void HPL_rollN
+void HPLAI_rollN
 (
-   HPL_T_panel *                    PBCST,
+   HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        N,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
    const int *                      IPLEN,
    const int *                      IPMAP,
    const int *                      IPMAPM1
 )
 #else
-void HPL_rollN
+void HPLAI_rollN
 ( PBCST, IFLAG, PANEL, N, U, LDU, IPLEN, IPMAP, IPMAPM1 )
-   HPL_T_panel *                    PBCST;
+   HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        N;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
    const int *                      IPLEN;
    const int *                      IPMAP;
@@ -83,7 +83,7 @@ void HPL_rollN
  * Purpose
  * =======
  *
- * HPL_rollN rolls the local arrays containing the local pieces of U, so
+ * HPLAI_rollN rolls the local arrays containing the local pieces of U, so
  * that on exit to this function  U  is replicated in every process row.
  * In addition, this function probe for the presence of the column panel
  * and forwards it when available.
@@ -91,7 +91,7 @@ void HPL_rollN
  * Arguments
  * =========
  *
- * PBCST   (local input/output)          HPL_T_panel *
+ * PBCST   (local input/output)          HPLAI_T_panel *
  *         On entry,  PBCST  points to the data structure containing the
  *         panel (to be broadcast) information.
  *
@@ -100,7 +100,7 @@ void HPL_rollN
  *         already been completed.  If not,  probing will occur, and the
  *         outcome will be contained in IFLAG on exit.
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel (to be rolled) information.
  *
@@ -108,7 +108,7 @@ void HPL_rollN
  *         On entry, N specifies the number of columns of  U.  N must be
  *         at least zero.
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry,  U  is an array of dimension (LDU,*) containing the
  *         local pieces of U in each process row.
  *
@@ -214,12 +214,12 @@ void HPL_rollN
 /*
  * Probe for column panel - forward it when available
  */
-      if( *IFLAG == HPL_KEEP_TESTING ) (void) HPL_bcast( PBCST, IFLAG );
+      if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
    }
 
    if( ierr != MPI_SUCCESS )
-   { HPL_pabort( __LINE__, "HPL_rollN", "MPI call failed" ); }
+   { HPLAI_pabort( __LINE__, "HPLAI_rollN", "MPI call failed" ); }
 /*
- * End of HPL_rollN
+ * End of HPLAI_rollN
  */
 }

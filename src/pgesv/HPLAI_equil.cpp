@@ -50,14 +50,14 @@
 #include "hplai.h"
 
 #ifdef STDC_HEADERS
-void HPL_equil
+void HPLAI_equil
 (
-   HPL_T_panel *                    PBCST,
+   HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
-   HPL_T_panel *                    PANEL,
-   const enum HPL_TRANS             TRANS,
+   HPLAI_T_panel *                    PANEL,
+   const enum HPLAI_TRANS             TRANS,
    const int                        N,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
    int *                            IPLEN,
    const int *                      IPMAP,
@@ -65,14 +65,14 @@ void HPL_equil
    int *                            IWORK
 )
 #else
-void HPL_equil
+void HPLAI_equil
 ( PBCST, IFLAG, PANEL, TRANS, N, U, LDU, IPLEN, IPMAP, IPMAPM1, IWORK )
-   HPL_T_panel *                    PBCST;
+   HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
-   HPL_T_panel *                    PANEL;
-   const enum HPL_TRANS             TRANS;
+   HPLAI_T_panel *                    PANEL;
+   const enum HPLAI_TRANS             TRANS;
    const int                        N;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
    int *                            IPLEN;
    const int *                      IPMAP;
@@ -84,7 +84,7 @@ void HPL_equil
  * Purpose
  * =======
  *
- * HPL_equil equilibrates  the  local  pieces  of U, so that on exit to
+ * HPLAI_equil equilibrates  the  local  pieces  of U, so that on exit to
  * this function, pieces of U contained in every process row are of the
  * same size. This phase makes the rolling phase optimal.  In addition,
  * this  function probes  for  the  column panel L and forwards it when
@@ -93,7 +93,7 @@ void HPL_equil
  * Arguments
  * =========
  *
- * PBCST   (local input/output)          HPL_T_panel *
+ * PBCST   (local input/output)          HPLAI_T_panel *
  *         On entry,  PBCST  points to the data structure containing the
  *         panel (to be broadcast) information.
  *
@@ -102,11 +102,11 @@ void HPL_equil
  *         already been completed.  If not,  probing will occur, and the
  *         outcome will be contained in IFLAG on exit.
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel (to be equilibrated) information.
  *
- * TRANS   (global input)                const enum HPL_TRANS
+ * TRANS   (global input)                const enum HPLAI_TRANS
  *         On entry, TRANS specifies whether  U  is stored in transposed
  *         or non-transposed form.
  *
@@ -114,7 +114,7 @@ void HPL_equil
  *         On entry, N  specifies the number of rows or columns of  U. N
  *         must be at least 0.
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry,  U  is an array of dimension (LDU,*) containing the
  *         local pieces of U in each process row.
  *
@@ -216,13 +216,13 @@ void HPL_equil
          {
             if( left  )
             {
-               HPL_spreadN( PBCST, IFLAG, PANEL, HplLeft,  N, U, LDU,
+               HPLAI_spreadN( PBCST, IFLAG, PANEL, HplLeft,  N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
 
             if( right )
             {
-               HPL_spreadN( PBCST, IFLAG, PANEL, HplRight, N, U, LDU,
+               HPLAI_spreadN( PBCST, IFLAG, PANEL, HplRight, N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
          }
@@ -230,13 +230,13 @@ void HPL_equil
          {
             if( left  )
             {
-               HPL_spreadT( PBCST, IFLAG, PANEL, HplLeft,  N, U, LDU,
+               HPLAI_spreadT( PBCST, IFLAG, PANEL, HplLeft,  N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
 
             if( right )
             {
-               HPL_spreadT( PBCST, IFLAG, PANEL, HplRight, N, U, LDU,
+               HPLAI_spreadT( PBCST, IFLAG, PANEL, HplRight, N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
          }
@@ -248,6 +248,6 @@ void HPL_equil
  */
    for( i = 0; i < nprow; i++ ) IPLEN[i] = ( i < ip ? i*smax : i*smin + ip );
 /*
- * End of HPL_equil
+ * End of HPLAI_equil
  */
 }

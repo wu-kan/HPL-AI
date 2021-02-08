@@ -21,6 +21,8 @@
 #define HPLAI_rtwo ((HPLAI_T_AFLOAT)HPL_rtwo)
 #define HPLAI_rzero ((HPLAI_T_AFLOAT)HPL_rzero)
 
+#define HPLAI_PTR HPL_PTR
+
 #endif
 /*
  * End of hpl_misc.h
