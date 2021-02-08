@@ -108,6 +108,136 @@ typedef struct HPLAI_S_palg
  * Function prototypes
  * ---------------------------------------------------------------------
  */
+void                             HPLAI_alocmax
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+
+void                             HPLAI_alocswpN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_alocswpT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_pamxswp
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+
+void                             HPLAI_papancrN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_papancrT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_papanllN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_papanllT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_papanrlN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_papanrlT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+
+void                             HPLAI_parpancrN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_parpancrT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_parpanllN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_parpanllT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_parpanrlN
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+void                             HPLAI_parpanrlT
+STDC_ARGS( (
+   HPLAI_T_panel *,
+   const int,
+   const int,
+   const int,
+   HPLAI_T_AFLOAT *
+) );
+
 void                             HPLAI_pafact
 STDC_ARGS( (
    HPLAI_T_panel *

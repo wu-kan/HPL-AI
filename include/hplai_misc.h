@@ -17,9 +17,9 @@
 #define HPLAI_T_AFLOAT float
 #endif
 
-#define HPLAI_rone HPL_rone
-#define HPLAI_rtwo HPL_rtwo
-#define HPLAI_rzero HPL_rzero
+#define HPLAI_rone ((HPLAI_T_AFLOAT)HPL_rone)
+#define HPLAI_rtwo ((HPLAI_T_AFLOAT)HPL_rtwo)
+#define HPLAI_rzero ((HPLAI_T_AFLOAT)HPL_rzero)
 
 #endif
 /*

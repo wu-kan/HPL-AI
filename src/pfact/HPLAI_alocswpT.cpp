@@ -48,6 +48,11 @@
  * Include files
  */
 #include "hplai.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*
  * Define default value for unrolling factor
  */
@@ -57,34 +62,34 @@
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlocswpT
+void HPLAI_alocswpT
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        II,
    const int                        JJ,
-   double *                         WORK
+   HPLAI_T_AFLOAT *                         WORK
 )
 #else
-void HPL_dlocswpT
+void HPLAI_alocswpT
 ( PANEL, II, JJ, WORK )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        II;
    const int                        JJ;
-   double *                         WORK;
+   HPLAI_T_AFLOAT *                         WORK;
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_dlocswpT performs  the local swapping operations  within a panel.
+ * HPLAI_alocswpT performs  the local swapping operations  within a panel.
  * The lower triangular  N0-by-N0  upper block of the panel is stored in
  * transpose form.
  *
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -96,7 +101,7 @@ void HPL_dlocswpT
  *         On entry, JJ  specifies the column offset where the column to
  *         be operated on starts with respect to the panel.
  *
- * WORK    (local workspace)             double *
+ * WORK    (local workspace)             HPLAI_T_AFLOAT *
  *         On entry, WORK  is a workarray of size at least 2 * (4+2*N0).
  *         WORK[0] contains  the  local  maximum  absolute value scalar,
  *         WORK[1] contains  the corresponding local row index,  WORK[2]
@@ -111,8 +116,8 @@ void HPL_dlocswpT
 /*
  * .. Local Variables ..
  */
-   double                     gmax;
-   double                     * A1, * A2, * L, * Wr0, * Wmx;
+   HPLAI_T_AFLOAT                     gmax;
+   HPLAI_T_AFLOAT                     * A1, * A2, * L, * Wr0, * Wmx;
    int                        ilindx, lda, myrow, n0, nr, nu;
    register int               i;
 /* ..
@@ -131,7 +136,7 @@ void HPL_dlocswpT
 /*
  * If the pivot is non-zero ...
  */
-   if( gmax != HPL_rzero )
+   if( gmax != HPLAI_rzero )
    {
 /*
  * and if I own the current row of A ...
@@ -398,9 +403,13 @@ void HPL_dlocswpT
  * Set INFO.
  */
       if( *(PANEL->DINFO) == 0.0 )
-         *(PANEL->DINFO) = (double)(PANEL->ia + JJ + 1);
+         *(PANEL->DINFO) = (HPLAI_T_AFLOAT)(PANEL->ia + JJ + 1);
    }
 /*
- * End of HPL_dlocswpT
+ * End of HPLAI_alocswpT
  */
 }
+
+#ifdef __cplusplus
+}
+#endif

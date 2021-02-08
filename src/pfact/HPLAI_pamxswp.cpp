@@ -49,31 +49,36 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-void HPL_pdmxswp
+void HPLAI_pamxswp
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        M,
    const int                        II,
    const int                        JJ,
-   double *                         WORK
+   HPLAI_T_AFLOAT *                         WORK
 )
 #else
-void HPL_pdmxswp
+void HPLAI_pamxswp
 ( PANEL, M, II, JJ, WORK )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        M;
    const int                        II;
    const int                        JJ;
-   double *                         WORK;
+   HPLAI_T_AFLOAT *                         WORK;
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_pdmxswp swaps  and  broadcasts  the  absolute value max row using
- * bi-directional exchange.  The buffer is partially set by HPL_dlocmax.
+ * HPLAI_pamxswp swaps  and  broadcasts  the  absolute value max row using
+ * bi-directional exchange.  The buffer is partially set by HPLAI_alocmax.
  *  
  * Bi-directional  exchange  is  used  to  perform  the  swap::broadcast
  * operations  at once  for one column in the panel.  This  results in a
@@ -84,14 +89,14 @@ void HPL_pdmxswp
  *    log_2( P ) * ( lat + ( 2 * N0 + 4 ) / bdwth )
  *  
  * where  lat and bdwth are the latency and bandwidth of the network for
- * double precision real elements.  Communication  only  occurs  in  one
+ * HPLAI_T_AFLOAT precision real elements.  Communication  only  occurs  in  one
  * process  column. Mono-directional links  will cause the communication
- * cost to double.
+ * cost to HPLAI_T_AFLOAT.
  *
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -107,9 +112,9 @@ void HPL_pdmxswp
  *         On entry, JJ  specifies the column offset where the column to
  *         be operated on starts with respect to the panel.
  *
- * WORK    (local workspace)             double *
+ * WORK    (local workspace)             HPLAI_T_AFLOAT *
  *         On entry, WORK  is a workarray of size at least 2 * (4+2*N0).
- *         It  is assumed that  HPL_dlocmax  was called  prior  to  this
+ *         It  is assumed that  HPLAI_alocmax  was called  prior  to  this
  *         routine to  initialize  the first four entries of this array.
  *         On exit, the  N0  length max row is stored in WORK[4:4+N0-1];
  *         Note that this is also the  JJth  row  (or column) of L1. The
@@ -120,8 +125,8 @@ void HPL_pdmxswp
 /*
  * .. Local Variables ..
  */
-   double                     gmax, tmp1;
-   double                     * A0, * Wmx, * Wwork;
+   HPLAI_T_AFLOAT                     gmax, tmp1;
+   HPLAI_T_AFLOAT                     * A0, * Wmx, * Wwork;
    HPLAI_T_grid                 * grid;
    MPI_Comm                   comm;
    unsigned int               hdim, ip2, ip2_, ipow, k, mask;
@@ -161,12 +166,12 @@ void HPL_pdmxswp
    if( M > 0 )
    {
       lda = PANEL->lda;
-      HPL_dcopy( n0, Mptr( PANEL->A, II+(int)(WORK[1]), 0, lda ), lda,
+      HPLAI_acopy( n0, Mptr( PANEL->A, II+(int)(WORK[1]), 0, lda ), lda,
                  Wmx, 1 );
       if( myrow == icurrow )
-      { HPL_dcopy( n0, Mptr( PANEL->A, II, 0, lda ), lda, A0, 1 ); }
+      { HPLAI_acopy( n0, Mptr( PANEL->A, II, 0, lda ), lda, A0, 1 ); }
    }
-   else { for( i = 0; i < n0; i++ ) Wmx[i] = HPL_rzero; }
+   else { for( i = 0; i < n0; i++ ) Wmx[i] = HPLAI_rzero; }
 /*
  * Combine the results (bi-directional exchange):  the process coordina-
  * tes are relative to icurrow,  this allows to reduce the communication
@@ -183,27 +188,27 @@ void HPL_pdmxswp
       if( ( mydist & ip2 ) != 0 )
       {
          if( mydist == (int)(ip2) )
-            (void) HPL_sdrv( WORK, cnt_, MSGID_BEGIN_PFACT, A0, n0,
+            (void) HPLAI_sdrv( WORK, cnt_, MSGID_BEGIN_PFACT, A0, n0,
                              MSGID_BEGIN_PFACT, MModAdd( partner,
                              icurrow, nprow ), comm );
          else
-            (void) HPL_send( WORK, cnt_, MModAdd( partner, icurrow,
+            (void) HPLAI_send( WORK, cnt_, MModAdd( partner, icurrow,
                              nprow ), MSGID_BEGIN_PFACT, comm );
       }
       else
       {
          if( mydist == 0 )
-            (void) HPL_sdrv( A0, n0, MSGID_BEGIN_PFACT, Wwork, cnt_,
+            (void) HPLAI_sdrv( A0, n0, MSGID_BEGIN_PFACT, Wwork, cnt_,
                              MSGID_BEGIN_PFACT, MModAdd( partner,
                              icurrow, nprow ), comm );
          else
-            (void) HPL_recv( Wwork, cnt_, MModAdd( partner, icurrow,
+            (void) HPLAI_recv( Wwork, cnt_, MModAdd( partner, icurrow,
                              nprow ), MSGID_BEGIN_PFACT, comm );
  
          tmp1 = Mabs( Wwork[0] ); gmax = Mabs( WORK[0] );
          if( ( tmp1 > gmax ) ||
              ( ( tmp1 == gmax ) && ( Wwork[3] < WORK[3] ) ) )
-         { HPL_dcopy( cnt_, Wwork, 1, WORK, 1 ); }
+         { HPLAI_acopy( cnt_, Wwork, 1, WORK, 1 ); }
       }
    }
 
@@ -231,7 +236,7 @@ void HPL_pdmxswp
          else { scnt = rcnt = cnt_; }
  
          partner = (int)( (unsigned int)(mydist) ^ ipow );
-         (void) HPL_sdrv( WORK, scnt, MSGID_BEGIN_PFACT, Wwork, rcnt,
+         (void) HPLAI_sdrv( WORK, scnt, MSGID_BEGIN_PFACT, Wwork, rcnt,
                           MSGID_BEGIN_PFACT, MModAdd( partner, icurrow,
                           nprow ), comm );
  
@@ -239,11 +244,11 @@ void HPL_pdmxswp
          if( ( tmp1 > gmax ) ||
              ( ( tmp1 == gmax ) && ( Wwork[3] < WORK[3] ) ) )
          {
-            HPL_dcopy( ( rcnt == cnt0 ? cnt0 : cnt_ ), Wwork, 1,
+            HPLAI_acopy( ( rcnt == cnt0 ? cnt0 : cnt_ ), Wwork, 1,
                        WORK, 1 );
          }
          else if( rcnt == cnt0 )
-         { HPL_dcopy( n0, Wwork+cnt_, 1, A0, 1 ); }
+         { HPLAI_acopy( n0, Wwork+cnt_, 1, A0, 1 ); }
  
          ipow <<= 1; k++;
       }
@@ -267,12 +272,12 @@ void HPL_pdmxswp
             partner = (int)(mydis_ ^ ip2_);
             if( ( mydis_ & ip2_ ) != 0 )
             {
-               (void) HPL_recv( A0, n0, MModAdd( root, partner,
+               (void) HPLAI_recv( A0, n0, MModAdd( root, partner,
                                 nprow ), MSGID_BEGIN_PFACT, comm );
             }
             else if( partner < size_ )
             {
-               (void) HPL_send( A0, n0, MModAdd( root, partner,
+               (void) HPLAI_send( A0, n0, MModAdd( root, partner,
                                 nprow ), MSGID_BEGIN_PFACT, comm );
             }
          }
@@ -289,12 +294,12 @@ void HPL_pdmxswp
    {
       if( ( mydist & ip2 ) != 0 )
       {
-         (void) HPL_recv( WORK, cnt_, MModAdd( partner, icurrow,
+         (void) HPLAI_recv( WORK, cnt_, MModAdd( partner, icurrow,
                           nprow ), MSGID_BEGIN_PFACT, comm );
       }
       else
       {
-         (void) HPL_send( WORK, cnt_, MModAdd( partner, icurrow,
+         (void) HPLAI_send( WORK, cnt_, MModAdd( partner, icurrow,
                           nprow ), MSGID_BEGIN_PFACT, comm );
       }
    }
@@ -306,6 +311,10 @@ void HPL_pdmxswp
    HPL_ptimer( HPL_TIMING_MXSWP );
 #endif
 /*
- * End of HPL_pdmxswp
+ * End of HPLAI_pamxswp
  */
 }
+
+#ifdef __cplusplus
+}
+#endif

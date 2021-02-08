@@ -49,30 +49,35 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-void HPL_pdpanrlT
+void HPLAI_papanrlT
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        M,
    const int                        N,
    const int                        ICOFF,
-   double *                         WORK
+   HPLAI_T_AFLOAT *                         WORK
 )
 #else
-void HPL_pdpanrlT
+void HPLAI_papanrlT
 ( PANEL, M, N, ICOFF, WORK )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        M;
    const int                        N;
    const int                        ICOFF;
-   double *                         WORK;
+   HPLAI_T_AFLOAT *                         WORK;
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_pdpanrlT factorizes  a panel of columns  that is a sub-array of a
+ * HPLAI_papanrlT factorizes  a panel of columns  that is a sub-array of a
  * larger one-dimensional panel A using the Right-looking variant of the
  * usual one-dimensional algorithm.  The lower triangular N0-by-N0 upper
  * block of the panel is stored in transpose form.
@@ -87,13 +92,13 @@ void HPL_pdpanrlT
  *    N0^2 * ( M - N0/3 ) * gam2-3
  *  
  * where M is the local number of rows of  the panel, lat and bdwth  are
- * the latency and bandwidth of the network for  double  precision  real
+ * the latency and bandwidth of the network for  HPLAI_T_AFLOAT  precision  real
  * words,  and  gam2-3  is an estimate of the  Level 2 and Level 3  BLAS
  * rate of execution. The  recursive  algorithm  allows indeed to almost
  * achieve  Level 3 BLAS  performance  in the panel factorization.  On a
  * large  number of modern machines,  this  operation is however latency
  * bound,  meaning  that its cost can  be estimated  by only the latency
- * portion N0 * log_2(P) * lat.  Mono-directional links will double this
+ * portion N0 * log_2(P) * lat.  Mono-directional links will HPLAI_T_AFLOAT this
  * communication cost.
  *  
  * Note that  one  iteration of the the main loop is unrolled. The local
@@ -108,7 +113,7 @@ void HPL_pdpanrlT
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -122,7 +127,7 @@ void HPL_pdpanrlT
  *         On entry, ICOFF specifies the row and column offset of sub(A)
  *         in A.
  *
- * WORK    (local workspace)             double *
+ * WORK    (local workspace)             HPLAI_T_AFLOAT *
  *         On entry, WORK  is a workarray of size at least 2*(4+2*N0).
  *
  * ---------------------------------------------------------------------
@@ -130,7 +135,7 @@ void HPL_pdpanrlT
 /*
  * .. Local Variables ..
  */
-   double                     * A, * Acur, * Anxt, * L1;
+   HPLAI_T_AFLOAT                     * A, * Acur, * Anxt, * L1;
 #ifdef HPL_CALL_VSIPL
    vsip_mview_d               * Av0, * Av1, * Xv1, * Yv0, * Yv1;
 #endif
@@ -164,7 +169,7 @@ void HPL_pdpanrlT
 /*
  * Find local absolute value max in first column - initialize WORK[0:3]
  */
-   HPL_dlocmax( PANEL, m, ii, jj, WORK );
+   HPLAI_alocmax( PANEL, m, ii, jj, WORK );
 
    while( Nm1 >= 1 )
    {
@@ -172,18 +177,18 @@ void HPL_pdpanrlT
 /*
  * Swap and broadcast the current row
  */
-      HPL_pdmxswp(  PANEL, m, ii, jj, WORK );
-      HPL_dlocswpT( PANEL,    ii, jj, WORK );
+      HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
+      HPLAI_alocswpT( PANEL,    ii, jj, WORK );
 /*
  * Scale current column by its absolute value max entry  -  Update trai-
  * ling sub-matrix and find local absolute value max in next column (On-
  * ly one pass through cache for each current column).  This sequence of
  * operations could benefit from a specialized blocked implementation.
  */
-      if( WORK[0] != HPL_rzero )
-         HPL_dscal( Mm1, HPL_rone / WORK[0], Acur, 1 );
-      HPL_daxpy( Mm1, -(*(Mptr( L1, jj+1, jj, n0 ))), Acur, 1, Anxt, 1 );
-      HPL_dlocmax( PANEL, Mm1, iip1, jj+1, WORK );
+      if( WORK[0] != HPLAI_rzero )
+         HPLAI_ascal( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
+      HPLAI_aaxpy( Mm1, -(*(Mptr( L1, jj+1, jj, n0 ))), Acur, 1, Anxt, 1 );
+      HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
 
       if( Nm1 > 1 )
       {
@@ -197,8 +202,8 @@ void HPL_pdpanrlT
                                 Mm1, 1   );
          Yv1 = vsip_msubview_d( Yv0, jj+2, jj, Nm1-1, 1 ); 
 
-         vsip_gemp_d( -HPL_rone, Xv1, VSIP_MAT_NTRANS, Yv1, VSIP_MAT_TRANS,
-                      HPL_rone, Av1 );
+         vsip_gemp_d( -HPLAI_rone, Xv1, VSIP_MAT_NTRANS, Yv1, VSIP_MAT_TRANS,
+                      HPLAI_rone, Av1 );
 /*
  * Destroy the matrix subviews
  */
@@ -206,7 +211,7 @@ void HPL_pdpanrlT
          (void) vsip_mdestroy_d( Xv1 );
          (void) vsip_mdestroy_d( Av1 );
 #else
-         HPL_dger( HplColumnMajor, Mm1, Nm1-1, -HPL_rone, Acur, 1,
+         HPLAI_ager( HplColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
                    Mptr( L1, jj+2, jj, n0 ), 1, Mptr( Anxt, 0, 1, lda ),
                    lda );
 #endif
@@ -219,10 +224,10 @@ void HPL_pdpanrlT
  * Swap and broadcast last row - Scale last column by its absolute value
  * max entry
  */ 
-   HPL_pdmxswp(  PANEL, m, ii, jj, WORK );
-   HPL_dlocswpT( PANEL,    ii, jj, WORK );
-   if( WORK[0] != HPL_rzero )
-      HPL_dscal( Mm1, HPL_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+   HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
+   HPLAI_alocswpT( PANEL,    ii, jj, WORK );
+   if( WORK[0] != HPLAI_rzero )
+      HPLAI_ascal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Release the blocks
@@ -239,6 +244,10 @@ void HPL_pdpanrlT
    HPL_ptimer( HPL_TIMING_PFACT );
 #endif
 /*
- * End of HPL_pdpanrlT
+ * End of HPLAI_papanrlT
  */
 }
+
+#ifdef __cplusplus
+}
+#endif

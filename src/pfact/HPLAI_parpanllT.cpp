@@ -49,30 +49,35 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-void HPL_pdrpanllT
+void HPLAI_parpanllT
 (
-   HPL_T_panel *                    PANEL,
+   HPLAI_T_panel *                    PANEL,
    const int                        M,
    const int                        N,
    const int                        ICOFF,
-   double *                         WORK
+   HPLAI_T_AFLOAT *                         WORK
 )
 #else
-void HPL_pdrpanllT
+void HPLAI_parpanllT
 ( PANEL, M, N, ICOFF, WORK )
-   HPL_T_panel *                    PANEL;
+   HPLAI_T_panel *                    PANEL;
    const int                        M;
    const int                        N;
    const int                        ICOFF;
-   double *                         WORK;
+   HPLAI_T_AFLOAT *                         WORK;
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_pdrpanllT recursively  factorizes  a panel of columns  using  the
+ * HPLAI_parpanllT recursively  factorizes  a panel of columns  using  the
  * recursive Left-looking variant of the one-dimensional algorithm.  The
  * lower  triangular  N0-by-N0  upper block  of  the panel  is stored in
  * transpose form.
@@ -87,19 +92,19 @@ void HPL_pdrpanllT
  *    N0^2 * ( M - N0/3 ) * gam2-3
  *  
  * where M is the local number of rows of  the panel, lat and bdwth  are
- * the latency and bandwidth of the network for  double  precision  real
+ * the latency and bandwidth of the network for  HPLAI_T_AFLOAT  precision  real
  * words,  and  gam2-3  is an estimate of the  Level 2 and Level 3  BLAS
  * rate of execution. The  recursive  algorithm  allows indeed to almost
  * achieve  Level 3 BLAS  performance  in the panel factorization.  On a
  * large  number of modern machines,  this  operation is however latency
  * bound,  meaning  that its cost can  be estimated  by only the latency
- * portion N0 * log_2(P) * lat.  Mono-directional links will double this
+ * portion N0 * log_2(P) * lat.  Mono-directional links will HPLAI_T_AFLOAT this
  * communication cost.
  *
  * Arguments
  * =========
  *
- * PANEL   (local input/output)          HPL_T_panel *
+ * PANEL   (local input/output)          HPLAI_T_panel *
  *         On entry,  PANEL  points to the data structure containing the
  *         panel information.
  *
@@ -113,7 +118,7 @@ void HPL_pdrpanllT
  *         On entry, ICOFF specifies the row and column offset of sub(A)
  *         in A.
  *
- * WORK    (local workspace)             double *
+ * WORK    (local workspace)             HPLAI_T_AFLOAT *
  *         On entry, WORK  is a workarray of size at least 2*(4+2*N0).
  *
  * ---------------------------------------------------------------------
@@ -121,7 +126,7 @@ void HPL_pdrpanllT
 /*
  * .. Local Variables ..
  */
-   double                     * A, * Aptr, * L1, * L1ptr;
+   HPLAI_T_AFLOAT                     * A, * Aptr, * L1, * L1ptr;
 #ifdef HPL_CALL_VSIPL
    vsip_mview_d               * Av0, * Lv0, * Av1, * Av2, * Lv1;
 #endif
@@ -166,8 +171,8 @@ void HPL_pdrpanllT
 /*
  * Replicated solve - Local update - Factor current panel
  */
-      HPL_dtrsm( HplColumnMajor, HplRight, HplUpper, HplNoTrans,
-                 HplUnit, jb, jj, HPL_rone, L1ptr, n0, Mptr( L1ptr,
+      HPLAI_atrsm( HplColumnMajor, HplRight, HplUpper, HplNoTrans,
+                 HplUnit, jb, jj, HPLAI_rone, L1ptr, n0, Mptr( L1ptr,
                  jj, 0, n0 ), n0 );
 #ifdef HPL_CALL_VSIPL
 /*
@@ -197,8 +202,8 @@ void HPL_pdrpanllT
       }
       Lv1 = vsip_msubview_d( Lv0, ioff, ICOFF, jb,  jj );
 
-      vsip_gemp_d( -HPL_rone, Av1, VSIP_MAT_NTRANS, Lv1, VSIP_MAT_TRANS,
-                   HPL_rone, Av2 );
+      vsip_gemp_d( -HPLAI_rone, Av1, VSIP_MAT_NTRANS, Lv1, VSIP_MAT_TRANS,
+                   HPLAI_rone, Av2 );
 /*
  * Destroy the matrix subviews
  */
@@ -216,18 +221,18 @@ void HPL_pdrpanllT
       (void) vsip_mdestroy_d( Lv0 );
       (void) vsip_mdestroy_d( Av0 );
 #else
-      HPL_dgemm( HplColumnMajor, HplNoTrans, HplTrans, m, jb,
-                 jj, -HPL_rone, Mptr( Aptr, ii, 0, lda ), lda,
-                 Mptr( L1ptr, jj, 0, n0 ), n0, HPL_rone,
+      HPLAI_agemm( HplColumnMajor, HplNoTrans, HplTrans, m, jb,
+                 jj, -HPLAI_rone, Mptr( Aptr, ii, 0, lda ), lda,
+                 Mptr( L1ptr, jj, 0, n0 ), n0, HPLAI_rone,
                  Mptr( Aptr, ii, jj, lda ), lda );
 #endif
-      HPL_pdrpanllT( PANEL, m, jb, ioff, WORK );
+      HPLAI_parpanllT( PANEL, m, jb, ioff, WORK );
 /*
  * Copy back upper part of A in current process row - Go the next block
  */
       if( curr != 0 )
       {
-         HPL_dlatcpy( ioff, jb, Mptr( L1, ioff, 0, n0 ), n0,
+         HPLAI_alatcpy( ioff, jb, Mptr( L1, ioff, 0, n0 ), n0,
                       Mptr( A, 0, ioff, lda ), lda );
          ii += jb; m -= jb;
       }
@@ -235,6 +240,10 @@ void HPL_pdrpanllT
 
    } while( n > 0 );
 /*
- * End of HPL_pdrpanllT
+ * End of HPLAI_parpanllT
  */
 }
+
+#ifdef __cplusplus
+}
+#endif

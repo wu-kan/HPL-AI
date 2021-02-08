@@ -23,7 +23,12 @@ pauxil/HPLAI_alaswp02N.cpp pauxil/HPLAI_alaswp03N.cpp pauxil/HPLAI_alaswp03T.cpp
 pauxil/HPLAI_alaswp04N.cpp pauxil/HPLAI_alaswp04T.cpp pauxil/HPLAI_alaswp05N.cpp \
 pauxil/HPLAI_alaswp05T.cpp pauxil/HPLAI_alaswp06N.cpp pauxil/HPLAI_alaswp06T.cpp \
 pauxil/HPLAI_alaswp10N.cpp \
-pfact/HPLAI_pafact.cpp \
+pfact/HPLAI_papanllN.cpp pfact/HPLAI_papanllT.cpp pfact/HPLAI_papanrlN.cpp \
+pfact/HPLAI_papanrlT.cpp pfact/HPLAI_parpancrN.cpp pfact/HPLAI_parpancrT.cpp \
+pfact/HPLAI_parpanllN.cpp pfact/HPLAI_parpanllT.cpp pfact/HPLAI_parpanrlN.cpp pfact/HPLAI_parpanrlT.cpp \
+pfact/HPLAI_pamxswp.cpp pfact/HPLAI_pafact.cpp pfact/HPLAI_alocmax.cpp \
+pfact/HPLAI_papancrT.cpp pfact/HPLAI_papancrN.cpp \
+pfact/HPLAI_alocswpN.cpp pfact/HPLAI_alocswpT.cpp \
 pgesv/HPLAI_pdgesv.cpp \
 pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPL_pdgesvK2.c \
 pgesv/HPLAI_patrsv.cpp
