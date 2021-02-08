@@ -1,76 +1,36 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
 /*
  * Include files
  */
 #include "hplai.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /*
  * Define default value for unrolling factor
  */
-#ifndef HPL_LASWP00N_DEPTH
-#define    HPL_LASWP00N_DEPTH       32
-#define    HPL_LASWP00N_LOG2_DEPTH   5
+#ifndef HPLAI_LASWP00N_DEPTH
+#define    HPLAI_LASWP00N_DEPTH       32
+#define    HPLAI_LASWP00N_LOG2_DEPTH   5
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp00N
+void HPLAI_dlaswp00N
 (
    const int                        M,
    const int                        N,
-   double *                         A,
+   HPLAI_T_AFLOAT *                         A,
    const int                        LDA,
    const int *                      IPIV
 )
 #else
-void HPL_dlaswp00N
+void HPLAI_dlaswp00N
 ( M, N, A, LDA, IPIV )
    const int                        M;
    const int                        N;
-   double *                         A;
+   HPLAI_T_AFLOAT *                         A;
    const int                        LDA;
    const int *                      IPIV;
 #endif
@@ -79,7 +39,7 @@ void HPL_dlaswp00N
  * Purpose
  * =======
  *
- * HPL_dlaswp00N performs a series of local row interchanges on a matrix
+ * HPLAI_dlaswp00N performs a series of local row interchanges on a matrix
  * A. One row interchange is initiated for rows 0 through M-1 of A.
  *
  * Arguments
@@ -93,7 +53,7 @@ void HPL_dlaswp00N
  *         On entry, N  specifies  the number of columns of the array A.
  *         N must be at least zero.
  *
- * A       (local input/output)          double *
+ * A       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry, A  points to an array of dimension (LDA,N) to which
  *         the row interchanges will be  applied.  On exit, the permuted
  *         matrix.
@@ -112,10 +72,10 @@ void HPL_dlaswp00N
 /*
  * .. Local Variables ..
  */
-   register double            r;
-   double                     * a0, * a1;
+   register HPLAI_T_AFLOAT            r;
+   HPLAI_T_AFLOAT                     * a0, * a1;
    const int                  incA = (int)( (unsigned int)(LDA) <<
-                                            HPL_LASWP00N_LOG2_DEPTH );
+                                            HPLAI_LASWP00N_LOG2_DEPTH );
    int                        ip, nr, nu;
    register int               i, j;
 /* ..
@@ -123,10 +83,10 @@ void HPL_dlaswp00N
  */
    if( ( M <= 0 ) || ( N <= 0 ) ) return;
 
-   nr = N - ( nu = (int)( ( (unsigned int)(N) >> HPL_LASWP00N_LOG2_DEPTH )
-                          << HPL_LASWP00N_LOG2_DEPTH ) );
+   nr = N - ( nu = (int)( ( (unsigned int)(N) >> HPLAI_LASWP00N_LOG2_DEPTH )
+                          << HPLAI_LASWP00N_LOG2_DEPTH ) );
 
-   for( j = 0; j < nu; j += HPL_LASWP00N_DEPTH, A += incA )
+   for( j = 0; j < nu; j += HPLAI_LASWP00N_DEPTH, A += incA )
    {
       for( i = 0; i < M; i++ )
       {
@@ -135,30 +95,30 @@ void HPL_dlaswp00N
             a0 = A + i; a1 = A + ip;
 
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-#if ( HPL_LASWP00N_DEPTH >  1 )
+#if ( HPLAI_LASWP00N_DEPTH >  1 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
 #endif
-#if ( HPL_LASWP00N_DEPTH >  2 )
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-#endif
-#if ( HPL_LASWP00N_DEPTH >  4 )
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+#if ( HPLAI_LASWP00N_DEPTH >  2 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
 #endif
-#if ( HPL_LASWP00N_DEPTH >  8 )
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+#if ( HPLAI_LASWP00N_DEPTH >  4 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
 #endif
-#if ( HPL_LASWP00N_DEPTH > 16 )
+#if ( HPLAI_LASWP00N_DEPTH >  8 )
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+#endif
+#if ( HPLAI_LASWP00N_DEPTH > 16 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
@@ -193,6 +153,11 @@ void HPL_dlaswp00N
       }
    }
 /*
- * End of HPL_dlaswp00N
+ * End of HPLAI_dlaswp00N
  */
 }
+
+#ifdef __cplusplus
+}
+#endif
+

@@ -61,7 +61,7 @@ STDC_ARGS( (
    const void *,
    void *
 ) );
-void                             HPL_min_AFLOAT
+void                             HPLAI_min_AFLOAT
 STDC_ARGS( (
    const int,
    const void *,

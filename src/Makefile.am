@@ -17,6 +17,12 @@ grid/HPLAI_all_reduce_AFLOAT.cpp grid/HPLAI_broadcast_AFLOAT.cpp grid/HPLAI_max_
 grid/HPLAI_min_AFLOAT.cpp \
 panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
+pauxil/HPLAI_palamch.cpp pauxil/HPLAI_palange.cpp \
+pauxil/HPLAI_alaswp00N.cpp pauxil/HPLAI_alaswp01N.cpp pauxil/HPLAI_alaswp01T.cpp \
+pauxil/HPLAI_alaswp02N.cpp pauxil/HPLAI_alaswp03N.cpp pauxil/HPLAI_alaswp03T.cpp \
+pauxil/HPLAI_alaswp04N.cpp pauxil/HPLAI_alaswp04T.cpp pauxil/HPLAI_alaswp05N.cpp \
+pauxil/HPLAI_alaswp05T.cpp pauxil/HPLAI_alaswp06N.cpp pauxil/HPLAI_alaswp06T.cpp \
+pauxil/HPLAI_alaswp10N.cpp \
 pfact/HPLAI_pafact.cpp \
 pgesv/HPLAI_pdgesv.cpp \
 pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPL_pdgesvK2.c \

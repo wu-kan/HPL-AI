@@ -49,24 +49,29 @@
  */
 #include "hplai.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #ifdef STDC_HEADERS
-double HPL_pdlamch
+HPLAI_T_AFLOAT HPLAI_palamch
 (
    MPI_Comm                         COMM,
-   const HPL_T_MACH                 CMACH
+   const HPLAI_T_MACH                 CMACH
 )
 #else
-double HPL_pdlamch
+HPLAI_T_AFLOAT HPLAI_palamch
 ( COMM, CMACH )
    MPI_Comm                         COMM;
-   const HPL_T_MACH                 CMACH;
+   const HPLAI_T_MACH                 CMACH;
 #endif
 {
 /* 
  * Purpose
  * =======
  *
- * HPL_pdlamch determines  machine-specific  arithmetic  constants  such  as
+ * HPLAI_palamch determines  machine-specific  arithmetic  constants  such  as
  * the relative machine precision (eps),  the safe minimum(sfmin) such that
  * 1/sfmin does not overflow, the base of the machine (base), the precision
  * (prec),  the  number  of  (base)  digits in the  mantissa  (t),  whether
@@ -81,18 +86,18 @@ double HPL_pdlamch
  * COMM    (global/local input)          MPI_Comm
  *         The MPI communicator identifying the process collection.
  *
- * CMACH   (global input)                const HPL_T_MACH
- *         Specifies the value to be returned by HPL_pdlamch            
- *            = HPL_MACH_EPS,   HPL_pdlamch := eps (default)            
- *            = HPL_MACH_SFMIN, HPL_pdlamch := sfmin                    
- *            = HPL_MACH_BASE,  HPL_pdlamch := base                     
- *            = HPL_MACH_PREC,  HPL_pdlamch := eps*base                 
- *            = HPL_MACH_MLEN,  HPL_pdlamch := t                        
- *            = HPL_MACH_RND,   HPL_pdlamch := rnd                      
- *            = HPL_MACH_EMIN,  HPL_pdlamch := emin                     
- *            = HPL_MACH_RMIN,  HPL_pdlamch := rmin                     
- *            = HPL_MACH_EMAX,  HPL_pdlamch := emax                     
- *            = HPL_MACH_RMAX,  HPL_pdlamch := rmax                     
+ * CMACH   (global input)                const HPLAI_T_MACH
+ *         Specifies the value to be returned by HPLAI_palamch            
+ *            = HPLAI_MACH_EPS,   HPLAI_palamch := eps (default)            
+ *            = HPLAI_MACH_SFMIN, HPLAI_palamch := sfmin                    
+ *            = HPLAI_MACH_BASE,  HPLAI_palamch := base                     
+ *            = HPLAI_MACH_PREC,  HPLAI_palamch := eps*base                 
+ *            = HPLAI_MACH_MLEN,  HPLAI_palamch := t                        
+ *            = HPLAI_MACH_RND,   HPLAI_palamch := rnd                      
+ *            = HPLAI_MACH_EMIN,  HPLAI_palamch := emin                     
+ *            = HPLAI_MACH_RMIN,  HPLAI_palamch := rmin                     
+ *            = HPLAI_MACH_EMAX,  HPLAI_palamch := emax                     
+ *            = HPLAI_MACH_RMAX,  HPLAI_palamch := rmax                     
  *          
  *         where                                                        
  *          
@@ -112,25 +117,25 @@ double HPL_pdlamch
 /*
  * .. Local Variables ..
  */
-   double                     param;
+   HPLAI_T_AFLOAT                     param;
 /* ..
  * .. Executable Statements ..
  */
-   param = HPL_dlamch( CMACH );
+   param = HPLAI_alamch( CMACH );
 
    switch( CMACH )
    {
-      case HPL_MACH_EPS   :
-      case HPL_MACH_SFMIN :
-      case HPL_MACH_EMIN  :
-      case HPL_MACH_RMIN  :
-         (void) HPL_all_reduce( (void *)(&param), 1, HPL_DOUBLE,
-                                HPL_max, COMM );
+      case HPLAI_MACH_EPS   :
+      case HPLAI_MACH_SFMIN :
+      case HPLAI_MACH_EMIN  :
+      case HPLAI_MACH_RMIN  :
+         (void) HPLAI_all_reduce_AFLOAT( (void *)(&param), 1,
+                                HPLAI_max_AFLOAT, COMM );
          break;
-      case HPL_MACH_EMAX  :
-      case HPL_MACH_RMAX  :
-         (void) HPL_all_reduce( (void *)(&param), 1, HPL_DOUBLE,
-                                HPL_min, COMM );
+      case HPLAI_MACH_EMAX  :
+      case HPLAI_MACH_RMAX  :
+         (void) HPLAI_all_reduce_AFLOAT( (void *)(&param), 1,
+                                HPLAI_min_AFLOAT, COMM );
          break;
       default             :
          break;
@@ -138,6 +143,10 @@ double HPL_pdlamch
 
    return( param );
 /*
- * End of HPL_pdlamch
+ * End of HPLAI_palamch
  */
 }
+
+#ifdef __cplusplus
+}
+#endif

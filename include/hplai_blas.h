@@ -72,7 +72,7 @@ void HPLAI_blas_init
 
 void HPLAI_blas_finalize();
 
-int HPL_iaamax
+int HPLAI_iaamax
     STDC_ARGS((
         const int,
         const HPLAI_T_AFLOAT *,

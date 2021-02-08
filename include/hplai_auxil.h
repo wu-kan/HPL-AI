@@ -9,6 +9,23 @@
 #include "hplai_misc.h"
 #include "hplai_blas.h"
 
+#define HPLAI_NORM_A HPL_NORM_A
+#define HPLAI_NORM_1 HPL_NORM_1
+#define HPLAI_NORM_I HPL_NORM_I
+#define HPLAI_T_NORM HPL_T_NORM
+
+#define HPLAI_MACH_EPS HPL_MACH_EPS
+#define HPLAI_MACH_SFMIN HPL_MACH_SFMIN
+#define HPLAI_MACH_BASE HPL_MACH_BASE
+#define HPLAI_MACH_PREC HPL_MACH_PREC
+#define HPLAI_MACH_MLEN HPL_MACH_MLEN
+#define HPLAI_MACH_RND HPL_MACH_RND
+#define HPLAI_MACH_EMIN HPL_MACH_EMIN
+#define HPLAI_MACH_RMIN HPL_MACH_RMIN
+#define HPLAI_MACH_EMAX HPL_MACH_EMAX
+#define HPLAI_MACH_RMAX HPL_MACH_RMAX
+#define HPLAI_T_MACH HPL_T_MACH
+
 void                             HPLAI_alacpy
 STDC_ARGS( (
    const int,

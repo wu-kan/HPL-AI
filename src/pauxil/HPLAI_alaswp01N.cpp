@@ -48,6 +48,12 @@
  * Include files
  */
 #include "hplai.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /*
  * Define default value for unrolling factor
  */
@@ -207,3 +213,8 @@ void HPL_dlaswp01N
  * End of HPL_dlaswp01N
  */
 } 
+
+#ifdef __cplusplus
+}
+#endif
+
