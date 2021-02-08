@@ -63,25 +63,25 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp05N
+void HPLAI_alaswp05N
 (
    const int                        M,
    const int                        N,
-   double *                         A,
+   HPLAI_T_AFLOAT *                         A,
    const int                        LDA,
-   const double *                   U,
+   const HPLAI_T_AFLOAT *                   U,
    const int                        LDU,
    const int *                      LINDXA,
    const int *                      LINDXAU
 )
 #else
-void HPL_dlaswp05N
+void HPLAI_alaswp05N
 ( M, N, A, LDA, U, LDU, LINDXA, LINDXAU )
    const int                        M;
    const int                        N;
-   double *                         A;
+   HPLAI_T_AFLOAT *                         A;
    const int                        LDA;
-   const double *                   U;
+   const HPLAI_T_AFLOAT *                   U;
    const int                        LDU;
    const int *                      LINDXA;
    const int *                      LINDXAU;
@@ -91,7 +91,7 @@ void HPL_dlaswp05N
  * Purpose
  * =======
  *
- * HPL_dlaswp05N copies rows of  U of global offset LINDXAU into rows of
+ * HPLAI_alaswp05N copies rows of  U of global offset LINDXAU into rows of
  * A at positions indicated by LINDXA.
  *
  * Arguments
@@ -105,7 +105,7 @@ void HPL_dlaswp05N
  *         On entry, N specifies the length of the rows of U that should
  *         be copied into A. N must be at least zero.
  *
- * A       (local output)                double *
+ * A       (local output)                HPLAI_T_AFLOAT *
  *         On entry, A points to an array of dimension (LDA,N). On exit,
  *         the  rows of this array specified by  LINDXA  are replaced by
  *         rows of U indicated by LINDXAU.
@@ -114,7 +114,7 @@ void HPL_dlaswp05N
  *         On entry, LDA specifies the leading dimension of the array A.
  *         LDA must be at least MAX(1,M).
  *
- * U       (local input/output)          const double *
+ * U       (local input/output)          const HPLAI_T_AFLOAT *
  *         On entry,  U  points to an array of dimension  (LDU,N).  This
  *         array contains the rows that are to be copied into A.
  *
@@ -135,8 +135,8 @@ void HPL_dlaswp05N
 /*
  * .. Local Variables ..
  */
-   const double               * U0 = U, * u0;
-   double                     * a0;
+   const HPLAI_T_AFLOAT               * U0 = U, * u0;
+   HPLAI_T_AFLOAT                     * a0;
    const int                  incA = (int)( (unsigned int)(LDA) <<
                                             HPL_LASWP05N_LOG2_DEPTH ),
                               incU = (int)( (unsigned int)(LDU) <<
@@ -196,7 +196,7 @@ void HPL_dlaswp05N
       }
    }
 /*
- * End of HPL_dlaswp05N
+ * End of HPLAI_alaswp05N
  */
 }
 

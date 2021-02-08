@@ -63,20 +63,20 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp10N
+void HPLAI_alaswp10N
 (
    const int                        M,
    const int                        N,
-   double *                         A,
+   HPLAI_T_AFLOAT *                         A,
    const int                        LDA,
    const int *                      IPIV
 )
 #else
-void HPL_dlaswp10N
+void HPLAI_alaswp10N
 ( M, N, A, LDA, IPIV )
    const int                        M;
    const int                        N;
-   double *                         A;
+   HPLAI_T_AFLOAT *                         A;
    const int                        LDA;
    const int *                      IPIV;
 #endif
@@ -85,7 +85,7 @@ void HPL_dlaswp10N
  * Purpose
  * =======
  *
- * HPL_dlaswp10N performs a sequence  of  local column interchanges on a
+ * HPLAI_alaswp10N performs a sequence  of  local column interchanges on a
  * matrix A.  One column interchange is initiated  for columns 0 through
  * N-1 of A.
  *
@@ -99,7 +99,7 @@ void HPL_dlaswp10N
  *         On entry,  M  specifies  the number of rows of the array A. M
  *         must be at least zero.
  *
- * A       (local input/output)          double *
+ * A       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry, N specifies the number of columns of the array A. N
  *         must be at least zero.
  *
@@ -117,8 +117,8 @@ void HPL_dlaswp10N
 /*
  * .. Local Variables ..
  */
-   double                     r;
-   double                     * a0, * a1;
+   HPLAI_T_AFLOAT                     r;
+   HPLAI_T_AFLOAT                     * a0, * a1;
    const int                  incA = ( 1 << HPL_LASWP10N_LOG2_DEPTH );
    int                        jp, mr, mu;
    register int               i, j;
@@ -187,7 +187,7 @@ void HPL_dlaswp10N
       }
    }
 /*
- * End of HPL_dlaswp10N
+ * End of HPLAI_alaswp10N
  */
 }
 

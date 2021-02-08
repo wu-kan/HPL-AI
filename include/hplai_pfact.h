@@ -12,9 +12,23 @@
 #include "hplai_panel.h"
 /*
  * ---------------------------------------------------------------------
- * Data Structures
+ * #typedefs and data structures
  * ---------------------------------------------------------------------
  */
+
+#define HPLAI_LEFT_LOOKING HPL_LEFT_LOOKING
+#define HPLAI_CROUT HPL_CROUT
+#define HPLAI_RIGHT_LOOKING HPL_RIGHT_LOOKING
+#define HPLAI_T_FACT HPL_T_FACT
+
+#define HPLAI_1RING HPL_1RING
+#define HPLAI_1RING_M HPL_1RING_M
+#define HPLAI_2RING HPL_2RING
+#define HPLAI_2RING_M HPL_2RING_M
+#define HPLAI_BLONG HPL_BLONG
+#define HPLAI_BLONG_M HPL_BLONG_M
+#define HPLAI_T_TOP HPL_T_TOP
+
 typedef struct HPLAI_S_pmat
 {
 #ifdef HPL_CALL_VSIPL
@@ -95,12 +109,12 @@ typedef void (*HPLAI_T_UPD_FUN)
 
 typedef struct HPLAI_S_palg
 {
-   HPL_T_TOP           btopo;               /* row broadcast topology */
+   HPLAI_T_TOP           btopo;               /* row broadcast topology */
    int                 depth;                     /* look-ahead depth */
    int                 nbdiv;            /* recursive division factor */
    int                 nbmin;         /* recursion stopping criterium */
-   HPL_T_FACT          pfact;                   /* panel fact variant */
-   HPL_T_FACT          rfact;               /* recursive fact variant */
+   HPLAI_T_FACT          pfact;                   /* panel fact variant */
+   HPLAI_T_FACT          rfact;               /* recursive fact variant */
    HPLAI_T_PFA_FUN     pffun;              /* panel fact function ptr */
    HPLAI_T_RFA_FUN     rffun;          /* recursive fact function ptr */
    HPLAI_T_UPD_FUN     upfun;                      /* update function */

@@ -17,7 +17,7 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_dlaswp00N
+void HPLAI_alaswp00N
 (
    const int                        M,
    const int                        N,
@@ -26,7 +26,7 @@ void HPLAI_dlaswp00N
    const int *                      IPIV
 )
 #else
-void HPLAI_dlaswp00N
+void HPLAI_alaswp00N
 ( M, N, A, LDA, IPIV )
    const int                        M;
    const int                        N;
@@ -39,7 +39,7 @@ void HPLAI_dlaswp00N
  * Purpose
  * =======
  *
- * HPLAI_dlaswp00N performs a series of local row interchanges on a matrix
+ * HPLAI_alaswp00N performs a series of local row interchanges on a matrix
  * A. One row interchange is initiated for rows 0 through M-1 of A.
  *
  * Arguments
@@ -153,7 +153,7 @@ void HPLAI_dlaswp00N
       }
    }
 /*
- * End of HPLAI_dlaswp00N
+ * End of HPLAI_alaswp00N
  */
 }
 

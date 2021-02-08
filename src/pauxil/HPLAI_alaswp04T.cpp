@@ -63,33 +63,33 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp04T
+void HPLAI_alaswp04T
 (
    const int                        M0,
    const int                        M1,
    const int                        N,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
-   double *                         A,
+   HPLAI_T_AFLOAT *                         A,
    const int                        LDA,
-   const double *                   W0,
-   const double *                   W,
+   const HPLAI_T_AFLOAT *                   W0,
+   const HPLAI_T_AFLOAT *                   W,
    const int                        LDW,
    const int *                      LINDXA,
    const int *                      LINDXAU
 )
 #else
-void HPL_dlaswp04T
+void HPLAI_alaswp04T
 ( M0, M1, N, U, LDU, A, LDA, W0, W, LDW, LINDXA, LINDXAU )
    const int                        M0;
    const int                        M1;
    const int                        N;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
-   double *                         A;
+   HPLAI_T_AFLOAT *                         A;
    const int                        LDA;
-   const double *                   W0;
-   const double *                   W;
+   const HPLAI_T_AFLOAT *                   W0;
+   const HPLAI_T_AFLOAT *                   W;
    const int                        LDW;
    const int *                      LINDXA;
    const int *                      LINDXAU;
@@ -99,7 +99,7 @@ void HPL_dlaswp04T
  * Purpose
  * =======
  *
- * HPL_dlaswp04T copies M0 columns of U into rows of A and replaces those
+ * HPLAI_alaswp04T copies M0 columns of U into rows of A and replaces those
  * columns of U with columns of W. In addition M1 - M0 columns of W  are
  * copied into U.
  *
@@ -119,7 +119,7 @@ void HPL_dlaswp04T
  *         On entry,  N  specifies the length of the columns of  U  that
  *         will be copied into rows of A. N must be at least zero.
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry,  U  points  to an array of dimension (LDU,*).  This
  *         array contains the columns that are to be copied into rows of
  *         A.
@@ -128,7 +128,7 @@ void HPL_dlaswp04T
  *         On entry, LDU specifies the leading dimension of the array U.
  *         LDU must be at least MAX(1,N).
  *
- * A       (local output)                double *
+ * A       (local output)                HPLAI_T_AFLOAT *
  *         On entry, A points to an array of dimension (LDA,N). On exit,
  *         the  rows of this array specified by  LINDXA  are replaced by
  *         columns of U indicated by LINDXAU.
@@ -137,12 +137,12 @@ void HPL_dlaswp04T
  *         On entry, LDA specifies the leading dimension of the array A.
  *         LDA must be at least MAX(1,M0).
  *
- * W0      (local input)                 const double *
+ * W0      (local input)                 const HPLAI_T_AFLOAT *
  *         On entry,  W0  is an array of size (M-1)*LDW+1, that contains
  *         the destination offset  in U where the columns of W should be
  *         copied.
  *
- * W       (local input)                 const double *
+ * W       (local input)                 const HPLAI_T_AFLOAT *
  *         On entry, W  is an array of size (LDW,M0+M1),  that  contains
  *         data to be copied into U.  For i in [M0..M0+M1),  the entries
  *         W(:,i) are copied into the column W0(i*LDW) of U.
@@ -165,8 +165,8 @@ void HPL_dlaswp04T
 /*
  * .. Local Variables ..
  */
-   const double               * w = W, * w0;
-   double                     * a0, * u0;
+   const HPLAI_T_AFLOAT               * w = W, * w0;
+   HPLAI_T_AFLOAT                     * a0, * u0;
    const int                  incA = (int)( (unsigned int)(LDA) <<
                                             HPL_LASWP04T_LOG2_DEPTH ),
                               incU = (   1 << HPL_LASWP04T_LOG2_DEPTH );
@@ -271,7 +271,7 @@ void HPL_dlaswp04T
       }
    }
 /*
- * End of HPL_dlaswp04T
+ * End of HPLAI_alaswp04T
  */
 } 
 

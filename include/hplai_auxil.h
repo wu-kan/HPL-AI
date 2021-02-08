@@ -26,6 +26,10 @@
 #define HPLAI_MACH_RMAX HPL_MACH_RMAX
 #define HPLAI_T_MACH HPL_T_MACH
 
+#define HPLAI_fprintf HPL_fprintf
+#define HPLAI_warn HPL_warn
+#define HPLAI_abort HPL_abort
+
 void                             HPLAI_alacpy
 STDC_ARGS( (
    const int,

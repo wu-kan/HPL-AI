@@ -36,30 +36,30 @@ char **ARGV;
    /*
  * .. Local Variables ..
  */
-   int nval[HPL_MAX_PARAM],
-       nbval[HPL_MAX_PARAM],
-       pval[HPL_MAX_PARAM],
-       qval[HPL_MAX_PARAM],
-       nbmval[HPL_MAX_PARAM],
-       ndvval[HPL_MAX_PARAM],
-       ndhval[HPL_MAX_PARAM];
+   int nval[HPLAI_MAX_PARAM],
+       nbval[HPLAI_MAX_PARAM],
+       pval[HPLAI_MAX_PARAM],
+       qval[HPLAI_MAX_PARAM],
+       nbmval[HPLAI_MAX_PARAM],
+       ndvval[HPLAI_MAX_PARAM],
+       ndhval[HPLAI_MAX_PARAM];
 
-   HPL_T_FACT pfaval[HPL_MAX_PARAM],
-       rfaval[HPL_MAX_PARAM];
+   HPLAI_T_FACT pfaval[HPLAI_MAX_PARAM],
+       rfaval[HPLAI_MAX_PARAM];
 
-   HPL_T_TOP topval[HPL_MAX_PARAM];
+   HPLAI_T_TOP topval[HPLAI_MAX_PARAM];
 
    HPLAI_T_grid grid;
-   HPL_T_palg algo;
-   HPL_T_test test;
+   HPLAI_T_palg algo;
+   HPLAI_T_test test;
    int L1notran, Unotran, align, equil, in, inb,
        inbm, indh, indv, ipfa, ipq, irfa, itop,
        mycol, myrow, ns, nbs, nbms, ndhs, ndvs,
        npcol, npfs, npqs, nprow, nrfs, ntps,
        rank, size, tswap;
    HPLAI_T_ORDER pmapping;
-   HPL_T_FACT rpfa;
-   HPL_T_SWAP fswap;
+   HPLAI_T_FACT rpfa;
+   HPLAI_T_SWAP fswap;
    /* ..
  * .. Executable Statements ..
  */
@@ -148,47 +148,47 @@ char **ARGV;
 
                               if (L1notran != 0)
                               {
-                                 if (rpfa == HPL_LEFT_LOOKING)
-                                    algo.pffun = HPL_pdpanllN;
-                                 else if (rpfa == HPL_CROUT)
-                                    algo.pffun = HPL_pdpancrN;
+                                 if (rpfa == HPLAI_LEFT_LOOKING)
+                                    algo.pffun = HPLAI_papanllN;
+                                 else if (rpfa == HPLAI_CROUT)
+                                    algo.pffun = HPLAI_papancrN;
                                  else
-                                    algo.pffun = HPL_pdpanrlN;
+                                    algo.pffun = HPLAI_papanrlN;
 
                                  algo.rfact = rpfa = rfaval[irfa];
-                                 if (rpfa == HPL_LEFT_LOOKING)
-                                    algo.rffun = HPL_pdrpanllN;
-                                 else if (rpfa == HPL_CROUT)
-                                    algo.rffun = HPL_pdrpancrN;
+                                 if (rpfa == HPLAI_LEFT_LOOKING)
+                                    algo.rffun = HPLAI_parpanllN;
+                                 else if (rpfa == HPLAI_CROUT)
+                                    algo.rffun = HPLAI_parpancrN;
                                  else
-                                    algo.rffun = HPL_pdrpanrlN;
+                                    algo.rffun = HPLAI_parpanrlN;
 
                                  if (Unotran != 0)
-                                    algo.upfun = HPL_pdupdateNN;
+                                    algo.upfun = HPLAI_paupdateNN;
                                  else
-                                    algo.upfun = HPL_pdupdateNT;
+                                    algo.upfun = HPLAI_paupdateNT;
                               }
                               else
                               {
-                                 if (rpfa == HPL_LEFT_LOOKING)
-                                    algo.pffun = HPL_pdpanllT;
-                                 else if (rpfa == HPL_CROUT)
-                                    algo.pffun = HPL_pdpancrT;
+                                 if (rpfa == HPLAI_LEFT_LOOKING)
+                                    algo.pffun = HPLAI_papanllT;
+                                 else if (rpfa == HPLAI_CROUT)
+                                    algo.pffun = HPLAI_papancrT;
                                  else
-                                    algo.pffun = HPL_pdpanrlT;
+                                    algo.pffun = HPLAI_papanrlT;
 
                                  algo.rfact = rpfa = rfaval[irfa];
-                                 if (rpfa == HPL_LEFT_LOOKING)
-                                    algo.rffun = HPL_pdrpanllT;
-                                 else if (rpfa == HPL_CROUT)
-                                    algo.rffun = HPL_pdrpancrT;
+                                 if (rpfa == HPLAI_LEFT_LOOKING)
+                                    algo.rffun = HPLAI_parpanllT;
+                                 else if (rpfa == HPLAI_CROUT)
+                                    algo.rffun = HPLAI_parpancrT;
                                  else
-                                    algo.rffun = HPL_pdrpanrlT;
+                                    algo.rffun = HPLAI_parpanrlT;
 
                                  if (Unotran != 0)
-                                    algo.upfun = HPL_pdupdateTN;
+                                    algo.upfun = HPLAI_paupdateTN;
                                  else
-                                    algo.upfun = HPL_pdupdateTT;
+                                    algo.upfun = HPLAI_paupdateTT;
                               }
 
                               algo.fswap = fswap;
@@ -214,41 +214,41 @@ char **ARGV;
    if (rank == 0)
    {
       test.ktest = test.kpass + test.kfail + test.kskip;
-#ifndef HPL_DETAILED_TIMING
-      HPL_fprintf(test.outfp, "%s%s\n",
+#ifndef HPLAI_DETAILED_TIMING
+      HPLAI_fprintf(test.outfp, "%s%s\n",
                   "========================================",
                   "========================================");
 #else
-      if (test.thrsh > HPL_rzero)
-         HPL_fprintf(test.outfp, "%s%s\n",
+      if (test.thrsh > HPLAI_rzero)
+         HPLAI_fprintf(test.outfp, "%s%s\n",
                      "========================================",
                      "========================================");
 #endif
 
-      HPL_fprintf(test.outfp, "\n%s %6d %s\n", "Finished", test.ktest,
+      HPLAI_fprintf(test.outfp, "\n%s %6d %s\n", "Finished", test.ktest,
                   "tests with the following results:");
-      if (test.thrsh > HPL_rzero)
+      if (test.thrsh > HPLAI_rzero)
       {
-         HPL_fprintf(test.outfp, "         %6d %s\n", test.kpass,
+         HPLAI_fprintf(test.outfp, "         %6d %s\n", test.kpass,
                      "tests completed and passed residual checks,");
-         HPL_fprintf(test.outfp, "         %6d %s\n", test.kfail,
+         HPLAI_fprintf(test.outfp, "         %6d %s\n", test.kfail,
                      "tests completed and failed residual checks,");
-         HPL_fprintf(test.outfp, "         %6d %s\n", test.kskip,
+         HPLAI_fprintf(test.outfp, "         %6d %s\n", test.kskip,
                      "tests skipped because of illegal input values.");
       }
       else
       {
-         HPL_fprintf(test.outfp, "         %6d %s\n", test.kpass,
+         HPLAI_fprintf(test.outfp, "         %6d %s\n", test.kpass,
                      "tests completed without checking,");
-         HPL_fprintf(test.outfp, "         %6d %s\n", test.kskip,
+         HPLAI_fprintf(test.outfp, "         %6d %s\n", test.kskip,
                      "tests skipped because of illegal input values.");
       }
 
-      HPL_fprintf(test.outfp, "%s%s\n",
+      HPLAI_fprintf(test.outfp, "%s%s\n",
                   "----------------------------------------",
                   "----------------------------------------");
-      HPL_fprintf(test.outfp, "\nEnd of Tests.\n");
-      HPL_fprintf(test.outfp, "%s%s\n",
+      HPLAI_fprintf(test.outfp, "\nEnd of Tests.\n");
+      HPLAI_fprintf(test.outfp, "%s%s\n",
                   "========================================",
                   "========================================");
 

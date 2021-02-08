@@ -63,25 +63,25 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp03T
+void HPLAI_alaswp03T
 (
    const int                        M,
    const int                        N,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
-   const double *                   W0,
-   const double *                   W,
+   const HPLAI_T_AFLOAT *                   W0,
+   const HPLAI_T_AFLOAT *                   W,
    const int                        LDW
 )
 #else
-void HPL_dlaswp03T
+void HPLAI_alaswp03T
 ( M, N, U, LDU, W0, W, LDW )
    const int                        M;
    const int                        N;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
-   const double *                   W0;
-   const double *                   W;
+   const HPLAI_T_AFLOAT *                   W0;
+   const HPLAI_T_AFLOAT *                   W;
    const int                        LDW;
 #endif
 {
@@ -89,7 +89,7 @@ void HPL_dlaswp03T
  * Purpose
  * =======
  *
- * HPL_dlaswp03T copies  columns of W into an array U.  The  destination
+ * HPLAI_alaswp03T copies  columns of W into an array U.  The  destination
  * in U of these columns contained in W is stored within W0.
  *
  * Arguments
@@ -105,7 +105,7 @@ void HPL_dlaswp03T
  *         contiguously that should be copied into U. N must be at least
  *         zero.
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry, U points to an array of dimension (LDU,M).  Columns
  *         of W are copied within the array U at the positions specified
  *         in W0.
@@ -114,12 +114,12 @@ void HPL_dlaswp03T
  *         On entry, LDU specifies the leading dimension of the array U.
  *         LDU must be at least MAX(1,N).
  *
- * W0      (local input)                 const double *
+ * W0      (local input)                 const HPLAI_T_AFLOAT *
  *         On entry,  W0  is an array of size (M-1)*LDW+1, that contains
  *         the destination offset  in U where the columns of W should be
  *         copied.
  *
- * W       (local input)                 const double *
+ * W       (local input)                 const HPLAI_T_AFLOAT *
  *         On entry, W  is an array of size (LDW,M),  that contains data
  *         to be copied into U. For i in [0..M),  entries W(:,i)  should
  *         be copied into the row or column W0(i*LDW) of U.
@@ -133,8 +133,8 @@ void HPL_dlaswp03T
 /*
  * .. Local Variables ..
  */
-   const double               * w = W, * w0; 
-   double                     * u0;
+   const HPLAI_T_AFLOAT               * w = W, * w0; 
+   HPLAI_T_AFLOAT                     * u0;
    const int                  incU = ( 1 << HPL_LASWP03T_LOG2_DEPTH );
    int                        nr, nu;
    register int               i, j;
@@ -187,7 +187,7 @@ void HPL_dlaswp03T
       }
    }
 /*
- * End of HPL_dlaswp03T
+ * End of HPLAI_alaswp03T
  */
 } 
 

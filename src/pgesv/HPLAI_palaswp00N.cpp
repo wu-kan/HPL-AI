@@ -135,7 +135,7 @@ void HPLAI_palaswp00N
    if( ( n <= 0 ) || ( jb <= 0 ) ) return;
 
 #ifdef HPLAI_DETAILED_TIMING
-   HPL_timer( HPL_TIMING_LASWP );
+   HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*
  * Retrieve parameters from the PANEL data structure
@@ -424,7 +424,7 @@ void HPLAI_palaswp00N
    if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
 
 #ifdef HPLAI_DETAILED_TIMING
-   HPL_timer( HPL_TIMING_LASWP );
+   HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*
  * End of HPLAI_palaswp00N

@@ -63,24 +63,24 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp06N
+void HPLAI_alaswp06N
 (
    const int                        M,
    const int                        N,
-   double *                         A,
+   HPLAI_T_AFLOAT *                         A,
    const int                        LDA,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
    const int *                      LINDXA
 )
 #else
-void HPL_dlaswp06N
+void HPLAI_alaswp06N
 ( M, N, A, LDA, U, LDU, LINDXA )
    const int                        M;
    const int                        N;
-   double *                         A;
+   HPLAI_T_AFLOAT *                         A;
    const int                        LDA;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
    const int *                      LINDXA;
 #endif
@@ -89,7 +89,7 @@ void HPL_dlaswp06N
  * Purpose
  * =======
  *
- * HPL_dlaswp06N swaps rows of  U  with rows of A at positions
+ * HPLAI_alaswp06N swaps rows of  U  with rows of A at positions
  * indicated by LINDXA.
  *
  * Arguments
@@ -103,7 +103,7 @@ void HPL_dlaswp06N
  *         On entry, N specifies the length of the rows of A that should
  *         be swapped with rows of U. N must be at least zero.
  *
- * A       (local output)                double *
+ * A       (local output)                HPLAI_T_AFLOAT *
  *         On entry, A points to an array of dimension (LDA,N). On exit,
  *         the  rows of this array specified by  LINDXA  are replaced by
  *         rows or columns of U.
@@ -112,7 +112,7 @@ void HPL_dlaswp06N
  *         On entry, LDA specifies the leading dimension of the array A.
  *         LDA must be at least MAX(1,M).
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry,  U  points  to an array of dimension (LDU,N).  This
  *         array contains the rows of U that are to be swapped with rows
  *         of A.
@@ -130,8 +130,8 @@ void HPL_dlaswp06N
 /*
  * .. Local Variables ..
  */
-   double                     r;
-   double                     * U0 = U, * a0, * u0;
+   HPLAI_T_AFLOAT                     r;
+   HPLAI_T_AFLOAT                     * U0 = U, * a0, * u0;
    const int                  incA = (int)( (unsigned int)(LDA) <<
                                             HPL_LASWP06N_LOG2_DEPTH ),
                               incU = (int)( (unsigned int)(LDU) <<
@@ -207,7 +207,7 @@ void HPL_dlaswp06N
       }
    }
 /*
- * End of HPL_dlaswp06N
+ * End of HPLAI_alaswp06N
  */
 }
 

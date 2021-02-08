@@ -131,7 +131,7 @@ void HPLAI_palaswp01T
  */
    if( ( n <= 0 ) || ( jb <= 0 ) ) return;
 #ifdef HPLAI_DETAILED_TIMING
-   HPL_timer( HPL_TIMING_LASWP );
+   HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*
  * Decide whether equilibration should be performed or not
@@ -209,7 +209,7 @@ void HPLAI_palaswp01T
    HPLAI_alaswp10N( n, jb, U, LDU, permU );
 
 #ifdef HPLAI_DETAILED_TIMING
-   HPL_timer( HPL_TIMING_LASWP );
+   HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*
  * End of HPLAI_palaswp01T

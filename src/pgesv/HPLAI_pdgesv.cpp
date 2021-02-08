@@ -1062,7 +1062,7 @@ static int HPL_pgmres(
 
 void HPL_pir(
     HPLAI_T_grid *GRID,
-    HPL_T_palg *ALGO,
+    HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
     HPLAI_T_pmat *FA,
     const int IR,
@@ -1253,7 +1253,7 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_pdgesv(
     HPLAI_T_grid *GRID,
-    HPL_T_palg *ALGO,
+    HPLAI_T_palg *ALGO,
     HPL_T_pmat *A)
 #else
 void HPLAI_pdgesv(GRID, ALGO, A)
@@ -1274,7 +1274,8 @@ HPLAI_T_pmat *A;
 
     HPL_T_pmat_cpy(&FA, A);
 
-//    HPLAI_pagesv(GRID, ALGO, &FA);
+    HPLAI_pagesv(GRID, ALGO, &FA);
+    /*
     {
         HPL_T_pmat TA;
 
@@ -1295,6 +1296,7 @@ HPLAI_T_pmat *A;
         if (vptr_TA)
             free(vptr_TA);
     }
+    */
 
     HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, 1e-13, 50, 10);
 

@@ -11,18 +11,18 @@ extern "C"
 #ifdef STDC_HEADERS
 void HPLAI_pdtest
 (
-   HPL_T_test *                     TEST,
+   HPLAI_T_test *                     TEST,
    HPLAI_T_grid *                     GRID,
-   HPL_T_palg *                     ALGO,
+   HPLAI_T_palg *                     ALGO,
    const int                        N,
    const int                        NB
 )
 #else
 void HPLAI_pdtest
 ( TEST, GRID, ALGO, N, NB )
-   HPL_T_test *                     TEST;
+   HPLAI_T_test *                     TEST;
    HPLAI_T_grid *                     GRID;
-   HPL_T_palg *                     ALGO;
+   HPLAI_T_palg *                     ALGO;
    const int                        N;
    const int                        NB;
 #endif
@@ -40,7 +40,7 @@ void HPLAI_pdtest
  * Arguments
  * =========
  *
- * TEST    (global input)                HPL_T_test *
+ * TEST    (global input)                HPLAI_T_test *
  *         On entry,  TEST  points  to a testing data structure:  outfp
  *         specifies the output file where the results will be printed.
  *         It is only defined and used by the process  0  of the  grid.
@@ -61,7 +61,7 @@ void HPLAI_pdtest
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
- * ALGO    (global input)                HPL_T_palg *
+ * ALGO    (global input)                HPLAI_T_palg *
  *         On entry,  ALGO  points to  the data structure containing the
  *         algorithmic parameters to be used for this test.
  *

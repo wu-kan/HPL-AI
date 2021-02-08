@@ -63,27 +63,27 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp02N
+void HPLAI_alaswp02N
 (
    const int                        M,
    const int                        N,
-   const double *                   A,
+   const HPLAI_T_AFLOAT *                   A,
    const int                        LDA,
-   double *                         W0,
-   double *                         W,
+   HPLAI_T_AFLOAT *                         W0,
+   HPLAI_T_AFLOAT *                         W,
    const int                        LDW,
    const int *                      LINDXA,
    const int *                      LINDXAU
 )
 #else
-void HPL_dlaswp02N
+void HPLAI_alaswp02N
 ( M, N, A, LDA, W0, W, LDW, LINDXA, LINDXAU )
    const int                        M;
    const int                        N;
-   const double *                   A;
+   const HPLAI_T_AFLOAT *                   A;
    const int                        LDA;
-   double *                         W0;
-   double *                         W;
+   HPLAI_T_AFLOAT *                         W0;
+   HPLAI_T_AFLOAT *                         W;
    const int                        LDW;
    const int *                      LINDXA;
    const int *                      LINDXAU;
@@ -93,7 +93,7 @@ void HPL_dlaswp02N
  * Purpose
  * =======
  *
- * HPL_dlaswp02N packs scattered rows of an array  A  into workspace  W.
+ * HPLAI_alaswp02N packs scattered rows of an array  A  into workspace  W.
  * The row offsets in A are specified by LINDXA.
  *
  * Arguments
@@ -107,7 +107,7 @@ void HPL_dlaswp02N
  *         On entry, N  specifies the length of rows of A that should be
  *         copied into W. N must be at least zero.
  *
- * A       (local input)                 const double *
+ * A       (local input)                 const HPLAI_T_AFLOAT *
  *         On entry, A points to an array of dimension (LDA,N). The rows
  *         of this array specified by LINDXA should be copied into W.
  *
@@ -115,12 +115,12 @@ void HPL_dlaswp02N
  *         On entry, LDA specifies the leading dimension of the array A.
  *         LDA must be at least MAX(1,M).
  *
- * W0      (local input/output)          double *
+ * W0      (local input/output)          HPLAI_T_AFLOAT *
  *         On exit,  W0  is  an array of size (M-1)*LDW+1, that contains
  *         the destination offset  in U where the columns of W should be
  *         copied.
  *
- * W       (local output)                double *
+ * W       (local output)                HPLAI_T_AFLOAT *
  *         On entry, W  is an array of size (LDW,M). On exit, W contains
  *         the  rows LINDXA[i] for i in [0..M) of A stored  contiguously
  *         in W(:,i).
@@ -143,8 +143,8 @@ void HPL_dlaswp02N
 /*
  * .. Local Variables ..
  */
-   const double               * A0 = A, * a0;
-   double                     * w0;
+   const HPLAI_T_AFLOAT               * A0 = A, * a0;
+   HPLAI_T_AFLOAT                     * w0;
    const int                  incA = (int)( (unsigned int)(LDA) <<
                                             HPL_LASWP02N_LOG2_DEPTH );
    int                        nr, nu;
@@ -155,7 +155,7 @@ void HPL_dlaswp02N
    if( ( M <= 0 ) || ( N <= 0 ) ) return;
 
    for( i = 0; i < M; i++ ) 
-      *(W0+(size_t)(i)*(size_t)(LDW)) = (double)(LINDXAU[i]);
+      *(W0+(size_t)(i)*(size_t)(LDW)) = (HPLAI_T_AFLOAT)(LINDXAU[i]);
 
    nr = N - ( nu = (int)( ( (unsigned int)(N) >> HPL_LASWP02N_LOG2_DEPTH ) <<
                           HPL_LASWP02N_LOG2_DEPTH ) );
@@ -206,7 +206,7 @@ void HPL_dlaswp02N
       }
    }
 /*
- * End of HPL_dlaswp02N
+ * End of HPLAI_alaswp02N
  */
 } 
 

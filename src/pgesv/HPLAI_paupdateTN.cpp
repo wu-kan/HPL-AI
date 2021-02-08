@@ -114,7 +114,7 @@ void HPLAI_paupdateTN
  * .. Executable Statements ..
  */
 #ifdef HPLAI_DETAILED_TIMING
-   HPL_timer( HPL_TIMING_UPDATE );
+   HPL_ptimer( HPL_TIMING_UPDATE );
 #endif
    nb = PANEL->nb; jb = PANEL->jb; n = PANEL->nq; lda = PANEL->lda;
    if( NN >= 0 ) n = Mmin( NN, n );
@@ -129,7 +129,7 @@ void HPLAI_paupdateTN
          while( *IFLAG != HPLAI_SUCCESS );
       }
 #ifdef HPLAI_DETAILED_TIMING
-      HPL_timer( HPL_TIMING_UPDATE );
+      HPL_ptimer( HPL_TIMING_UPDATE );
 #endif
       return;
    }
@@ -174,9 +174,9 @@ void HPLAI_paupdateTN
  * Update nb columns at a time
  */
 #ifdef HPLAI_DETAILED_TIMING
-         HPL_timer( HPL_TIMING_LASWP );
+         HPL_ptimer( HPL_TIMING_LASWP );
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
-         HPL_timer( HPL_TIMING_LASWP );
+         HPL_ptimer( HPL_TIMING_LASWP );
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
@@ -211,9 +211,9 @@ void HPLAI_paupdateTN
       if( ( nn = n - nq0 ) > 0 )
       {
 #ifdef HPLAI_DETAILED_TIMING
-         HPL_timer( HPL_TIMING_LASWP );
+         HPL_ptimer( HPL_TIMING_LASWP );
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
-         HPL_timer( HPL_TIMING_LASWP );
+         HPL_ptimer( HPL_TIMING_LASWP );
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
@@ -435,7 +435,7 @@ void HPLAI_paupdateTN
  */
    if( PBCST != NULL ) *IFLAG = test;
 #ifdef HPLAI_DETAILED_TIMING
-   HPL_timer( HPL_TIMING_UPDATE );
+   HPL_ptimer( HPL_TIMING_UPDATE );
 #endif
 /*
  * End of HPLAI_paupdateTN

@@ -15,9 +15,11 @@ extern "C"
 #include "hplai_misc.h"
 #include "hplai_blas.h"
 #include "hplai_auxil.h"
+#include "hplai_gesv.h"
 
 #include "hplai_pauxil.h"
 #include "hplai_panel.h"
+#include "hplai_pfact.h"
 #include "hplai_pgesv.h"
 
 #include "hplai_pmatgen.h"

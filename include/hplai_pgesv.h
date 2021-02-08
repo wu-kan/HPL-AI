@@ -46,21 +46,8 @@ STDC_ARGS( (
    const int
 ) );
 
-void                             HPLAI_perm
-STDC_ARGS( (
-   const int,
-   int *,
-   int *,
-   int *
-) );
-void                             HPLAI_logsort
-STDC_ARGS( (
-   const int,
-   const int,
-   int *,
-   int *,
-   int *
-) );
+#define HPLAI_perm HPL_perm
+#define HPLAI_logsort HPL_logsort
 void                             HPLAI_plindx10
 STDC_ARGS( (
    HPLAI_T_panel *,
@@ -197,39 +184,39 @@ STDC_ARGS( (
 
 void                             HPLAI_pdgesv
 STDC_ARGS( (
-   HPL_T_grid *,
-   HPL_T_palg *,
+   HPLAI_T_grid *,
+   HPLAI_T_palg *,
    HPL_T_pmat *
 ) );
 
 void                             HPLAI_pagesv0
 STDC_ARGS( (
-   HPL_T_grid *,
+   HPLAI_T_grid *,
    HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
 void                             HPLAI_pagesvK1
 STDC_ARGS( (
-   HPL_T_grid *,
+   HPLAI_T_grid *,
    HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
 void                             HPLAI_pagesvK2
 STDC_ARGS( (
-   HPL_T_grid *,
+   HPLAI_T_grid *,
    HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
 void                             HPLAI_pagesv
 STDC_ARGS( (
-   HPL_T_grid *,
+   HPLAI_T_grid *,
    HPLAI_T_palg *,
    HPLAI_T_pmat *
 ) );
  
 void                             HPLAI_patrsv
 STDC_ARGS( (
-   HPL_T_grid *,
+   HPLAI_T_grid *,
    HPLAI_T_pmat *
 ) );
 

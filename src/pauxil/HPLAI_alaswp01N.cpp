@@ -63,25 +63,25 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPL_dlaswp01N
+void HPLAI_alaswp01N
 (
    const int                        M,
    const int                        N,
-   double *                         A,
+   HPLAI_T_AFLOAT *                         A,
    const int                        LDA,
-   double *                         U,
+   HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
    const int *                      LINDXA,
    const int *                      LINDXAU
 )
 #else
-void HPL_dlaswp01N
+void HPLAI_alaswp01N
 ( M, N, A, LDA, U, LDU, LINDXA, LINDXAU )
    const int                        M;
    const int                        N;
-   double *                         A;
+   HPLAI_T_AFLOAT *                         A;
    const int                        LDA;
-   double *                         U;
+   HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
    const int *                      LINDXA;
    const int *                      LINDXAU;
@@ -91,7 +91,7 @@ void HPL_dlaswp01N
  * Purpose
  * =======
  *
- * HPL_dlaswp01N copies  scattered rows  of  A  into itself  and into an
+ * HPLAI_alaswp01N copies  scattered rows  of  A  into itself  and into an
  * array  U.  The row offsets in  A  of the source rows are specified by
  * LINDXA.  The  destination of those rows are specified by  LINDXAU.  A
  * positive value of  LINDXAU indicates that the array destination is U,
@@ -108,7 +108,7 @@ void HPL_dlaswp01N
  *         On entry, N  specifies the length of rows of A that should be
  *         moved within A or copied into U. N must be at least zero.
  *
- * A       (local input/output)          double *
+ * A       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry, A points to an array of dimension (LDA,N). The rows
  *         of this array specified by LINDXA should be moved within A or
  *         copied into U.
@@ -117,7 +117,7 @@ void HPL_dlaswp01N
  *         On entry, LDA specifies the leading dimension of the array A.
  *         LDA must be at least MAX(1,M).
  *
- * U       (local input/output)          double *
+ * U       (local input/output)          HPLAI_T_AFLOAT *
  *         On entry, U points to an array of dimension (LDU,N). The rows
  *         of A specified by LINDXA are be copied within this array U at
  *         the positions indicated by positive values of LINDXAU.
@@ -146,7 +146,7 @@ void HPL_dlaswp01N
 /*
  * .. Local Variables ..
  */
-   double                     * a0, * a1;
+   HPLAI_T_AFLOAT                     * a0, * a1;
    const int                  incA = (int)( (unsigned int)(LDA) <<
                                             HPL_LASWP01N_LOG2_DEPTH ),
                               incU = (int)( (unsigned int)(LDU) <<
@@ -210,7 +210,7 @@ void HPL_dlaswp01N
       }
    }
 /*
- * End of HPL_dlaswp01N
+ * End of HPLAI_alaswp01N
  */
 } 
 
