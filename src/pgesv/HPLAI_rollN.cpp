@@ -181,7 +181,7 @@ void HPLAI_rollN
       if( lengthR > 0 )
       {
          if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_vector( N, lengthR, LDU, MPI_DOUBLE,
+            ierr =   MPI_Type_vector( N, lengthR * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                       &type[I_RECV] );
          if( ierr == MPI_SUCCESS )
             ierr =   MPI_Type_commit( &type[I_RECV] );
@@ -193,7 +193,7 @@ void HPLAI_rollN
       if( lengthS > 0 )
       {
          if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_vector( N, lengthS, LDU, MPI_DOUBLE,
+            ierr =   MPI_Type_vector( N, lengthS * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                       &type[I_SEND] );
          if( ierr == MPI_SUCCESS )
             ierr =   MPI_Type_commit( &type[I_SEND] );

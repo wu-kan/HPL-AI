@@ -186,10 +186,10 @@ void HPLAI_rollT
          if( ierr == MPI_SUCCESS )
          {
             if( LDU == N )
-               ierr = MPI_Type_contiguous( lengthR * LDU, MPI_DOUBLE,
+               ierr = MPI_Type_contiguous( lengthR * LDU * 1LL * sizeof(HPLAI_T_AFLOAT), MPI_BYTE,
                                            &type[I_RECV] );
             else
-               ierr = MPI_Type_vector( lengthR, N, LDU, MPI_DOUBLE,
+               ierr = MPI_Type_vector( lengthR, N * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                        &type[I_RECV] );
          }
          if( ierr == MPI_SUCCESS )
@@ -202,8 +202,8 @@ void HPLAI_rollT
  * In our case, LDU is N - Do not use the MPI datatype.
  */
          if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Irecv( Mptr( U, 0, ibufR, LDU ), lengthR*LDU,
-                                MPI_DOUBLE, partner, Cmsgid, comm, &request );
+            ierr =   MPI_Irecv( Mptr( U, 0, ibufR, LDU ), lengthR*LDU * 1LL * sizeof(HPLAI_T_AFLOAT),
+                                MPI_BYTE, partner, Cmsgid, comm, &request );
 #endif
       }
  
@@ -213,10 +213,10 @@ void HPLAI_rollT
          if( ierr == MPI_SUCCESS )
          {
             if( LDU == N )
-               ierr =   MPI_Type_contiguous( lengthS*LDU, MPI_DOUBLE,
+               ierr =   MPI_Type_contiguous( lengthS*LDU * 1LL * sizeof(HPLAI_T_AFLOAT), MPI_BYTE,
                                              &type[I_SEND] );
             else
-               ierr =   MPI_Type_vector( lengthS, N, LDU, MPI_DOUBLE,
+               ierr =   MPI_Type_vector( lengthS, N * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                          &type[I_SEND] );
          }
          if( ierr == MPI_SUCCESS )
@@ -231,8 +231,8 @@ void HPLAI_rollT
  * In our case, LDU is N - Do not use the MPI datatype.
  */
          if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Send( Mptr( U, 0, ibufS, LDU ), lengthS*LDU,
-                               MPI_DOUBLE, partner, Cmsgid, comm );
+            ierr =   MPI_Send( Mptr( U, 0, ibufS, LDU ), lengthS*LDU * 1LL * sizeof(HPLAI_T_AFLOAT),
+                               MPI_BYTE, partner, Cmsgid, comm );
 #endif
       }
 

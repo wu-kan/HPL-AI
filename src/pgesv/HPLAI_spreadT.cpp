@@ -198,10 +198,10 @@ void HPLAI_spreadT
                   if( ierr == MPI_SUCCESS )
                   {
                      if( LDU == N )
-                        ierr = MPI_Type_contiguous( lbuf*LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_contiguous( lbuf*LDU * 1LL * sizeof(HPLAI_T_AFLOAT), MPI_BYTE,
                                                     &type );
                      else
-                        ierr = MPI_Type_vector( lbuf, N, LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_vector( lbuf, N * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                                 &type );
                   }
                   if( ierr == MPI_SUCCESS )
@@ -217,8 +217,8 @@ void HPLAI_spreadT
  * In our case, LDU is N - do not use the MPI Datatypes
  */
                   if( ierr == MPI_SUCCESS )
-                     ierr =   MPI_Recv( Mptr( U, 0, ibuf, LDU ), lbuf*N,
-                                        MPI_DOUBLE, IPMAP[npm1-partner],
+                     ierr =   MPI_Recv( Mptr( U, 0, ibuf, LDU ), lbuf*N * 1LL * sizeof(HPLAI_T_AFLOAT),
+                                        MPI_BYTE, IPMAP[npm1-partner],
                                         Cmsgid, comm, &status );
 #endif
                }
@@ -228,10 +228,10 @@ void HPLAI_spreadT
                   if( ierr == MPI_SUCCESS )
                   {
                      if( LDU == N )
-                        ierr = MPI_Type_contiguous( lbuf*LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_contiguous( lbuf*LDU * 1LL * sizeof(HPLAI_T_AFLOAT), MPI_BYTE,
                                                     &type );
                      else
-                        ierr = MPI_Type_vector( lbuf, N, LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_vector( lbuf, N * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                                 &type );
                   }
                   if( ierr == MPI_SUCCESS )
@@ -246,8 +246,8 @@ void HPLAI_spreadT
  * In our case, LDU is N - do not use the MPI Datatypes
  */
                   if( ierr == MPI_SUCCESS )
-                     ierr =   MPI_Send( Mptr( U, 0, ibuf, LDU ), lbuf*N,
-                                        MPI_DOUBLE, IPMAP[npm1-partner],
+                     ierr =   MPI_Send( Mptr( U, 0, ibuf, LDU ), lbuf*N * 1LL * sizeof(HPLAI_T_AFLOAT),
+                                        MPI_BYTE, IPMAP[npm1-partner],
                                         Cmsgid, comm );
 #endif
                }
@@ -297,10 +297,10 @@ void HPLAI_spreadT
                   if( ierr == MPI_SUCCESS )
                   {
                      if( LDU == N )
-                        ierr = MPI_Type_contiguous( lbuf*LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_contiguous( lbuf*LDU * 1LL * sizeof(HPLAI_T_AFLOAT), MPI_BYTE,
                                                     &type );
                      else
-                        ierr = MPI_Type_vector( lbuf, N, LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_vector( lbuf, N * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                                 &type );
                   }
                   if( ierr == MPI_SUCCESS )
@@ -316,8 +316,8 @@ void HPLAI_spreadT
  * In our case, LDU is N - do not use the MPI Datatypes
  */
                   if( ierr == MPI_SUCCESS )
-                     ierr =   MPI_Recv( Mptr( U, 0, ibuf, LDU ), lbuf*N,
-                                        MPI_DOUBLE, IPMAP[SRCDIST+partner],
+                     ierr =   MPI_Recv( Mptr( U, 0, ibuf, LDU ), lbuf*N * 1LL * sizeof(HPLAI_T_AFLOAT),
+                                        MPI_BYTE, IPMAP[SRCDIST+partner],
                                         Cmsgid, comm, &status );
 #endif
                }
@@ -327,10 +327,10 @@ void HPLAI_spreadT
                   if( ierr == MPI_SUCCESS )
                   {
                      if( LDU == N )
-                        ierr = MPI_Type_contiguous( lbuf*LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_contiguous( lbuf*LDU * 1LL * sizeof(HPLAI_T_AFLOAT), MPI_BYTE,
                                                     &type );
                      else
-                        ierr = MPI_Type_vector( lbuf, N, LDU, MPI_DOUBLE,
+                        ierr = MPI_Type_vector( lbuf, N * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
                                                 &type );
                   }
                   if( ierr == MPI_SUCCESS )
@@ -346,8 +346,8 @@ void HPLAI_spreadT
  * In our case, LDU is N - do not use the MPI Datatypes
  */
                   if( ierr == MPI_SUCCESS )
-                     ierr =   MPI_Send( Mptr( U, 0, ibuf, LDU ), lbuf*N,
-                                        MPI_DOUBLE, IPMAP[SRCDIST+partner],
+                     ierr =   MPI_Send( Mptr( U, 0, ibuf, LDU ), lbuf*N * 1LL * sizeof(HPLAI_T_AFLOAT),
+                                        MPI_BYTE, IPMAP[SRCDIST+partner],
                                         Cmsgid, comm );
 #endif
                }
