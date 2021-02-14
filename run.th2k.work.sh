@@ -20,8 +20,8 @@ Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-2900 30 34 35  Ns
-2            # of NBs
+2900 29 30 34 35  Ns
+1            # of NBs
 1 2 3 4      NBs
 0            PMAP process mapping (0=Row-,1=Column-major)
 1            # of process grids (P x Q)
@@ -46,5 +46,6 @@ HPL.out      output file name (if any)
 0            U  in (0=transposed,1=no-transposed) form
 1            Equilibration (0=no,1=yes)
 8            memory alignment in double (> 0)' >HPL.dat
+mpiexec -n 4 testing/xhpl
 mpiexec -n 4 testing/xhplai
 git clean -d -f -q -x
