@@ -4,7 +4,7 @@
 #include "hplai.h"
 
 template <typename T1, typename T2>
-static void HPL_T_pmat_cpy(
+static void HPLAI_pmat_cpy(
     T1 *DST,
     const T2 *SRC)
 {
@@ -260,12 +260,12 @@ static void HPL_pLdtrsv(
             {
                 if (GridIsNot1xQ)
                     (void)HPL_send(Xdprev, kbprev, MModAdd1(myrow, nprow),
-                                    Cmsgid, Ccomm);
+                                   Cmsgid, Ccomm);
             }
             else
             {
                 (void)HPL_recv(Xdprev, kbprev, MModSub1(myrow, nprow),
-                                Cmsgid, Ccomm);
+                               Cmsgid, Ccomm);
             }
             /*
  * Compute partial update of previous solution block and send it to cur-
@@ -286,7 +286,7 @@ static void HPL_pLdtrsv(
             if ((myrow != rowprev) &&
                 (myrow != MModSub1(rowprev, nprow)))
                 (void)HPL_send(Xdprev, kbprev, MModAdd1(myrow, nprow),
-                                Cmsgid, Ccomm);
+                               Cmsgid, Ccomm);
         }
         else if (mycol == Alcol)
         {
@@ -383,14 +383,14 @@ static void HPL_pLdtrsv(
  */
 static void givens_rotations(
     HPLAI_T_grid *GRID, /* processes grid information */
-    HPL_T_pmat *A,    /* local A */
-    double *v,        /* kth column of H */
-    double *w,        /* rhs */
-    double *R,        /* R matrix */
-    double *sinus,    /* sin(theta) */
-    double *cosus,    /* cos(theta) */
-    const int k,      /* offset */
-    const int MM      /* restart size */
+    HPL_T_pmat *A,      /* local A */
+    double *v,          /* kth column of H */
+    double *w,          /* rhs */
+    double *R,          /* R matrix */
+    double *sinus,      /* sin(theta) */
+    double *cosus,      /* cos(theta) */
+    const int k,        /* offset */
+    const int MM        /* restart size */
 )
 {
     /* local variables */
@@ -530,11 +530,11 @@ static void givens_rotations(
  */
 static void generateHouseholder(
     HPLAI_T_grid *GRID, /* processes grid information */
-    HPL_T_pmat *A,    /* local A */
-    const double *x,  /* local object vector pointer */
-    double *u,        /* local result Householder Vector */
-    const int k,      /* order of the Householder */
-    double *alpha     /* result variable */
+    HPL_T_pmat *A,      /* local A */
+    const double *x,    /* local object vector pointer */
+    double *u,          /* local result Householder Vector */
+    const int k,        /* order of the Householder */
+    double *alpha       /* result variable */
 )
 {
     /* local variables */
@@ -591,11 +591,11 @@ static void generateHouseholder(
  */
 static void applyHouseholder(
     HPLAI_T_grid *GRID, /* processes grid information */
-    HPL_T_pmat *A,    /* local A */
-    const double *x,  /* local object vector pointer */
-    const double *u,  /* local result Householder Vector */
-    const int k,      /* order of the Householder */
-    double *y         /* target vector */
+    HPL_T_pmat *A,      /* local A */
+    const double *x,    /* local object vector pointer */
+    const double *u,    /* local result Householder Vector */
+    const int k,        /* order of the Householder */
+    double *y           /* target vector */
 )
 {
     /* local variables */
@@ -1251,31 +1251,31 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_pdgesv(
-    HPLAI_T_grid *GRID,
-    HPLAI_T_palg *ALGO,
-    HPL_T_pmat *A)
+    void HPLAI_pdgesv(
+        HPLAI_T_grid *GRID,
+        HPLAI_T_palg *ALGO,
+        HPL_T_pmat *A)
 #else
 void HPLAI_pdgesv(GRID, ALGO, A)
     HPLAI_T_grid *GRID;
 HPL_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif
-{
-    HPLAI_T_pmat FA;
+    {
+        HPLAI_T_pmat FA;
 
-    void *vptr_FA = (void *)malloc(
+        void *vptr_FA = (void *)malloc(
             ((size_t)(ALGO->align) + (size_t)(A->ld + 1) * (size_t)(A->nq)) *
             sizeof(HPLAI_T_AFLOAT));
 
-    FA.A = (HPLAI_T_AFLOAT *)HPL_PTR(vptr_FA, ((size_t)(ALGO->align) * sizeof(HPLAI_T_AFLOAT)));
+        FA.A = (HPLAI_T_AFLOAT *)HPL_PTR(vptr_FA, ((size_t)(ALGO->align) * sizeof(HPLAI_T_AFLOAT)));
 
-    FA.X = Mptr(FA.A, 0, A->nq, A->ld);
+        FA.X = Mptr(FA.A, 0, A->nq, A->ld);
 
-    HPL_T_pmat_cpy(&FA, A);
+        HPLAI_pmat_cpy(&FA, A);
 
-    HPLAI_pagesv(GRID, ALGO, &FA);
-    /*
+        HPLAI_pagesv(GRID, ALGO, &FA);
+        /*
     {
         HPL_T_pmat TA;
 
@@ -1287,22 +1287,23 @@ HPLAI_T_pmat *A;
 
         TA.X = Mptr(TA.A, 0, A->nq, A->ld);
 
-        HPL_T_pmat_cpy(&TA, &FA);
+        HPLAI_pmat_cpy(&TA, &FA);
         
         HPL_pdgesv(GRID, ALGO, &TA);
 
-        HPL_T_pmat_cpy(&FA, &TA);
+        HPLAI_pmat_cpy(&FA, &TA);
         
         if (vptr_TA)
             free(vptr_TA);
     }
     */
 
-    //HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, 1e-13, 50, 10);
+        //HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, 1e-13, 50, 10);
+        HPLAI_pmat_cpy(A, &FA);
 
-    if (vptr_FA)
-        free(vptr_FA);
-}
+        if (vptr_FA)
+            free(vptr_FA);
+    }
 
 #ifdef __cplusplus
 }
