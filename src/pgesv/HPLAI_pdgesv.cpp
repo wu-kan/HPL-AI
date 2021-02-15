@@ -66,7 +66,7 @@ static double sign(double x)
     return (x >= 0) ? 1 : -1;
 }
 
-static void HPL_pLdtrsv(
+static void HPLAI_pLdtrsv(
     HPLAI_T_grid *GRID,
     HPL_T_pmat *AMAT)
 {
@@ -198,7 +198,7 @@ static void HPL_pLdtrsv(
         W = (double *)malloc((size_t)(Mmin(n1, np)) * sizeof(double));
         if (W == NULL)
         {
-            HPL_pabort(__LINE__, "HPL_pLdtrsv", "Memory allocation failed");
+            HPL_pabort(__LINE__, "HPLAI_pLdtrsv", "Memory allocation failed");
         }
         Wfr = 1;
     }
@@ -699,10 +699,10 @@ static void redX2B(
 }
 
 /*
- *  HPL_pgmres():
+ *  HPLAI_pgmres():
  * 
  */
-static int HPL_pgmres(
+static int HPLAI_pgmres(
     HPLAI_T_grid *GRID,
     HPL_T_pmat *A,       /* local A */
     HPL_T_pmat *factors, /* local LU factors */
@@ -744,7 +744,7 @@ static int HPL_pgmres(
         {
             memcpy(bptr, b, mp * sizeof(double));
         }
-        HPL_pLdtrsv(GRID, factors);
+        HPLAI_pLdtrsv(GRID, factors);
 
         /* redistribute x into column-distributing pattern for next pdtrsv */
         redX2B(GRID, factors, factors->X, rhs);
@@ -810,7 +810,7 @@ static int HPL_pgmres(
                 {
                     memcpy(bptr, v, mp * sizeof(double));
                 }
-                HPL_pLdtrsv(GRID, factors);
+                HPLAI_pLdtrsv(GRID, factors);
                 redX2B(GRID, factors, factors->X, v);
 
                 if (GRID->mycol == tarcol)
@@ -870,7 +870,7 @@ static int HPL_pgmres(
                 {
                     memcpy(bptr, v, mp * sizeof(double));
                 }
-                HPL_pLdtrsv(GRID, factors);
+                HPLAI_pLdtrsv(GRID, factors);
                 redX2B(GRID, factors, factors->X, v);
 
                 if (GRID->mycol == tarcol)
@@ -988,7 +988,7 @@ static int HPL_pgmres(
         //     {
         //         memcpy(bptr, v, mp*sizeof(double));
         //     }
-        //     HPL_pLdtrsv(GRID, factors);
+        //     HPLAI_pLdtrsv(GRID, factors);
         //     redX2B(GRID, factors, factors->X, v);
 
         //     if (GRID->mycol == tarcol)
@@ -1057,10 +1057,10 @@ static int HPL_pgmres(
     /* return total number of iterations performed */
     return (start * MM + k + 1);
 
-    /* end of HPL_pgmres() */
+    /* end of HPLAI_pgmres() */
 }
 
-static void HPL_pir(
+static void HPLAI_pir(
     HPLAI_T_grid *GRID,
     HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
@@ -1075,7 +1075,7 @@ static void HPL_pir(
    * Purpose
    * =======
    *
-   * HPL_pir performs iterative refinement procesure to enhance the accur-
+   * HPLAI_pir performs iterative refinement procesure to enhance the accur-
    * acy of  the solution  of linear system obtained  by LU factorization. 
    * Parallel  GMRES algorithm  is used  as the inner solver to solve  the 
    * inner correct equation Ad = r.
@@ -1222,7 +1222,7 @@ static void HPL_pir(
       * precision.  
       */
         memset(d, 0, nq * sizeof(double));
-        HPL_pgmres(GRID, A, &factors, res, d, TOL, MM, MAXIT);
+        HPLAI_pgmres(GRID, A, &factors, res, d, TOL, MM, MAXIT);
         /* 
       * update X with d
       */
@@ -1241,7 +1241,7 @@ static void HPL_pir(
         free(res);
 
     /*
-   * End of HPL_pir
+   * End of HPLAI_pir
    */
 }
 
@@ -1298,7 +1298,7 @@ HPLAI_T_pmat *A;
         }
         */
 
-        HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, -1, 1, 2); // 此处将 tol 设置成 -1， 并强制做 2 次 gmres
+        HPLAI_pir(GRID, ALGO, A, &FA, 1, 1e-14, -1, 50, 1); // 此处将 tol 设置成 -1 从而强制做 gmres
         //HPLAI_pmat_cpy(A, &FA);
 
         if (vptr_FA)
