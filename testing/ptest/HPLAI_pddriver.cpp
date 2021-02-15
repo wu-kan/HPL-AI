@@ -214,7 +214,7 @@ char **ARGV;
    if (rank == 0)
    {
       test.ktest = test.kpass + test.kfail + test.kskip;
-#ifndef HPLAI_DETAILED_TIMING
+#ifndef HPL_DETAILED_TIMING
       HPLAI_fprintf(test.outfp, "%s%s\n",
                   "========================================",
                   "========================================");

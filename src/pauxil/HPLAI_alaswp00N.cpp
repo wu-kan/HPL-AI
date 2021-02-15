@@ -11,9 +11,9 @@ extern "C"
 /*
  * Define default value for unrolling factor
  */
-#ifndef HPLAI_LASWP00N_DEPTH
-#define    HPLAI_LASWP00N_DEPTH       32
-#define    HPLAI_LASWP00N_LOG2_DEPTH   5
+#ifndef HPL_LASWP00N_DEPTH
+#define    HPL_LASWP00N_DEPTH       32
+#define    HPL_LASWP00N_LOG2_DEPTH   5
 #endif
 
 #ifdef STDC_HEADERS
@@ -75,7 +75,7 @@ void HPLAI_alaswp00N
    register HPLAI_T_AFLOAT            r;
    HPLAI_T_AFLOAT                     * a0, * a1;
    const int                  incA = (int)( (unsigned int)(LDA) <<
-                                            HPLAI_LASWP00N_LOG2_DEPTH );
+                                            HPL_LASWP00N_LOG2_DEPTH );
    int                        ip, nr, nu;
    register int               i, j;
 /* ..
@@ -83,10 +83,10 @@ void HPLAI_alaswp00N
  */
    if( ( M <= 0 ) || ( N <= 0 ) ) return;
 
-   nr = N - ( nu = (int)( ( (unsigned int)(N) >> HPLAI_LASWP00N_LOG2_DEPTH )
-                          << HPLAI_LASWP00N_LOG2_DEPTH ) );
+   nr = N - ( nu = (int)( ( (unsigned int)(N) >> HPL_LASWP00N_LOG2_DEPTH )
+                          << HPL_LASWP00N_LOG2_DEPTH ) );
 
-   for( j = 0; j < nu; j += HPLAI_LASWP00N_DEPTH, A += incA )
+   for( j = 0; j < nu; j += HPL_LASWP00N_DEPTH, A += incA )
    {
       for( i = 0; i < M; i++ )
       {
@@ -95,30 +95,30 @@ void HPLAI_alaswp00N
             a0 = A + i; a1 = A + ip;
 
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-#if ( HPLAI_LASWP00N_DEPTH >  1 )
+#if ( HPL_LASWP00N_DEPTH >  1 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
 #endif
-#if ( HPLAI_LASWP00N_DEPTH >  2 )
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-#endif
-#if ( HPLAI_LASWP00N_DEPTH >  4 )
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+#if ( HPL_LASWP00N_DEPTH >  2 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
 #endif
-#if ( HPLAI_LASWP00N_DEPTH >  8 )
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
-            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+#if ( HPL_LASWP00N_DEPTH >  4 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
 #endif
-#if ( HPLAI_LASWP00N_DEPTH > 16 )
+#if ( HPL_LASWP00N_DEPTH >  8 )
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+            r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
+#endif
+#if ( HPL_LASWP00N_DEPTH > 16 )
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
             r = *a0; *a0 = *a1; *a1 = r; a0 += LDA; a1 += LDA;
