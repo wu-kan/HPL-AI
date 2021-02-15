@@ -134,7 +134,7 @@ void HPLAI_palaswp00T
  */
    if( ( n <= 0 ) || ( jb <= 0 ) ) return;
 
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*
@@ -424,7 +424,7 @@ void HPLAI_palaswp00T
  */
    if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
 
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*

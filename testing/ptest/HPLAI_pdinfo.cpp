@@ -580,7 +580,7 @@ label_error:
          HPLAI_pwarn( stderr, __LINE__, "HPLAI_pdinfo",
                     "Illegal input in file HPL.dat. Exiting ..." );
       MPI_Finalize();
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
       (void) vsip_finalize( NULL );
 #endif
       exit( 1 );

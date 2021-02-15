@@ -130,7 +130,7 @@ void HPLAI_palaswp01T
  * Quick return if there is nothing to do
  */
    if( ( n <= 0 ) || ( jb <= 0 ) ) return;
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*
@@ -208,7 +208,7 @@ void HPLAI_palaswp01T
  */
    HPLAI_alaswp10N( n, jb, U, LDU, permU );
 
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_LASWP );
 #endif
 /*

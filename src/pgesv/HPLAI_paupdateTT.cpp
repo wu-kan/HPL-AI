@@ -102,7 +102,7 @@ void HPLAI_paupdateTT
  */
    HPLAI_T_AFLOAT                    * Aptr, * L1ptr, * L2ptr, * Uptr, * dpiv;
    int                       * ipiv;
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
    vsip_mview_d              * Av0, * Av1, * Lv0, * Lv1, * Uv0, * Uv1;
 #endif
    int                       curr, i, iroff, jb, lda, ldl2, mp, n, nb,
@@ -113,7 +113,7 @@ void HPLAI_paupdateTT
 /* ..
  * .. Executable Statements ..
  */
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_UPDATE );
 #endif
    nb = PANEL->nb; jb = PANEL->jb; n = PANEL->nq; lda = PANEL->lda;
@@ -128,7 +128,7 @@ void HPLAI_paupdateTT
          do { (void) HPLAI_bcast( PBCST, IFLAG ); }
          while( *IFLAG != HPLAI_SUCCESS );
       }
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
       HPL_ptimer( HPL_TIMING_UPDATE );
 #endif
       return;
@@ -145,7 +145,7 @@ void HPLAI_paupdateTT
       Aptr = PANEL->A;       L2ptr = PANEL->L2;   L1ptr = PANEL->L1;
       ldl2 = PANEL->ldl2;    dpiv  = PANEL->DPIV; ipiv  = PANEL->IWORK;
       mp   = PANEL->mp - jb; iroff = PANEL->ii;   nq0   = 0; 
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Admit the blocks
  */
@@ -173,7 +173,7 @@ void HPLAI_paupdateTT
 /*
  * Update nb columns at a time
  */
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
          HPL_ptimer( HPL_TIMING_LASWP );
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
          HPL_ptimer( HPL_TIMING_LASWP );
@@ -182,7 +182,7 @@ void HPLAI_paupdateTT
 #endif
          HPLAI_atrsm( HplColumnMajor, HplLeft, HplUpper, HplTrans,
                     HplUnit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
  */
@@ -210,7 +210,7 @@ void HPLAI_paupdateTT
  */
       if( ( nn = n - nq0 ) > 0 )
       {
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
          HPL_ptimer( HPL_TIMING_LASWP );
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
          HPL_ptimer( HPL_TIMING_LASWP );
@@ -219,7 +219,7 @@ void HPLAI_paupdateTT
 #endif
          HPLAI_atrsm( HplColumnMajor, HplLeft, HplUpper, HplTrans,
                     HplUnit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
  */
@@ -239,7 +239,7 @@ void HPLAI_paupdateTT
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
       }
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Destroy the matrix subviews
  */
@@ -276,7 +276,7 @@ void HPLAI_paupdateTT
       Aptr = PANEL->A; L2ptr = PANEL->L2;  L1ptr = PANEL->L1;
       Uptr = PANEL->U; ldl2 = PANEL->ldl2;
       mp   = PANEL->mp - ( curr != 0 ? jb : 0 );
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Admit the blocks
  */
@@ -306,7 +306,7 @@ void HPLAI_paupdateTT
 
          if( curr != 0 )
          {
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
  */
@@ -329,7 +329,7 @@ void HPLAI_paupdateTT
          }
          else
          {
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
  */
@@ -364,7 +364,7 @@ void HPLAI_paupdateTT
 
          if( curr != 0 )
          {
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
  */
@@ -387,7 +387,7 @@ void HPLAI_paupdateTT
          }
          else
          {
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
  */
@@ -408,7 +408,7 @@ void HPLAI_paupdateTT
 #endif
          }
       }
-#ifdef HPLAI_CALL_VSIPL
+#ifdef HPL_CALL_VSIPL
 /*
  * Destroy the matrix subviews
  */
@@ -434,7 +434,7 @@ void HPLAI_paupdateTT
  * panel broadcast is enforced in that routine).
  */
    if( PBCST != NULL ) *IFLAG = test;
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_UPDATE );
 #endif
 /*

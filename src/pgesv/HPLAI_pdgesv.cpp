@@ -1298,7 +1298,7 @@ HPLAI_T_pmat *A;
     }
     */
 
-    HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, 1e-13, 50, 10);
+    //HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, 1e-13, 50, 10);
 
     if (vptr_FA)
         free(vptr_FA);

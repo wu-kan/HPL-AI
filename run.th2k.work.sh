@@ -13,14 +13,14 @@ autoconf
 autoheader
 automake --add-missing
 ./configure \
-    CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING"
+    CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING -DHPLAI_T_AFLOAT=double"
 make -j
 echo 'HPLinpack benchmark input file
 Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-2900 29 30 34 35  Ns
+9 29 30 34 35  Ns
 1            # of NBs
 1 2 3 4      NBs
 0            PMAP process mapping (0=Row-,1=Column-major)

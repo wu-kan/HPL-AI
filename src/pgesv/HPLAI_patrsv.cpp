@@ -77,7 +77,7 @@ void HPLAI_patrsv
 /* ..
  * .. Executable Statements ..
  */
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_PTRSV );
 #endif
    if( ( n = AMAT->n ) <= 0 ) return;
@@ -246,7 +246,7 @@ void HPLAI_patrsv
                             Ccomm );
 
    if( Wfr  ) free( W  );
-#ifdef HPLAI_DETAILED_TIMING
+#ifdef HPL_DETAILED_TIMING
    HPL_ptimer( HPL_TIMING_PTRSV );
 #endif
 /*
