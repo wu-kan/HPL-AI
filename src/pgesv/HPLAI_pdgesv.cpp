@@ -1298,7 +1298,7 @@ HPLAI_T_pmat *A;
         }
         */
 
-        HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, -1, 50, 10); // 此处将 tol 设置成 -1， 强制做 50 次 gmres
+        HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, -1, 1, 2); // 此处将 tol 设置成 -1， 并强制做 2 次 gmres
         //HPLAI_pmat_cpy(A, &FA);
 
         if (vptr_FA)
