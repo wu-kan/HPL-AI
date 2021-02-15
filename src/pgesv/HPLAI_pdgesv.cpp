@@ -1060,7 +1060,7 @@ static int HPL_pgmres(
     /* end of HPL_pgmres() */
 }
 
-void HPL_pir(
+static void HPL_pir(
     HPLAI_T_grid *GRID,
     HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
@@ -1276,30 +1276,30 @@ HPLAI_T_pmat *A;
 
         HPLAI_pagesv(GRID, ALGO, &FA);
         /*
-    {
-        HPL_T_pmat TA;
+        {
+            HPL_T_pmat TA;
 
-        void *vptr_TA = (void *)malloc(
-            ((size_t)(ALGO->align) + (size_t)(A->ld + 1) * (size_t)(A->nq)) *
-            sizeof(double));
+            void *vptr_TA = (void *)malloc(
+                ((size_t)(ALGO->align) + (size_t)(A->ld + 1) * (size_t)(A->nq)) *
+                sizeof(double));
 
-        TA.A = (double *)HPL_PTR(vptr_TA, ((size_t)(ALGO->align) * sizeof(double)));
+            TA.A = (double *)HPL_PTR(vptr_TA, ((size_t)(ALGO->align) * sizeof(double)));
 
-        TA.X = Mptr(TA.A, 0, A->nq, A->ld);
+            TA.X = Mptr(TA.A, 0, A->nq, A->ld);
 
-        HPLAI_pmat_cpy(&TA, &FA);
-        
-        HPL_pdgesv(GRID, ALGO, &TA);
+            HPLAI_pmat_cpy(&TA, &FA);
 
-        HPLAI_pmat_cpy(&FA, &TA);
-        
-        if (vptr_TA)
-            free(vptr_TA);
-    }
-    */
+            HPL_pdgesv(GRID, ALGO, &TA);
 
-        //HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, 1e-13, 50, 10);
-        HPLAI_pmat_cpy(A, &FA);
+            HPLAI_pmat_cpy(&FA, &TA);
+
+            if (vptr_TA)
+                free(vptr_TA);
+        }
+        */
+
+        HPL_pir(GRID, ALGO, A, &FA, 1, 1e-14, -1, 50, 10); // 此处将 tol 设置成 -1， 强制做 50 次 gmres
+        //HPLAI_pmat_cpy(A, &FA);
 
         if (vptr_FA)
             free(vptr_FA);
