@@ -3,72 +3,17 @@
  */
 #include "hplai.h"
 
-template <typename T1, typename T2>
-static void HPLAI_pmat_cpy(
-    T1 *DST,
-    const T2 *SRC)
-{
-    DST->n = SRC->n;
-    DST->nb = SRC->nb;
-    DST->ld = SRC->ld;
-    DST->mp = SRC->mp;
-    DST->nq = SRC->nq;
-    DST->info = SRC->info;
-    for (int i = 0, sizeA = SRC->nq * SRC->ld; i < sizeA; ++i)
-        DST->A[i] = SRC->A[i];
-    for (int i = 0; i < SRC->nq; ++i)
-        DST->X[i] = SRC->X[i];
-}
+// https://github.com/schuangs/hpl-ai-with-IR/blob/master/src/pgesv/HPL_pLdtrsv.c
 
-/*
-static void print_vector
-(
-   const double *    vptr,
-   int         n,
-   int         inc
-)
-{
-   int         i;
-   HPL_fprintf(stdout, "\n[");
-   for (i = 0; i < n - 1; ++i)
-   {
-      HPL_fprintf(stdout, "%.16f, ", *(vptr + i*inc));
-   }
-   HPL_fprintf(stdout, "%.16f]\n", *(vptr + i*inc));
-}
-
-static void print_matrix
-(
-   const double *    mptr,
-   int         m,
-   int         n,
-   int         lda,
-   int         inc
-)
-{
-   int         i, j;
-   HPL_fprintf(stdout, "\n");
-   for (i = 0; i < m; ++i)
-   {
-      HPL_fprintf(stdout, "\n|");
-      for (j = 0; j < n-1; ++j)
-      {
-         HPL_fprintf(stdout, "%.16f, ", *(mptr + i*inc + j*lda));
-      }
-      HPL_fprintf(stdout, "%.16f|\n", *(mptr + i*inc + j*lda));
-   }
-   HPL_fprintf(stdout, "\n");
-}
-*/
-
-static double sign(double x)
-{
-    return (x >= 0) ? 1 : -1;
-}
-
-static void HPLAI_pLdtrsv(
-    HPLAI_T_grid *GRID,
+#ifdef STDC_HEADERS
+void HPL_pLdtrsv(
+    HPL_T_grid *GRID,
     HPL_T_pmat *AMAT)
+#else
+void HPL_pdtrsv(GRID, AMAT)
+    HPL_T_grid *GRID;
+HPL_T_pmat *AMAT;
+#endif
 {
     /* 
  * Purpose
@@ -101,7 +46,7 @@ static void HPLAI_pLdtrsv(
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPLAI_T_grid *
+ * GRID    (local input)                 HPL_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -136,7 +81,7 @@ static void HPLAI_pLdtrsv(
     A = AMAT->A;
     XR = AMAT->X;
 
-    (void)HPLAI_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
+    (void)HPL_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
     Rcomm = GRID->row_comm;
     Rmsgid = MSGID_BEGIN_PTRSV;
     Ccomm = GRID->col_comm;
@@ -198,7 +143,7 @@ static void HPLAI_pLdtrsv(
         W = (double *)malloc((size_t)(Mmin(n1, np)) * sizeof(double));
         if (W == NULL)
         {
-            HPL_pabort(__LINE__, "HPLAI_pLdtrsv", "Memory allocation failed");
+            HPL_pabort(__LINE__, "HPL_pLdtrsv", "Memory allocation failed");
         }
         Wfr = 1;
     }
@@ -365,6 +310,24 @@ static void HPLAI_pLdtrsv(
  */
 }
 
+// https://github.com/schuangs/hpl-ai-with-IR/blob/master/src/pir/HPL_pgmres.c
+
+/*
+ *  by Junkang Huang, Dec. 2020
+ * 
+ *  based on the implementation of parallel GMRES:
+ *      Parallelization Of The GMRES ---by Morgan Görtz, Lund University.
+ *  
+ *  and the pioneer work implementing Householder Transformations into GMRES:
+ *      Implementation Of The GMRES Method Using Householder Transformations Method
+ *      ---by Homer F. Walker, 1988
+ */
+
+double sign(double x)
+{
+    return (x >= 0) ? 1 : -1;
+}
+
 /* 
  * givens_rotation():
  * 
@@ -381,16 +344,16 @@ static void HPLAI_pLdtrsv(
  * 4. append v to R, that is:
  *   R = [R, v]
  */
-static void givens_rotations(
-    HPLAI_T_grid *GRID, /* processes grid information */
-    HPL_T_pmat *A,      /* local A */
-    double *v,          /* kth column of H */
-    double *w,          /* rhs */
-    double *R,          /* R matrix */
-    double *sinus,      /* sin(theta) */
-    double *cosus,      /* cos(theta) */
-    const int k,        /* offset */
-    const int MM        /* restart size */
+void givens_rotations(
+    HPL_T_grid *GRID, /* processes grid information */
+    HPL_T_pmat *A,    /* local A */
+    double *v,        /* kth column of H */
+    double *w,        /* rhs */
+    double *R,        /* R matrix */
+    double *sinus,    /* sin(theta) */
+    double *cosus,    /* cos(theta) */
+    const int k,      /* offset */
+    const int MM      /* restart size */
 )
 {
     /* local variables */
@@ -445,7 +408,7 @@ static void givens_rotations(
         {
             if (v[ii] * v[ii] + v[ii1] * v[ii1] == 0)
             {
-                HPL_fprintf(stdout, "Error: divided by zero in givens_rotations()\n");
+                printf("Error: divided by zero in givens_rotations()\n");
                 return;
             }
             /* calculate sin and cos for Jk */
@@ -466,7 +429,7 @@ static void givens_rotations(
             HPL_recv(&tmp, 1, pi1, 1, GRID->col_comm);
             if (v[ii] * v[ii] + tmp * tmp == 0)
             {
-                HPL_fprintf(stdout, "Error: divided by zero in givens_rotations()\n");
+                printf("Error: divided by zero in givens_rotations()\n");
                 return;
             }
             cosus[k] = v[ii] / sqrt(v[ii] * v[ii] + tmp * tmp);
@@ -528,13 +491,13 @@ static void givens_rotations(
  * solve for Householder vector u:
  *   s.t. Pkx = (I-2uuT)x = [x0,x1,..,xk-1,alpha,0,..0], alpha != 0
  */
-static void generateHouseholder(
-    HPLAI_T_grid *GRID, /* processes grid information */
-    HPL_T_pmat *A,      /* local A */
-    const double *x,    /* local object vector pointer */
-    double *u,          /* local result Householder Vector */
-    const int k,        /* order of the Householder */
-    double *alpha       /* result variable */
+void generateHouseholder(
+    HPL_T_grid *GRID, /* processes grid information */
+    HPL_T_pmat *A,    /* local A */
+    const double *x,  /* local object vector pointer */
+    double *u,        /* local result Householder Vector */
+    const int k,      /* order of the Householder */
+    double *alpha     /* result variable */
 )
 {
     /* local variables */
@@ -589,13 +552,13 @@ static void generateHouseholder(
  * perform:
  *    y = Pkx = (I-2uuT)x = x - 2u(x, u)
  */
-static void applyHouseholder(
-    HPLAI_T_grid *GRID, /* processes grid information */
-    HPL_T_pmat *A,      /* local A */
-    const double *x,    /* local object vector pointer */
-    const double *u,    /* local result Householder Vector */
-    const int k,        /* order of the Householder */
-    double *y           /* target vector */
+void applyHouseholder(
+    HPL_T_grid *GRID, /* processes grid information */
+    HPL_T_pmat *A,    /* local A */
+    const double *x,  /* local object vector pointer */
+    const double *u,  /* local result Householder Vector */
+    const int k,      /* order of the Householder */
+    double *y         /* target vector */
 )
 {
     /* local variables */
@@ -637,8 +600,8 @@ static void applyHouseholder(
  * when performing A*v, if v is distributed along different rows like b, some redistributions
  * needed to perform to make v distributed along different columns like x.
  */
-static void redB2X(
-    HPLAI_T_grid *GRID,
+void redB2X(
+    HPL_T_grid *GRID,
     HPL_T_pmat *A,   /* local A */
     const double *v, /* the vector to be redistributed, size: mp */
     double *vc       /* the target space, size: nq */
@@ -671,8 +634,8 @@ static void redB2X(
  * v is distributed along different columns like x, some redistributions
  * needed to perform to make v distributed along different columns like b.
  */
-static void redX2B(
-    HPLAI_T_grid *GRID,
+void redX2B(
+    HPL_T_grid *GRID,
     HPL_T_pmat *A,   /* local A */
     const double *v, /* the vector to be redistributed, size: nq */
     double *vc       /* the target space, size: mp */
@@ -699,11 +662,11 @@ static void redX2B(
 }
 
 /*
- *  HPLAI_pgmres():
+ *  HPL_pgmres():
  * 
  */
-static int HPLAI_pgmres(
-    HPLAI_T_grid *GRID,
+int HPL_pgmres(
+    HPL_T_grid *GRID,
     HPL_T_pmat *A,       /* local A */
     HPL_T_pmat *factors, /* local LU factors */
     const double *b,     /* local rhs */
@@ -744,7 +707,7 @@ static int HPLAI_pgmres(
         {
             memcpy(bptr, b, mp * sizeof(double));
         }
-        HPLAI_pLdtrsv(GRID, factors);
+        HPL_pLdtrsv(GRID, factors);
 
         /* redistribute x into column-distributing pattern for next pdtrsv */
         redX2B(GRID, factors, factors->X, rhs);
@@ -810,7 +773,7 @@ static int HPLAI_pgmres(
                 {
                     memcpy(bptr, v, mp * sizeof(double));
                 }
-                HPLAI_pLdtrsv(GRID, factors);
+                HPL_pLdtrsv(GRID, factors);
                 redX2B(GRID, factors, factors->X, v);
 
                 if (GRID->mycol == tarcol)
@@ -870,7 +833,7 @@ static int HPLAI_pgmres(
                 {
                     memcpy(bptr, v, mp * sizeof(double));
                 }
-                HPLAI_pLdtrsv(GRID, factors);
+                HPL_pLdtrsv(GRID, factors);
                 redX2B(GRID, factors, factors->X, v);
 
                 if (GRID->mycol == tarcol)
@@ -915,10 +878,10 @@ static int HPLAI_pgmres(
             tmp = w[k + 1];
             /* store the current error */
             currenterror = fabs(tmp);
-            // HPLAI_barrier(GRID->all_comm);
+            // HPL_barrier(GRID->all_comm);
             // if (GRID->iam == 0)
-            // HPL_fprintf(stdout, "Err: %.16f, start = %d\n", currenterror, start);fflush(stdout);
-            // HPLAI_barrier(GRID->all_comm);
+            // printf("Err: %.16f, start = %d\n", currenterror, start);fflush(stdout);
+            // HPL_barrier(GRID->all_comm);
             /* check if the solution is good enough */
             if (currenterror < TOL)
             {
@@ -936,18 +899,18 @@ static int HPLAI_pgmres(
 
         // if (GRID->iam == 0)
         // {
-        //     HPL_fprintf(stdout, "Before:\n");
-        //     HPL_fprintf(stdout, "w = :\n");
+        //     printf("Before:\n");
+        //     printf("w = :\n");
         //     print_vector(w, MM, 1);
-        //     HPL_fprintf(stdout, "R = :\n");
+        //     printf("R = :\n");
         //     print_matrix(R, MM, MM, MM, 1);
         // }
         /* solve Ry = w, R is upper-tri, and w will be overwritten by solution y */
         HPL_dtrsv(HplColumnMajor, HplUpper, HplNoTrans, HplNonUnit, k + 1, R, MM, w, 1);
         // if (GRID->iam == 0)
         // {
-        //     HPL_fprintf(stdout, "After:\n");
-        //     HPL_fprintf(stdout, "w = :\n");
+        //     printf("After:\n");
+        //     printf("w = :\n");
         //     print_vector(w, MM, 1);
         // }
         /* calculate the new solution */
@@ -988,7 +951,7 @@ static int HPLAI_pgmres(
         //     {
         //         memcpy(bptr, v, mp*sizeof(double));
         //     }
-        //     HPLAI_pLdtrsv(GRID, factors);
+        //     HPL_pLdtrsv(GRID, factors);
         //     redX2B(GRID, factors, factors->X, v);
 
         //     if (GRID->mycol == tarcol)
@@ -1010,11 +973,11 @@ static int HPLAI_pgmres(
         // HPL_all_reduce(&norm, 1, HPL_DOUBLE, HPL_sum, GRID->col_comm);
         // norm = sqrt(norm);
 
-        // HPLAI_barrier(GRID->all_comm);
+        // HPL_barrier(GRID->all_comm);
         // if (GRID->iam == 0)
-        //     HPL_fprintf(stdout, "currenterror = %.16f, norm = %.16f\n", currenterror, norm);
+        //     printf("currenterror = %.16f, norm = %.16f\n", currenterror, norm);
         // fflush(stdout);
-        // HPLAI_barrier(GRID->all_comm);
+        // HPL_barrier(GRID->all_comm);
 
         /* if the error is small enough, stop. 
             otherwise another iteration will be initiated. */
@@ -1023,11 +986,11 @@ static int HPLAI_pgmres(
             ready = 1;
         }
 
-        // HPL_fprintf(stdout, "Restart!\n");
+        // printf("Restart!\n");
         // fflush(stdout);
     }
 
-    // HPL_fprintf(stdout, "Final! From process %d\n", GRID->iam);
+    // printf("Final! From process %d\n", GRID->iam);
     // fflush(stdout);
     /* check if we have done maximum number of starts */
     if (start > MAXIT)
@@ -1057,53 +1020,86 @@ static int HPLAI_pgmres(
     /* return total number of iterations performed */
     return (start * MM + k + 1);
 
-    /* end of HPLAI_pgmres() */
+    /* end of HPL_pgmres() */
 }
 
-static void HPLAI_pir(
+// https://github.com/schuangs/hpl-ai-with-IR/blob/master/src/pir/HPL_pir.c
+
+/*
+ * By Junkang Huang, August, 2020
+ * 
+ * based on the paper:
+ *    A New  Analysis  Of Iterative Refinement And Its  Application To 
+ *    Accurate Solution Of Ill Conditioned Sparse Linear Systems
+ *    ---by Carson, Erin & Higham, Nicholas J., 2017
+ */
+
+#ifdef HPLAI_IR_PARA
+
+#define IR 1
+
+#define TOL -1    /* Tolerance for GMRES residual */
+#define PRE 1e-14 /* solution tolerance */
+#define MM 2      /* restart size for GMRES */
+#define MAXIT 1   /* maximum number of GMRES iteration */
+
+#else
+
+#define IR 1
+
+#define TOL 1e-13 /* Tolerance for GMRES residual */
+#define PRE 1e-14 /* solution tolerance */
+#define MM 50     /* restart size for GMRES */
+#define MAXIT 10  /* maximum number of GMRES iteration */
+#endif
+
+#ifdef STDC_HEADERS
+void HPL_pir(
     HPLAI_T_grid *GRID,
     HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
-    HPLAI_T_pmat *FA,
-    const int IR,
-    const double PRE,
-    const double TOL,
-    const int MM,
-    const int MAXIT)
+    HPLAI_T_pmat *FA)
+#else
+void HPL_pir(GRID, ALGO, A, FA, MYROW, MYCOL, NPCOL)
+    HPL_T_grid *GRID;
+HPLAI_T_palg *ALGO;
+HPLAI_T_pmat *A;
+HPLAI_T_pmat *FA;
+#endif
 {
     /* 
-   * Purpose
-   * =======
-   *
-   * HPLAI_pir performs iterative refinement procesure to enhance the accur-
-   * acy of  the solution  of linear system obtained  by LU factorization. 
-   * Parallel  GMRES algorithm  is used  as the inner solver to solve  the 
-   * inner correct equation Ad = r.
-   *
-   * Arguments
-   * =========
-   *
-   * GRID    (local input)                 HPLAI_T_grid *
-   *         On entry,  GRID  points  to the data structure containing the
-   *         process grid information.
-   *
-   * ALGO    (global input)                HPL_T_palg *
-   *         On entry,  ALGO  points to  the data structure containing the
-   *         algorithmic parameters to be used for this test.
-   * 
-   * A       (local input/output)          HPL_T_pmat *
-   *         On entry, A points to the data structure containing the local
-   *         array information. 
-   * FA      (local input/output)          HPLAI_T_pmat *
-   *         On entry, A points to the data structure containing the local
-   *         array information. It serves as lower precision version if A.
-   *
-   * ---------------------------------------------------------------------
-   */
+ * Purpose
+ * =======
+ *
+ * HPL_pir performs iterative refinement procesure to enhance the accur-
+ * acy of  the solution  of linear system obtained  by LU factorization. 
+ * Parallel  GMRES algorithm  is used  as the inner solver to solve  the 
+ * inner correct equation Ad = r.
+ *
+ * Arguments
+ * =========
+ *
+ * GRID    (local input)                 HPL_T_grid *
+ *         On entry,  GRID  points  to the data structure containing the
+ *         process grid information.
+ *
+ * ALGO    (global input)                HPL_T_palg *
+ *         On entry,  ALGO  points to  the data structure containing the
+ *         algorithmic parameters to be used for this test.
+ * 
+ * A       (local input/output)          HPL_T_pmat *
+ *         On entry, A points to the data structure containing the local
+ *         array information. 
+ * FA      (local input/output)          HPL_T_pmat *
+ *         On entry, A points to the data structure containing the local
+ *         array information. It serves as lower precision version if A.
+ *
+ * ---------------------------------------------------------------------
+ */
 
     /*
-   * .. Local Variables ..
-   */
+ * .. Local Variables ..
+ */
     int i, j, sizeA;
     int mp, nq, n, nb, npcol, nprow, myrow, mycol, tarcol, info[3];
     double *Bptr, *res, *d;
@@ -1112,8 +1108,8 @@ static void HPLAI_pir(
     HPL_T_pmat factors;
 
     /* ..
-   * .. Executable Statements ..
-   */
+ * .. Executable Statements ..
+ */
     mp = A->mp;
     nq = A->nq - 1;
     n = A->n;
@@ -1134,9 +1130,9 @@ static void HPLAI_pir(
     factors.info = 0;
 
     /*
-   * allocate  space  for  factors, which  contains LU factors of  double
-   * precision, which is in fact of lower precision, just stored in double. 
-   */
+ * allocate  space  for  factors, which  contains LU factors of  double
+ * precision, which is in fact of lower precision, just stored in double. 
+ */
 
     vptr = (void *)malloc(((size_t)(ALGO->align) +
                            (size_t)(A->ld + 1) * (size_t)(A->nq)) *
@@ -1152,32 +1148,33 @@ static void HPLAI_pir(
         *(factors.A + i) = (double)*(FA->A + i);
     }
     /*
-   * Convert initial solution ( which is obtained through lower precision 
-   * LU factorization) into higher precision
-   */
+ * Convert initial solution ( which is obtained through lower precision 
+ * LU factorization) into higher precision
+ */
     for (i = 0; i < nq; ++i)
     {
         *(A->X + i) = (double)(*(FA->X + i));
     }
 
     /*
-   * allocate space for residual vector, correction vectors.
-   */
+ * allocate space for residual vector, correction vectors.
+ */
     res = (double *)malloc(mp * sizeof(double));
     d = (double *)malloc(nq * sizeof(double));
 
     /*
-   * tarcol is the process column containing b
-   */
+ * tarcol is the process column containing b
+ */
     tarcol = HPL_indxg2p(n, nb, nb, 0, npcol);
 
     /*
-   * Iterative Refinement
-   */
+ * Iterative Refinement
+ */
     for (i = 0; i < IR; ++i)
     {
+        memset(res, 0, mp * sizeof(double));
         if (GRID->iam == 0)
-            HPL_fprintf(stdout, "IR Loop %d\n", i);
+            printf("IR Loop %d\n", i);
         /* Calculate residual in double precision */
         if (mycol == tarcol)
         {
@@ -1187,7 +1184,6 @@ static void HPLAI_pir(
         }
         else if (nq > 0)
         {
-            memset(res, 0, mp * sizeof(double));
             HPL_dgemv(HplColumnMajor, HplNoTrans, mp, nq, -HPL_rone,
                       A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
         }
@@ -1206,26 +1202,20 @@ static void HPLAI_pir(
             norm += res[j] * res[j];
         }
         HPL_all_reduce(&norm, 1, HPL_DOUBLE, HPL_sum, GRID->col_comm);
+        norm = sqrt(norm);
 
-        /*
-         norm = sqrt(norm);
-
-         if (norm < PRE)
-            break;      
-         */
-
-        if (norm < PRE * PRE)
+        if (norm < PRE)
             break;
 
         /* 
-      * Solve correction  equation using preconditioned  GMRES  method in mix
-      * precision.  
-      */
+    * Solve correction  equation using preconditioned  GMRES  method in mix
+    * precision.  
+    */
         memset(d, 0, nq * sizeof(double));
-        HPLAI_pgmres(GRID, A, &factors, res, d, TOL, MM, MAXIT);
+        HPL_pgmres(GRID, A, &factors, res, d, TOL, MM, MAXIT);
         /* 
-      * update X with d
-      */
+    * update X with d
+    */
         for (j = 0; j < nq; ++j)
         {
             *(A->X + j) += d[j];
@@ -1241,8 +1231,25 @@ static void HPLAI_pir(
         free(res);
 
     /*
-   * End of HPLAI_pir
-   */
+ * End of HPL_pir
+ */
+}
+
+template <typename T1, typename T2>
+static void HPLAI_pmat_cpy(
+    T1 *DST,
+    const T2 *SRC)
+{
+    DST->n = SRC->n;
+    DST->nb = SRC->nb;
+    DST->ld = SRC->ld;
+    DST->mp = SRC->mp;
+    DST->nq = SRC->nq;
+    DST->info = SRC->info;
+    for (int i = 0, sizeA = SRC->nq * SRC->ld; i < sizeA; ++i)
+        DST->A[i] = SRC->A[i];
+    for (int i = 0; i < SRC->nq; ++i)
+        DST->X[i] = SRC->X[i];
 }
 
 #ifdef __cplusplus
@@ -1298,8 +1305,7 @@ HPLAI_T_pmat *A;
         }
         */
 
-        HPLAI_pir(GRID, ALGO, A, &FA, 1, 1e-14, -1, 50, 1); // 此处将 tol 设置成 -1 从而强制做 gmres
-        //HPLAI_pmat_cpy(A, &FA);
+        HPL_pir(GRID, ALGO, A, &FA);
 
         if (vptr_FA)
             free(vptr_FA);
