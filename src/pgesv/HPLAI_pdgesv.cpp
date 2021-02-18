@@ -1243,6 +1243,23 @@ static void HPLAI_pmat_cpy(
         DST->X[i] = SRC->X[i];
 }
 
+template <typename T1, typename T2, typename T3>
+static void HPLAI_pmat_new(
+    T1 *DST,
+    const T2 *SRC,
+    HPLAI_T_palg *ALGO,
+    void **vptr,
+    T3 *DSTA)
+{
+    *vptr = (void *)malloc(
+            ((size_t)(ALGO->align) + (size_t)(SRC->ld + 1) * (size_t)(SRC->nq)) * sizeof(DST->A[0]));
+    DST->A = (T3 *)HPL_PTR((*vptr), ((size_t)(ALGO->align) * sizeof(DST->A[0])));
+
+    DST->X = Mptr(DST->A, 0, SRC->nq, SRC->ld);
+
+    HPLAI_pmat_cpy(DST, SRC);
+}
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -1260,17 +1277,9 @@ HPL_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif
     {
+        void *vptr_FA;
         HPLAI_T_pmat FA;
-
-        void *vptr_FA = (void *)malloc(
-            ((size_t)(ALGO->align) + (size_t)(A->ld + 1) * (size_t)(A->nq)) *
-            sizeof(HPLAI_T_AFLOAT));
-
-        FA.A = (HPLAI_T_AFLOAT *)HPL_PTR(vptr_FA, ((size_t)(ALGO->align) * sizeof(HPLAI_T_AFLOAT)));
-
-        FA.X = Mptr(FA.A, 0, A->nq, A->ld);
-
-        HPLAI_pmat_cpy(&FA, A);
+        HPLAI_pmat_new(&FA, A, ALGO, &vptr_FA, FA.A);
 
         HPLAI_pagesv(GRID, ALGO, &FA);
         /*

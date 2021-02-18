@@ -14,7 +14,7 @@ autoreconf -ivf
     LIBS="-lblaspp"
 make -j
 
-if false; then
+if true; then
     cp testing/ptest/HPL.dat HPL.dat
 else
     echo 'HPLinpack benchmark input file
