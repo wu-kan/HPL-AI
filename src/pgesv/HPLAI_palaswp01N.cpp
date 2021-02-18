@@ -182,7 +182,7 @@ void HPLAI_palaswp01N
 /*
  * Spread U - optionally probe for column panel
  */
-   HPLAI_spreadN( PBCST, IFLAG, PANEL, HplRight, n, U, LDU, 0, iplen,
+   HPLAI_spreadN( PBCST, IFLAG, PANEL, HPLAI_Right, n, U, LDU, 0, iplen,
                 ipmap, ipmapm1 );
 /*
  * Local exchange (everywhere but in process row icurrow)
@@ -197,7 +197,7 @@ void HPLAI_palaswp01N
  * Equilibration
  */
    if( equil != 0 )
-      HPLAI_equil( PBCST, IFLAG, PANEL, HplNoTrans, n, U, LDU, iplen,
+      HPLAI_equil( PBCST, IFLAG, PANEL, HPLAI_NoTrans, n, U, LDU, iplen,
                  ipmap, ipmapm1, iwork );
 /*
  * Rolling phase

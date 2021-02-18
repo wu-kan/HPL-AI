@@ -201,7 +201,7 @@ void HPLAI_papancrT
          (void) vsip_mdestroy_d( Xv1 );
          (void) vsip_mdestroy_d( Av1 );
 #else
-         HPLAI_agemv( HplColumnMajor, HplNoTrans, Nm1, kk, -HPLAI_rone,
+         HPLAI_agemv( HPLAI_ColumnMajor, HPLAI_NoTrans, Nm1, kk, -HPLAI_rone,
                     Mptr( L1, jj+1, ICOFF, n0 ), n0, Mptr( L1, ICOFF,
                     jj, n0 ), 1, HPLAI_rone, L1ptr, 1 );
 #endif
@@ -234,7 +234,7 @@ void HPLAI_papancrT
       (void) vsip_mdestroy_d( Xv1 );
       (void) vsip_mdestroy_d( Av1 );
 #else
-      HPLAI_agemv( HplColumnMajor, HplNoTrans, Mm1, kk+1, -HPLAI_rone,
+      HPLAI_agemv( HPLAI_ColumnMajor, HPLAI_NoTrans, Mm1, kk+1, -HPLAI_rone,
                  Mptr( A, iip1, ICOFF, lda ), lda, Mptr( L1, jj+1, ICOFF,
                  n0 ), n0, HPLAI_rone, Mptr( A, iip1, jj+1, lda ), 1 );
 #endif

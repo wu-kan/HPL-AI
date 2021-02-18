@@ -218,7 +218,7 @@ void HPLAI_parpancrT
       (void) vsip_mdestroy_d( Lv0 );
       (void) vsip_mdestroy_d( Av0 );
 #else
-      HPLAI_agemm( HplColumnMajor, HplNoTrans, HplTrans, m, jb, jj,
+      HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_Trans, m, jb, jj,
                  -HPLAI_rone, Mptr( Aptr, ii, 0, lda ), lda, Mptr( L1ptr,
                  jj, 0, n0 ), n0, HPLAI_rone, Mptr( Aptr, ii, jj, lda ),
                  lda );
@@ -260,13 +260,13 @@ void HPLAI_parpancrT
  */
          (void) vsip_mdestroy_d( Lv0 );
 #else
-         HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, n, jb,
+         HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, n, jb,
                     jj, -HPLAI_rone, Mptr( L1ptr, jj+jb, 0, n0 ), n0,
                     Mptr( L1ptr, 0, jj, n0 ), n0, HPLAI_rone,
                     Mptr( L1ptr, jj+jb, jj, n0 ), n0 );
 #endif
-         HPLAI_atrsm( HplColumnMajor, HplRight, HplUpper, HplNoTrans,
-                    HplUnit, n, jb, HPLAI_rone, Mptr( L1ptr, jj, jj,
+         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Right, HPLAI_Upper, HPLAI_NoTrans,
+                    HPLAI_Unit, n, jb, HPLAI_rone, Mptr( L1ptr, jj, jj,
                     n0 ), n0, Mptr( L1ptr, jj+jb, jj, n0 ), n0 );
       }
 /*

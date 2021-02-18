@@ -9,10 +9,25 @@
 #include "hplai_misc.h"
 
 #define HPLAI_ORDER HPL_ORDER
+#define HPLAI_RowMajor HplRowMajor
+#define HPLAI_ColumnMajor HplColumnMajor
+
 #define HPLAI_TRANS HPL_TRANS
+#define HPLAI_NoTrans HplNoTrans
+#define HPLAI_Trans HplTrans
+#define HPLAI_ConjTrans HplConjTrans
+
 #define HPLAI_UPLO HPL_UPLO
+#define HPLAI_Upper HplUpper
+#define HPLAI_Lower HplLower
+
 #define HPLAI_DIAG HPL_DIAG
+#define HPLAI_NonUnit HplNonUnit
+#define HPLAI_Unit HplUnit
+
 #define HPLAI_SIDE HPL_SIDE
+#define HPLAI_Left HplLeft
+#define HPLAI_Right HplRight
 
 #if (HPL_CALL_CBLAS)
 

@@ -5,7 +5,7 @@
 
 template <typename T>
 static void HPLAI_ager_template(
-    const enum HPL_ORDER ORDER,
+    const enum HPLAI_ORDER ORDER,
     const int M,
     const int N,
     const T ALPHA,
@@ -18,7 +18,7 @@ static void HPLAI_ager_template(
 
 template <>
 void HPLAI_ager_template<double>(
-    const enum HPL_ORDER ORDER,
+    const enum HPLAI_ORDER ORDER,
     const int M,
     const int N,
     const double ALPHA,
@@ -35,7 +35,7 @@ void HPLAI_ager_template<double>(
 #ifdef HPL_CALL_CBLAS
 template <>
 void HPLAI_ager_template<float>(
-    const enum HPL_ORDER ORDER,
+    const enum HPLAI_ORDER ORDER,
     const int M,
     const int N,
     const float ALPHA,
@@ -57,7 +57,7 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_ager(
-        const enum HPL_ORDER ORDER,
+        const enum HPLAI_ORDER ORDER,
         const int M,
         const int N,
         const HPLAI_T_AFLOAT ALPHA,
@@ -69,7 +69,7 @@ extern "C"
         const int LDA)
 #else
 void HPLAI_ager(ORDER, M, N, ALPHA, X, INCX, Y, INCY, A, LDA)
-    const enum HPL_ORDER ORDER;
+    const enum HPLAI_ORDER ORDER;
 const int M;
 const int N;
 const HPLAI_T_AFLOAT ALPHA;

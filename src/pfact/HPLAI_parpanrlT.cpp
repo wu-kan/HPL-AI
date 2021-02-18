@@ -172,8 +172,8 @@ void HPLAI_parpanrlT
  * Factor current panel - Replicated solve - Local update
  */
       HPLAI_parpanrlT( PANEL, m, jb, ioff, WORK );
-      HPLAI_atrsm( HplColumnMajor, HplRight, HplUpper, HplNoTrans,
-                 HplUnit, n, jb, HPLAI_rone, Mptr( L1ptr, jj, jj, n0 ),
+      HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Right, HPLAI_Upper, HPLAI_NoTrans,
+                 HPLAI_Unit, n, jb, HPLAI_rone, Mptr( L1ptr, jj, jj, n0 ),
                  n0, Mptr( L1ptr, jj+jb, jj, n0 ), n0 );
       if( curr != 0 ) { ii += jb; m -= jb; }
 #ifdef HPL_CALL_VSIPL
@@ -223,7 +223,7 @@ void HPLAI_parpanrlT
       (void) vsip_mdestroy_d( Lv0 );
       (void) vsip_mdestroy_d( Av0 );
 #else
-      HPLAI_agemm( HplColumnMajor, HplNoTrans, HplTrans, m, n,
+      HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_Trans, m, n,
                  jb, -HPLAI_rone, Mptr( Aptr, ii, jj, lda ), lda,
                  Mptr( L1ptr, jj+jb, jj, n0 ), n0, HPLAI_rone,
                  Mptr( Aptr, ii, jj+jb, lda ), lda );

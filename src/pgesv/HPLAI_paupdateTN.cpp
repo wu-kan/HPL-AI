@@ -180,8 +180,8 @@ void HPLAI_paupdateTN
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
-         HPLAI_atrsm( HplColumnMajor, HplLeft, HplUpper, HplTrans,
-                    HplUnit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
+         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left, HPLAI_Upper, HPLAI_Trans,
+                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
 #ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
@@ -197,7 +197,7 @@ void HPLAI_paupdateTN
          (void) vsip_mdestroy_d( Av1 );
          (void) vsip_mdestroy_d( Uv1 );
 #else
-         HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, mp, nn,
+         HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
                     jb, -HPLAI_rone, L2ptr, ldl2, Aptr, lda, HPLAI_rone,
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -217,8 +217,8 @@ void HPLAI_paupdateTN
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
-         HPLAI_atrsm( HplColumnMajor, HplLeft, HplUpper, HplTrans,
-                    HplUnit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
+         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left, HPLAI_Upper, HPLAI_Trans,
+                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
 #ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
@@ -234,7 +234,7 @@ void HPLAI_paupdateTN
          (void) vsip_mdestroy_d( Av1 );
          (void) vsip_mdestroy_d( Uv1 );
 #else
-         HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, mp, nn,
+         HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
                     jb, -HPLAI_rone, L2ptr, ldl2, Aptr, lda, HPLAI_rone,
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -301,8 +301,8 @@ void HPLAI_paupdateTN
       {
          nn = n - nq0; nn = Mmin( nb, nn );
 
-         HPLAI_atrsm( HplColumnMajor, HplLeft,  HplUpper, HplTrans,
-                    HplUnit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
+         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left,  HPLAI_Upper, HPLAI_Trans,
+                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
 
          if( curr != 0 )
          {
@@ -321,7 +321,7 @@ void HPLAI_paupdateTN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, mp, nn,
+            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -344,7 +344,7 @@ void HPLAI_paupdateTN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, mp, nn,
+            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Aptr, lda );
 #endif
@@ -359,8 +359,8 @@ void HPLAI_paupdateTN
  */
       if( ( nn = n - nq0 ) > 0 )
       {
-         HPLAI_atrsm( HplColumnMajor, HplLeft,  HplUpper, HplTrans,
-                    HplUnit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
+         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left,  HPLAI_Upper, HPLAI_Trans,
+                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
 
          if( curr != 0 )
          {
@@ -379,7 +379,7 @@ void HPLAI_paupdateTN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, mp, nn,
+            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -402,7 +402,7 @@ void HPLAI_paupdateTN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HplColumnMajor, HplNoTrans, HplNoTrans, mp, nn,
+            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Aptr, lda );
 #endif

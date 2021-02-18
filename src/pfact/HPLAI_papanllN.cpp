@@ -181,7 +181,7 @@ void HPLAI_papanllN
       HPLAI_alocswpN( PANEL,    ii, jj, WORK );
 
       L1ptr = Mptr( L1, ICOFF, jj+1, n0 ); kk = jj + 1 - ICOFF;
-      HPLAI_atrsv( HplColumnMajor, HplLower, HplNoTrans, HplUnit, kk, 
+      HPLAI_atrsv( HPLAI_ColumnMajor, HPLAI_Lower, HPLAI_NoTrans, HPLAI_Unit, kk, 
                  Mptr( L1, ICOFF, ICOFF, n0 ), n0, L1ptr,  1 );
 /*
  * Scale  current column by its absolute value max entry  -  Update  and 
@@ -208,7 +208,7 @@ void HPLAI_papanllN
       (void) vsip_mdestroy_d( Xv1 );
       (void) vsip_mdestroy_d( Av1 );
 #else
-      HPLAI_agemv( HplColumnMajor, HplNoTrans, Mm1, kk,  -HPLAI_rone,
+      HPLAI_agemv( HPLAI_ColumnMajor, HPLAI_NoTrans, Mm1, kk,  -HPLAI_rone,
                  Mptr( A, iip1, ICOFF, lda ), lda, L1ptr, 1,
                  HPLAI_rone, Mptr( A, iip1, jj+1, lda ),  1 );
 #endif

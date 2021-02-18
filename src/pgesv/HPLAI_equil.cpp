@@ -212,17 +212,17 @@ void HPLAI_equil
 /*
  * Equilibration phase
  */
-         if( TRANS == HplNoTrans )
+         if( TRANS == HPLAI_NoTrans )
          {
             if( left  )
             {
-               HPLAI_spreadN( PBCST, IFLAG, PANEL, HplLeft,  N, U, LDU,
+               HPLAI_spreadN( PBCST, IFLAG, PANEL, HPLAI_Left,  N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
 
             if( right )
             {
-               HPLAI_spreadN( PBCST, IFLAG, PANEL, HplRight, N, U, LDU,
+               HPLAI_spreadN( PBCST, IFLAG, PANEL, HPLAI_Right, N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
          }
@@ -230,13 +230,13 @@ void HPLAI_equil
          {
             if( left  )
             {
-               HPLAI_spreadT( PBCST, IFLAG, PANEL, HplLeft,  N, U, LDU,
+               HPLAI_spreadT( PBCST, IFLAG, PANEL, HPLAI_Left,  N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
 
             if( right )
             {
-               HPLAI_spreadT( PBCST, IFLAG, PANEL, HplRight, N, U, LDU,
+               HPLAI_spreadT( PBCST, IFLAG, PANEL, HPLAI_Right, N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
          }

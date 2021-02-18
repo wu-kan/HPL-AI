@@ -211,14 +211,14 @@ void HPLAI_papanrlN
       }
 #else
       if( Nm1 > 1 )
-         HPLAI_ager( HplColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
+         HPLAI_ager( HPLAI_ColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
                    WORK+4+jj+2, 1, Mptr( Anxt, 0, 1, lda ), lda );
 #endif
 /*
  * Same thing as above but with worse data access on y (A += x * y^T)
  *
  *    if( Nm1 > 1 ) )
- *       HPLAI_ager( HplColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
+ *       HPLAI_ager( HPLAI_ColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
  *                 Mptr( L1, jj, jj+2, n0 ), n0, Mptr( Anxt, 0, 1, lda ),
  *                 lda );
  */  

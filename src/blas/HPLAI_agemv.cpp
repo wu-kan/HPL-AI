@@ -5,8 +5,8 @@
 
 template <typename T>
 static void HPLAI_agemv_template(
-    const enum HPL_ORDER ORDER,
-    const enum HPL_TRANS TRANS,
+    const enum HPLAI_ORDER ORDER,
+    const enum HPLAI_TRANS TRANS,
     const int M,
     const int N,
     const T ALPHA,
@@ -20,8 +20,8 @@ static void HPLAI_agemv_template(
 
 template <>
 void HPLAI_agemv_template<double>(
-    const enum HPL_ORDER ORDER,
-    const enum HPL_TRANS TRANS,
+    const enum HPLAI_ORDER ORDER,
+    const enum HPLAI_TRANS TRANS,
     const int M,
     const int N,
     const double ALPHA,
@@ -39,8 +39,8 @@ void HPLAI_agemv_template<double>(
 #ifdef HPL_CALL_CBLAS
 template <>
 void HPLAI_agemv_template<float>(
-    const enum HPL_ORDER ORDER,
-    const enum HPL_TRANS TRANS,
+    const enum HPLAI_ORDER ORDER,
+    const enum HPLAI_TRANS TRANS,
     const int M,
     const int N,
     const float ALPHA,
@@ -63,8 +63,8 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_agemv(
-        const enum HPL_ORDER ORDER,
-        const enum HPL_TRANS TRANS,
+        const enum HPLAI_ORDER ORDER,
+        const enum HPLAI_TRANS TRANS,
         const int M,
         const int N,
         const HPLAI_T_AFLOAT ALPHA,
@@ -77,8 +77,8 @@ extern "C"
         const int INCY)
 #else
 void HPLAI_agemv(ORDER, TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY)
-    const enum HPL_ORDER ORDER;
-const enum HPL_TRANS TRANS;
+    const enum HPLAI_ORDER ORDER;
+const enum HPLAI_TRANS TRANS;
 const int M;
 const int N;
 const HPLAI_T_AFLOAT ALPHA;

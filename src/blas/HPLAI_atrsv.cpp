@@ -5,10 +5,10 @@
 
 template <typename T>
 static void HPLAI_atrsv_template(
-	const enum HPL_ORDER ORDER,
-	const enum HPL_UPLO UPLO,
-	const enum HPL_TRANS TRANS,
-	const enum HPL_DIAG DIAG,
+	const enum HPLAI_ORDER ORDER,
+	const enum HPLAI_UPLO UPLO,
+	const enum HPLAI_TRANS TRANS,
+	const enum HPLAI_DIAG DIAG,
 	const int N,
 	const T *A,
 	const int LDA,
@@ -17,10 +17,10 @@ static void HPLAI_atrsv_template(
 
 template <>
 void HPLAI_atrsv_template<double>(
-	const enum HPL_ORDER ORDER,
-	const enum HPL_UPLO UPLO,
-	const enum HPL_TRANS TRANS,
-	const enum HPL_DIAG DIAG,
+	const enum HPLAI_ORDER ORDER,
+	const enum HPLAI_UPLO UPLO,
+	const enum HPLAI_TRANS TRANS,
+	const enum HPLAI_DIAG DIAG,
 	const int N,
 	const double *A,
 	const int LDA,
@@ -33,10 +33,10 @@ void HPLAI_atrsv_template<double>(
 #if (HPL_CALL_CBLAS)
 template <>
 void HPLAI_atrsv_template<float>(
-	const enum HPL_ORDER ORDER,
-	const enum HPL_UPLO UPLO,
-	const enum HPL_TRANS TRANS,
-	const enum HPL_DIAG DIAG,
+	const enum HPLAI_ORDER ORDER,
+	const enum HPLAI_UPLO UPLO,
+	const enum HPLAI_TRANS TRANS,
+	const enum HPLAI_DIAG DIAG,
 	const int N,
 	const float *A,
 	const int LDA,
@@ -54,10 +54,10 @@ extern "C"
 
 #ifdef STDC_HEADERS
 	void HPLAI_atrsv(
-		const enum HPL_ORDER ORDER,
-		const enum HPL_UPLO UPLO,
-		const enum HPL_TRANS TRANS,
-		const enum HPL_DIAG DIAG,
+		const enum HPLAI_ORDER ORDER,
+		const enum HPLAI_UPLO UPLO,
+		const enum HPLAI_TRANS TRANS,
+		const enum HPLAI_DIAG DIAG,
 		const int N,
 		const HPLAI_T_AFLOAT *A,
 		const int LDA,
@@ -65,10 +65,10 @@ extern "C"
 		const int INCX)
 #else
 void HPLAI_atrsv(ORDER, UPLO, TRANS, DIAG, N, A, LDA, X, INCX)
-	const enum HPL_ORDER ORDER;
-const enum HPL_UPLO UPLO;
-const enum HPL_TRANS TRANS;
-const enum HPL_DIAG DIAG;
+	const enum HPLAI_ORDER ORDER;
+const enum HPLAI_UPLO UPLO;
+const enum HPLAI_TRANS TRANS;
+const enum HPLAI_DIAG DIAG;
 const int N;
 const HPLAI_T_AFLOAT *A;
 const int LDA;

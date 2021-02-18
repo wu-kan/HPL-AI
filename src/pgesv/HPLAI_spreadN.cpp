@@ -168,7 +168,7 @@ void HPLAI_spreadN
 /*
  * Spread U to the left
  */
-   if( SIDE == HplLeft )
+   if( SIDE == HPLAI_Left )
    {
       nprow = ( npm1 = SRCDIST ) + 1;
       if( ( ( mydist = (unsigned int)(IPMAPM1[myrow]) ) >
