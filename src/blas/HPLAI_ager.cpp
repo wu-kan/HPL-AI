@@ -3,52 +3,31 @@
  */
 #include "hplai.h"
 
-template <typename T>
-static void HPLAI_ager_template(
-    const enum HPLAI_ORDER ORDER,
-    const int M,
-    const int N,
-    const T ALPHA,
-    const T *X,
-    const int INCX,
-    T *Y,
-    const int INCY,
-    T *A,
-    const int LDA);
-
 template <>
-void HPLAI_ager_template<double>(
-    const enum HPLAI_ORDER ORDER,
-    const int M,
-    const int N,
-    const double ALPHA,
-    const double *X,
-    const int INCX,
-    double *Y,
-    const int INCY,
+void blas::ger<double, double, double>(
+    blas::Layout layout,
+    int64_t m,
+    int64_t n,
+    double alpha,
+    double const *x,
+    int64_t incx,
+    double const *y,
+    int64_t incy,
     double *A,
-    const int LDA)
+    int64_t lda)
 {
-    HPL_dger(ORDER, M, N, ALPHA, X, INCX, Y, INCY, A, LDA);
+    HPL_dger(
+        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
+        m,
+        n,
+        alpha,
+        x,
+        incx,
+        y,
+        incy,
+        A,
+        lda);
 }
-
-#ifdef HPL_CALL_CBLAS
-template <>
-void HPLAI_ager_template<float>(
-    const enum HPLAI_ORDER ORDER,
-    const int M,
-    const int N,
-    const float ALPHA,
-    const float *X,
-    const int INCX,
-    float *Y,
-    const int INCY,
-    float *A,
-    const int LDA)
-{
-    cblas_sger(ORDER, M, N, ALPHA, X, INCX, Y, INCY, A, LDA);
-}
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -81,7 +60,9 @@ HPLAI_T_AFLOAT *A;
 const int LDA;
 #endif
     {
-        HPLAI_ager_template(ORDER, M, N, ALPHA, X, INCX, Y, INCY, A, LDA);
+        blas::ger(
+            ORDER == HPLAI_RowMajor ? blas::Layout::RowMajor : blas::Layout::ColMajor,
+            M, N, ALPHA, X, INCX, Y, INCY, A, LDA);
         /*
  * End of HPLAI_ager
  */

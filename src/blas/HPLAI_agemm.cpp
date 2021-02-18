@@ -21,9 +21,9 @@ void blas::gemm<double, double, double>(
     int64_t ldc)
 {
     HPL_dgemm(
-        layout == blas::Layout::RowMajor ? HPLAI_RowMajor : HPLAI_ColumnMajor,
-        transA == blas::Op::Trans ? HPLAI_Trans : HPLAI_NoTrans,
-        transB == blas::Op::Trans ? HPLAI_Trans : HPLAI_NoTrans,
+        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
+        transA == blas::Op::Trans ? HplTrans : HplNoTrans,
+        transB == blas::Op::Trans ? HplTrans : HplNoTrans,
         m,
         n,
         k,

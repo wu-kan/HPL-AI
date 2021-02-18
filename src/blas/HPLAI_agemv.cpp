@@ -19,8 +19,8 @@ void blas::gemv<double, double, double>(
     int64_t incy)
 {
     HPL_dgemv(
-        layout == blas::Layout::RowMajor ? HPLAI_RowMajor : HPLAI_ColumnMajor,
-        trans == blas::Op::Trans ? HPLAI_Trans : HPLAI_NoTrans,
+        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
+        trans == blas::Op::Trans ? HplTrans : HplNoTrans,
         m,
         n,
         alpha,
