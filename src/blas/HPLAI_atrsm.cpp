@@ -3,58 +3,36 @@
  */
 #include "hplai.h"
 
-template <typename T>
-static void HPLAI_atrsm_template(
-    const enum HPLAI_ORDER ORDER,
-    const enum HPLAI_SIDE SIDE,
-    const enum HPLAI_UPLO UPLO,
-    const enum HPLAI_TRANS TRANS,
-    const enum HPLAI_DIAG DIAG,
-    const int M,
-    const int N,
-    const T ALPHA,
-    const T *A,
-    const int LDA,
-    T *B,
-    const int LDB);
 
 template <>
-void HPLAI_atrsm_template<double>(
-    const enum HPLAI_ORDER ORDER,
-    const enum HPLAI_SIDE SIDE,
-    const enum HPLAI_UPLO UPLO,
-    const enum HPLAI_TRANS TRANS,
-    const enum HPLAI_DIAG DIAG,
-    const int M,
-    const int N,
-    const double ALPHA,
-    const double *A,
-    const int LDA,
+void blas::trsm<double, double>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    double alpha,
+    double const *A,
+    int64_t lda,
     double *B,
-    const int LDB)
+    int64_t ldb)
 {
-    HPL_dtrsm(ORDER, SIDE, UPLO, TRANS, DIAG, M, N, ALPHA, A, LDA, B, LDB);
+    HPL_dtrsm(
+        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
+        side == blas::Side::Left ? HplLeft : HplRight,
+        uplo == blas::Uplo::Upper ? HplUpper : HplLower,
+        trans == blas::Op::Trans ? HplTrans : HplNoTrans,
+        diag == las::Diag::Unit ? HplUnit : HplNonUnit,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb);
 }
-
-#ifdef HPL_CALL_CBLAS
-template <>
-void HPLAI_atrsm_template<float>(
-    const enum HPLAI_ORDER ORDER,
-    const enum HPLAI_SIDE SIDE,
-    const enum HPLAI_UPLO UPLO,
-    const enum HPLAI_TRANS TRANS,
-    const enum HPLAI_DIAG DIAG,
-    const int M,
-    const int N,
-    const float ALPHA,
-    const float *A,
-    const int LDA,
-    float *B,
-    const int LDB)
-{
-    cblas_strsm(ORDER, SIDE, UPLO, TRANS, DIAG, M, N, ALPHA, A, LDA, B, LDB);
-}
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -91,7 +69,13 @@ HPLAI_T_AFLOAT *B;
 const int LDB;
 #endif
     {
-        HPLAI_atrsm_template(ORDER, SIDE, UPLO, TRANS, DIAG, M, N, ALPHA, A, LDA, B, LDB);
+        blas::trsm(
+            ORDER == HPLAI_RowMajor ? blas::Layout::RowMajor : blas::Layout::ColMajor,
+            SIDE == HPLAI_Left ? blas::Side::Left : blas::Side::Right,
+            UPLO == HPLAI_Upper ? blas::Uplo::Upper : blas::Uplo::Lower,
+            TRANS == HPLAI_Trans ? blas::Op::Trans : blas::Op::NoTrans,
+            DIAG == HPLAI_Unit ? blas::Diag::Unit : blas::Diag::NonUnit,
+            M, N, ALPHA, A, LDA, B, LDB);
         /*
  * End of HPLAI_atrsm
  */
