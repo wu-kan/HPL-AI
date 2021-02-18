@@ -3,7 +3,6 @@
  */
 #include "hplai.h"
 
-
 template <>
 void blas::trsm<double, double>(
     blas::Layout layout,
@@ -24,7 +23,7 @@ void blas::trsm<double, double>(
         side == blas::Side::Left ? HplLeft : HplRight,
         uplo == blas::Uplo::Upper ? HplUpper : HplLower,
         trans == blas::Op::Trans ? HplTrans : HplNoTrans,
-        diag == las::Diag::Unit ? HplUnit : HplNonUnit,
+        diag == blas::Diag::Unit ? HplUnit : HplNonUnit,
         m,
         n,
         alpha,
