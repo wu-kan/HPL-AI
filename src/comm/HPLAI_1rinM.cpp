@@ -67,8 +67,8 @@ int HPLAI_binit_1rinM( PANEL )
 #else
  
 #define   _M_BUFF     (void *)(PANEL->L2)
-#define   _M_COUNT    (1LL * sizeof(HPLAI_T_AFLOAT) * PANEL->len)
-#define   _M_TYPE     MPI_BYTE
+#define   _M_COUNT    PANEL->len
+#define   _M_TYPE     HPLAI_MPI_AFLOAT
  
 #endif
 
@@ -138,7 +138,7 @@ int HPLAI_bcast_1rinM( PANEL, IFLAG )
                                 comm );
             }
          }
-         else { *IFLAG = HPL_KEEP_TESTING; return( *IFLAG ); }
+         else { *IFLAG = HPLAI_KEEP_TESTING; return( *IFLAG ); }
       }
    }
 /*

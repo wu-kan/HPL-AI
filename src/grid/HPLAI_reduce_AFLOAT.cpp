@@ -132,7 +132,7 @@ int HPLAI_reduce_AFLOAT
    {
       do
       {
-         mpierr = MPI_Recv( buffer, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
+         mpierr = MPI_Recv( buffer, COUNT, HPLAI_MPI_AFLOAT,
                             MModAdd( ROOT, ip2, size ), tag, COMM,
                             &status );
          if( mpierr != MPI_SUCCESS ) hplerr = mpierr;
@@ -151,13 +151,13 @@ int HPLAI_reduce_AFLOAT
             if( mydist & ip2 )
             {
                partner = MModAdd( ROOT, partner, size );
-               mpierr = MPI_Send( BUFFER, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
+               mpierr = MPI_Send( BUFFER, COUNT, HPLAI_MPI_AFLOAT,
                                   partner, tag, COMM );
             }
             else if( partner < size )
             {
                partner = MModAdd( ROOT, partner, size );
-               mpierr  = MPI_Recv( buffer, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
+               mpierr  = MPI_Recv( buffer, COUNT, HPLAI_MPI_AFLOAT,
                                    partner, tag, COMM, &status );
                OP( COUNT, buffer, BUFFER);
             }

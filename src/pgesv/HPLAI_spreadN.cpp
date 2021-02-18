@@ -193,7 +193,7 @@ void HPLAI_spreadN
                if( mydist & ip2 )
                {
                   if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
+                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
                                                &type );
                   if( ierr == MPI_SUCCESS )  
                      ierr =   MPI_Type_commit( &type );
@@ -207,7 +207,7 @@ void HPLAI_spreadN
                else if( partner < nprow )
                {
                   if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
+                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
                                                &type );
                   if( ierr == MPI_SUCCESS )  
                      ierr =   MPI_Type_commit( &type );
@@ -257,7 +257,7 @@ void HPLAI_spreadN
                if( mydist & ip2 )
                {
                   if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
+                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
                                                &type );
                   if( ierr == MPI_SUCCESS )  
                      ierr =   MPI_Type_commit( &type );
@@ -271,7 +271,7 @@ void HPLAI_spreadN
                else if( partner < nprow )
                {
                   if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf * 1LL * sizeof(HPLAI_T_AFLOAT), LDU, MPI_BYTE,
+                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
                                                &type );
                   if( ierr == MPI_SUCCESS )  
                      ierr =   MPI_Type_commit( &type );

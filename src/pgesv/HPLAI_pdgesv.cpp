@@ -1305,8 +1305,8 @@ HPLAI_T_pmat *A;
         }
         */
 
-        //HPL_pir(GRID, ALGO, A, &FA);
-        HPLAI_pmat_cpy(&FA, A);
+        HPL_pir(GRID, ALGO, A, &FA);
+        //HPLAI_pmat_cpy(A, &FA);
 
         if (vptr_FA)
             free(vptr_FA);

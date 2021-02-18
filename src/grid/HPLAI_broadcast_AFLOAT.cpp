@@ -21,8 +21,7 @@ const int ROOT;
 MPI_Comm COMM;
 #endif
 {
-   return MPI_Bcast(BUFFER, 1LL * sizeof(HPLAI_T_AFLOAT) * COUNT, MPI_BYTE,
-                    ROOT, COMM);
+   return MPI_Bcast(BUFFER, COUNT, HPLAI_MPI_AFLOAT, ROOT, COMM);
    /*
  * End of HPLAI_broadcast_AFLOAT
  */
