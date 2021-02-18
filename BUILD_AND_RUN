@@ -12,7 +12,7 @@ autoreconf -ivf
 ./configure \
     CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING -DHPLAI_IR_PARA"
 make -j
-if false; then
+if true; then
     cp testing/ptest/HPL.dat HPL.dat
 else
     echo 'HPLinpack benchmark input file
@@ -20,7 +20,7 @@ Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-4096 25000 30000 40000 50000 60000 39007 39000  20960 364160 359424 276480 138240 115200 23040 354432 236160 95040 9600 20737 16129 16128 Ns
+25000 30000 40000 50000 60000 39007 39000  20960 364160 359424 276480 138240 115200 23040 354432 236160 95040 9600 20737 16129 16128 Ns
 1             # of NBs
 384 768 1024 512 384 640 768 896 960 1024 1152 1280 384 640 960 768 640 256  960 512 768 1152         NBs
 0            PMAP process mapping (0=Row-,1=Column-major)

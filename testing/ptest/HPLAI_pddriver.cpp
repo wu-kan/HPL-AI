@@ -66,7 +66,7 @@ char **ARGV;
    MPI_Init(&ARGC, &ARGV);
    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
    MPI_Comm_size(MPI_COMM_WORLD, &size);
-   HPLAI_blas_init(rank, size);
+   HPLAI_init(rank, size);
    /*
  * Read and check validity of test parameters from input file
  *
@@ -255,7 +255,7 @@ char **ARGV;
       if ((test.outfp != stdout) && (test.outfp != stderr))
          (void)fclose(test.outfp);
    }
-   HPLAI_blas_finalize();
+   HPLAI_finalize();
    MPI_Finalize();
    exit(0);
 

@@ -8,11 +8,11 @@ extern "C"
 MPI_Datatype HPLAI_MPI_AFLOAT;
 
 #ifdef STDC_HEADERS
-    void HPLAI_blas_init(
+    void HPLAI_init(
         const int RANK,
         const int SIZE)
 #else
-void HPLAI_blas_init(RANK, SIZE)
+void HPLAI_init(RANK, SIZE)
     const int RANK,
     SIZE;
 #endif
@@ -24,7 +24,7 @@ void HPLAI_blas_init(RANK, SIZE)
 #endif
     }
 
-    void HPLAI_blas_finalize()
+    void HPLAI_finalize()
     {
 #ifdef HPL_CALL_VSIPL
         vsip_finalize((void *)0);

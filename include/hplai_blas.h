@@ -71,13 +71,6 @@ STDC_ARGS(
    const int ) );
 #endif
 
-void HPLAI_blas_init
-    STDC_ARGS((
-        const int,
-        const int));
-
-void HPLAI_blas_finalize();
-
 int HPLAI_iaamax
     STDC_ARGS((
         const int,
