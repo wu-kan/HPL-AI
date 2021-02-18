@@ -1034,24 +1034,12 @@ int HPL_pgmres(
  *    ---by Carson, Erin & Higham, Nicholas J., 2017
  */
 
-#ifdef HPLAI_IR_PARA
-
 #define IR 1
 
-#define TOL 1e-17    /* Tolerance for GMRES residual */
-#define PRE 1e-14 /* solution tolerance */
-#define MM 50      /* restart size for GMRES */
-#define MAXIT 1   /* maximum number of GMRES iteration */
-
-#else
-
-#define IR 1
-
-#define TOL 1e-13 /* Tolerance for GMRES residual */
+#define TOL 1e-17 /* Tolerance for GMRES residual */
 #define PRE 1e-14 /* solution tolerance */
 #define MM 50     /* restart size for GMRES */
-#define MAXIT 10  /* maximum number of GMRES iteration */
-#endif
+#define MAXIT 1   /* maximum number of GMRES iteration */
 
 #ifdef STDC_HEADERS
 void HPL_pir(

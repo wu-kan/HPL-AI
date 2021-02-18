@@ -718,7 +718,7 @@ label_error:
                    "========================================" );
       HPLAI_fprintf( TEST->outfp, "%s%s\n",
           "HPL-AI Mixed-Precision Benchmark  --  ",
-          " February 2, 2021" );
+          " February 18, 2021" );
       HPLAI_fprintf( TEST->outfp, "%s%s\n",
           "Written by A. Petitet and R. Clint Whaley,  ",
           "Innovative Computing Laboratory, UTK" );
