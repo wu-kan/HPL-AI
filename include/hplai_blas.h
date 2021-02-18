@@ -29,63 +29,6 @@
 #define HPLAI_Left HplLeft
 #define HPLAI_Right HplRight
 
-#if (HPL_CALL_CBLAS)
-
-//float---
-CBLAS_INDEX       cblas_isamax
-STDC_ARGS(
-(  const int,       const float *,  const int ) );
-void              cblas_sswap
-STDC_ARGS(
-(  const int,       float *,        const int,       float *,
-   const int ) );
-void              cblas_scopy
-STDC_ARGS(
-(  const int,       const float *,  const int,       float *,
-   const int ) );
-void              cblas_saxpy
-STDC_ARGS(
-(  const int,       const float,    const float *,  const int,
-   float *,        const int ) );
-void              cblas_sscal
-STDC_ARGS(
-(  const int,       const float,    float *,        const int ) );
-
-void              cblas_sgemv
-STDC_ARGS(
-(  const enum CBLAS_ORDER,           const enum CBLAS_TRANSPOSE,
-   const int,       const int,       const float,    const float *,
-   const int,       const float *,  const int,       const float,
-   float *,        const int ) );
-
-void              cblas_sger
-STDC_ARGS(
-(  const enum CBLAS_ORDER,           const int,       const int,
-   const float,    const float *,  const int,       const float *,
-   const int,       float *,        const int ) );
-void              cblas_strsv
-STDC_ARGS(
-(  const enum CBLAS_ORDER,           const enum CBLAS_UPLO,
-   const enum CBLAS_TRANSPOSE,       const enum CBLAS_DIAG,
-   const int,       const float *,  const int,       float *,
-   const int ) );
-
-void              cblas_sgemm
-STDC_ARGS(
-(  const enum CBLAS_ORDER,           const enum CBLAS_TRANSPOSE,
-   const enum CBLAS_TRANSPOSE,       const int,       const int,
-   const int,       const float,    const float *,  const int,
-   const float *,  const int,       const float,    float *,
-   const int ) );
-void              cblas_strsm
-STDC_ARGS(
-(  const enum CBLAS_ORDER,           const enum CBLAS_SIDE,
-   const enum CBLAS_UPLO,            const enum CBLAS_TRANSPOSE,
-   const enum CBLAS_DIAG,            const int,       const int,
-   const float,    const float *,  const int,       float *,
-   const int ) );
-#endif
-
 int HPLAI_iaamax
     STDC_ARGS((
         const int,
