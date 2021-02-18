@@ -3,37 +3,16 @@
  */
 #include "hplai.h"
 
-template <typename T>
-static void HPLAI_acopy_template(
-    const int N,
-    const T *X,
-    const int INCX,
-    T *Y,
-    const int INCY);
-
 template <>
-void HPLAI_acopy_template<double>(
-    const int N,
-    const double *X,
-    const int INCX,
-    double *Y,
-    const int INCY)
+void blas::copy<double>(
+    int64_t n,
+    double const *x,
+    int64_t incx,
+    double *y,
+    int64_t incy)
 {
-    HPL_dcopy(N, X, INCX, Y, INCY);
+    HPL_dcopy(n, x, incx, y, incy);
 }
-
-#ifdef HPL_CALL_CBLAS
-template <>
-void HPLAI_acopy_template<float>(
-    const int N,
-    const float *X,
-    const int INCX,
-    float *Y,
-    const int INCY)
-{
-    cblas_scopy(N, X, INCX, Y, INCY);
-}
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -56,7 +35,7 @@ HPLAI_T_AFLOAT *Y;
 const int INCY;
 #endif
     {
-        HPLAI_acopy_template(N, X, INCX, Y, INCY);
+        blas::copy(N, X, INCX, Y, INCY);
         /*
  * End of HPLAI_acopy
  */
