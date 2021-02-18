@@ -1173,8 +1173,10 @@ HPLAI_T_pmat *FA;
     for (i = 0; i < IR; ++i)
     {
         memset(res, 0, mp * sizeof(double));
+        /*
         if (GRID->iam == 0)
             printf("IR Loop %d\n", i);
+        */
         /* Calculate residual in double precision */
         if (mycol == tarcol)
         {
