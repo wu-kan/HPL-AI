@@ -940,14 +940,13 @@ const HPLAI_T_AFLOAT X;
          n = N;
          r = X;
       }
-
+      /*
       for (k = 0; k < n; k++)
          y *= r;
-      /*
+      */
       for (k = n; k; k >>= 1, r *= r)
          if (k & 1)
             y *= r;
-      */
 
       return (y);
    }
