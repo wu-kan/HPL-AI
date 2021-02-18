@@ -13,7 +13,7 @@ extern "C"
 #include "hpl.h"
 
 #include "hplai_misc.h"
-#include "hplai_blas.h"
+
 #include "hplai_auxil.h"
 #include "hplai_gesv.h"
 
@@ -24,6 +24,24 @@ extern "C"
 
 #include "hplai_pmatgen.h"
 #include "hplai_ptest.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __cplusplus
+
+//use blaspp https://bitbucket.org/icl/blaspp/src/master/
+#include <blas.hh>
+
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "hplai_blas.h"
 
 #ifdef __cplusplus
 }

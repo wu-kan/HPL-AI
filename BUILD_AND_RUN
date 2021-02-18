@@ -10,7 +10,8 @@ spack load openmpi@4.0.5%gcc@7.5.0
 spack load blaspp@2020.10.02%gcc@7.5.0
 autoreconf -ivf
 ./configure \
-    CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING -DHPLAI_IR_PARA"
+    CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING -DHPLAI_IR_PARA" \
+    LIBS="-lblaspp"
 make -j
 if true; then
     cp testing/ptest/HPL.dat HPL.dat
