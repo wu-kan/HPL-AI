@@ -1,18 +1,18 @@
 #!/bin/bash
 
-source ../spack/share/spack/setup-env.sh
+source /GPUFS/sysu_hpcedu_302/asc21/WuK/spack/share/spack/setup-env.sh
 spack unload -a
 spack load gcc@7.5.0%gcc@4.8.5
 spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.3%gcc@7.5.0
 spack load openmpi@4.0.5%gcc@7.5.0
-spack load openblas@0.3.13%gcc@7.5.0
+spack load blaspp@2020.10.02%gcc@7.5.0
 autoreconf -ivf
 ./configure \
-    CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING"
+    CPPFLAGS="-DHPL_CALL_CBLAS -DHPL_DETAILED_TIMING -DHPLAI_IR_PAPR -DHPLAI_T_AFLOAT=double"
 make -j
-if 0; then
+if true; then
     cp testing/ptest/HPL.dat HPL.dat
 else
     echo 'HPLinpack benchmark input file
@@ -47,6 +47,6 @@ HPL.out      output file name (if any)
 1            Equilibration (0=no,1=yes)
 8            memory alignment in double (> 0)' >HPL.dat
 fi
-mpiexec -n 4 testing/xhpl
-mpiexec -n 4 testing/xhplai
+mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhpl
+mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhplai
 git clean -d -f -q -x
