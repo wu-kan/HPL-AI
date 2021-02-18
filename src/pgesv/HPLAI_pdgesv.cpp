@@ -1036,7 +1036,6 @@ int HPL_pgmres(
 
 #define IR 1
 
-#define TOL 1e-17 /* Tolerance for GMRES residual */
 #define PRE 1e-14 /* solution tolerance */
 #define MM 50     /* restart size for GMRES */
 #define MAXIT 1   /* maximum number of GMRES iteration */
@@ -1046,13 +1045,15 @@ void HPL_pir(
     HPLAI_T_grid *GRID,
     HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
-    HPLAI_T_pmat *FA)
+    HPLAI_T_pmat *FA,
+    double TOL)
 #else
 void HPL_pir(GRID, ALGO, A, FA, MYROW, MYCOL, NPCOL)
     HPL_T_grid *GRID;
 HPLAI_T_palg *ALGO;
 HPLAI_T_pmat *A;
 HPLAI_T_pmat *FA;
+double TOL;
 #endif
 {
     /* 
@@ -1295,7 +1296,7 @@ HPLAI_T_pmat *A;
         }
         */
 
-        HPL_pir(GRID, ALGO, A, &FA);
+        HPL_pir(GRID, ALGO, A, &FA, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));
         //HPLAI_pmat_cpy(A, &FA);
 
         if (vptr_FA)
