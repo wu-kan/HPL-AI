@@ -3,58 +3,35 @@
  */
 #include "hplai.h"
 
-template <typename T>
-static void HPLAI_agemv_template(
-    const enum HPLAI_ORDER ORDER,
-    const enum HPLAI_TRANS TRANS,
-    const int M,
-    const int N,
-    const T ALPHA,
-    const T *A,
-    const int LDA,
-    const T *X,
-    const int INCX,
-    const T BETA,
-    T *Y,
-    const int INCY);
-
 template <>
-void HPLAI_agemv_template<double>(
-    const enum HPLAI_ORDER ORDER,
-    const enum HPLAI_TRANS TRANS,
-    const int M,
-    const int N,
-    const double ALPHA,
-    const double *A,
-    const int LDA,
-    const double *X,
-    const int INCX,
-    const double BETA,
-    double *Y,
-    const int INCY)
+void blas::gemv<double, double, double>(
+    blas::Layout layout,
+    blas::Op trans,
+    int64_t m,
+    int64_t n,
+    double alpha,
+    double const *A,
+    int64_t lda,
+    double const *x,
+    int64_t incx,
+    double beta,
+    double *y,
+    int64_t incy)
 {
-    HPL_dgemv(ORDER, TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY);
+    HPL_dgemv(
+        layout == blas::Layout::RowMajor ? HPLAI_RowMajor : HPLAI_ColumnMajor,
+        trans == blas::Op::Trans ? HPLAI_Trans : HPLAI_NoTrans,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        x,
+        incx,
+        beta,
+        y,
+        incy);
 }
-
-#ifdef HPL_CALL_CBLAS
-template <>
-void HPLAI_agemv_template<float>(
-    const enum HPLAI_ORDER ORDER,
-    const enum HPLAI_TRANS TRANS,
-    const int M,
-    const int N,
-    const float ALPHA,
-    const float *A,
-    const int LDA,
-    const float *X,
-    const int INCX,
-    const float BETA,
-    float *Y,
-    const int INCY)
-{
-    cblas_sgemv(ORDER, TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY);
-}
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -91,7 +68,10 @@ HPLAI_T_AFLOAT *Y;
 const int INCY;
 #endif
     {
-        HPLAI_agemv_template(ORDER, TRANS, M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY);
+        blas::gemv(
+            ORDER == HPLAI_RowMajor ? blas::Layout::RowMajor : blas::Layout::ColMajor,
+            TRANS == HPLAI_Trans ? blas::Op::Trans : blas::Op::NoTrans,
+            M, N, ALPHA, A, LDA, X, INCX, BETA, Y, INCY);
         /*
  * End of HPLAI_agemv
  */
