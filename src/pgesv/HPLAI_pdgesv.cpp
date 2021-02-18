@@ -1034,27 +1034,16 @@ int HPL_pgmres(
  *    ---by Carson, Erin & Higham, Nicholas J., 2017
  */
 
-#define IR 1
-
-#define PRE 1e-14 /* solution tolerance */
-#define MM 50     /* restart size for GMRES */
-#define MAXIT 1   /* maximum number of GMRES iteration */
-
-#ifdef STDC_HEADERS
-void HPL_pir(
+static void HPL_pir(
     HPLAI_T_grid *GRID,
     HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
-    HPLAI_T_pmat *FA,
+    HPL_T_pmat *factors,
+    double PRE, /* solution tolerance */
+    int IR,
+    int MM,   /* restart size for GMRES */
+    int MAXIT, /* maximum number of GMRES iteration */
     double TOL)
-#else
-void HPL_pir(GRID, ALGO, A, FA, MYROW, MYCOL, NPCOL)
-    HPL_T_grid *GRID;
-HPLAI_T_palg *ALGO;
-HPLAI_T_pmat *A;
-HPLAI_T_pmat *FA;
-double TOL;
-#endif
 {
     /* 
  * Purpose
@@ -1089,12 +1078,10 @@ double TOL;
     /*
  * .. Local Variables ..
  */
-    int i, j, sizeA;
-    int mp, nq, n, nb, npcol, nprow, myrow, mycol, tarcol, info[3];
+    int i, j;
+    int mp, nq, n, nb, npcol, nprow, myrow, mycol, tarcol;
     double *Bptr, *res, *d;
-    void *vptr;
     double norm;
-    HPL_T_pmat factors;
 
     /* ..
  * .. Executable Statements ..
@@ -1111,39 +1098,23 @@ double TOL;
     /* point to local rhs area */
     Bptr = Mptr(A->A, 0, nq, A->ld);
 
-    factors.mp = mp;
-    factors.nq = A->nq;
-    factors.n = n;
-    factors.ld = A->ld;
-    factors.nb = nb;
-    factors.info = 0;
-
     /*
  * allocate  space  for  factors, which  contains LU factors of  double
  * precision, which is in fact of lower precision, just stored in double. 
  */
-
-    vptr = (void *)malloc(((size_t)(ALGO->align) +
-                           (size_t)(A->ld + 1) * (size_t)(A->nq)) *
-                          sizeof(double));
-
-    factors.A = (double *)HPL_PTR(vptr, ((size_t)(ALGO->align) * sizeof(double)));
-    factors.X = Mptr(factors.A, 0, factors.nq, factors.ld);
-
-    /* convert low-precision FA into double precision factors */
-    sizeA = A->nq * A->ld;
-    for (int i = 0; i < sizeA; ++i)
-    {
-        *(factors.A + i) = (double)*(FA->A + i);
-    }
     /*
  * Convert initial solution ( which is obtained through lower precision 
  * LU factorization) into higher precision
  */
+    /*
     for (i = 0; i < nq; ++i)
     {
-        *(A->X + i) = (double)(*(FA->X + i));
+        *(A->X + i) = (double)(*(factors->X + i));
+        *(factors->X + i) = 0;
     }
+    */
+    HPL_dcopy(nq, factors->X, 1, A->X, 1);
+    //待检查能不能改成上面这个
 
     /*
  * allocate space for residual vector, correction vectors.
@@ -1161,7 +1132,6 @@ double TOL;
  */
     for (i = 0; i < IR; ++i)
     {
-        memset(res, 0, mp * sizeof(double));
         /*
         if (GRID->iam == 0)
             printf("IR Loop %d\n", i);
@@ -1175,12 +1145,13 @@ double TOL;
         }
         else if (nq > 0)
         {
+            memset(res, 0, mp * sizeof(double));
             HPL_dgemv(HplColumnMajor, HplNoTrans, mp, nq, -HPL_rone,
                       A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
         }
         else
         {
-            for (j = 0; j < mp; j++)
+            for (j = 0; j < mp; ++j)
                 res[j] = HPL_rzero;
         }
 
@@ -1203,7 +1174,7 @@ double TOL;
     * precision.  
     */
         memset(d, 0, nq * sizeof(double));
-        HPL_pgmres(GRID, A, &factors, res, d, TOL, MM, MAXIT);
+        HPL_pgmres(GRID, A, factors, res, d, TOL, MM, MAXIT);
         /* 
     * update X with d
     */
@@ -1216,8 +1187,6 @@ double TOL;
     /* free dynamic memories */
     if (d)
         free(d);
-    if (vptr)
-        free(vptr);
     if (res)
         free(res);
 
@@ -1277,7 +1246,7 @@ HPL_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif
     {
-        void *vptr_FA;
+        void *vptr_FA, *vptr_factors;
         HPLAI_T_pmat FA;
         HPLAI_pmat_new(&FA, A, ALGO, &vptr_FA, FA.A);
 
@@ -1305,11 +1274,16 @@ HPLAI_T_pmat *A;
         }
         */
 
-        HPL_pir(GRID, ALGO, A, &FA, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));
-        //HPLAI_pmat_cpy(A, &FA);
-
+        HPL_T_pmat factors;
+        HPLAI_pmat_new(&factors, &FA, ALGO, &vptr_factors, factors.A);
         if (vptr_FA)
             free(vptr_FA);
+
+        HPL_pir(GRID, ALGO, A, &factors, 1e-14, 1, 50, 1, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));
+        //HPLAI_pmat_cpy(A, &FA);
+
+        if (vptr_factors)
+            free(vptr_factors);
     }
 
 #ifdef __cplusplus
