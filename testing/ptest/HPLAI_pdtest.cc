@@ -314,7 +314,7 @@ void HPLAI_pdtest
    if( mycol == HPL_indxg2p( N, NB, NB, 0, npcol ) ){
       if( mat.mp > 0 )
       {
-         BnormI = Bptr[blas::iamax( mat.mp, Bptr, 1 )]; BnormI = Mabs( BnormI );
+         BnormI = Bptr[blas::iamax<double>( mat.mp, Bptr, 1 )]; BnormI = Mabs( BnormI );
       }
       else
       {

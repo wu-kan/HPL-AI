@@ -165,9 +165,9 @@ HPL_T_pmat *AMAT;
     {
         if (myrow == Alrow)
         {
-            blas::trsv(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
+            blas::trsv<double, double>(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
                       kb, Aptr, lda, XC, 1);
-            blas::copy(kb, XC, 1, Xd, 1);
+            blas::copy<double, double>(kb, XC, 1, Xd, 1);
         }
 
         /* update local variables */
@@ -242,7 +242,7 @@ HPL_T_pmat *AMAT;
             if (n1pprev > 0)
             {
                 (void)HPL_recv(W, n1pprev, colprev, Rmsgid, Rcomm);
-                blas::axpy(n1pprev, HPL_rone, W, 1, XC + Anp, 1);
+                blas::axpy<double, double>(n1pprev, HPL_rone, W, 1, XC + Anp, 1);
             }
         }
         /*
@@ -250,9 +250,9 @@ HPL_T_pmat *AMAT;
  */
         if ((mycol == Alcol) && (myrow == Alrow))
         {
-            blas::trsv(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
+            blas::trsv<double, double>(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
                       kb, Aptr + Anp, lda, XC + Anp, 1);
-            blas::copy(kb, XC + Anp, 1, Xd, 1);
+            blas::copy<double, double>(kb, XC + Anp, 1, Xd, 1);
         }
         /*
  *  Finish previous update
@@ -906,7 +906,7 @@ int HPL_pgmres(
         //     print_matrix(R, MM, MM, MM, 1);
         // }
         /* solve Ry = w, R is upper-tri, and w will be overwritten by solution y */
-        blas::trsv(blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit, k + 1, R, MM, w, 1);
+        blas::trsv<double, double>(blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit, k + 1, R, MM, w, 1);
         // if (GRID->iam == 0)
         // {
         //     printf("After:\n");
@@ -1113,7 +1113,7 @@ static void HPL_pir(
         *(factors->X + i) = 0;
     }
     */
-    blas::copy(nq, factors->X, 1, A->X, 1);
+    blas::copy<double, double>(nq, factors->X, 1, A->X, 1);
     //待检查能不能改成上面这个
 
     /*

@@ -6,6 +6,8 @@ int64_t blas::iamax<double>(
 	double const *x,
 	int64_t incx)
 {
+    //HPLAI_pabort( __LINE__, "blas::iamax<double>", "Use HPL_idamax" );
+    //去掉上一行注释可以显示模板特化效果
 	return HPL_idamax(n, x, incx);
 }
 
