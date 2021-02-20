@@ -215,7 +215,7 @@ void HPLAI_papanllN
       HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
       if( curr != 0 )
       {
-         blas::copy( kk, L1ptr,  1, Mptr( A, ICOFF, jj+1, lda ), 1 );
+         blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( kk, L1ptr,  1, Mptr( A, ICOFF, jj+1, lda ), 1 );
          ii = iip1; iip1++; m = Mm1; Mm1--;
       }
       Nm1--; jj++;

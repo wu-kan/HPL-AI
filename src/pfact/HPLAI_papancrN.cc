@@ -207,7 +207,7 @@ void HPLAI_papancrN
                     ICOFF, n0 ), n0, HPLAI_rone, L1ptr, n0 );
 #endif
          if( curr != 0 )
-            blas::copy( Nm1, L1ptr, n0, Mptr( A, ii, jj+1, lda ), lda );
+            blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( Nm1, L1ptr, n0, Mptr( A, ii, jj+1, lda ), lda );
       }
 /*
  * Scale current column by its absolute value max entry  -  Update  dia-

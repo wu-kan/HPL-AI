@@ -78,7 +78,7 @@ const int LDB;
    if( ( M <= 0 ) || ( N <= 0 ) ) return;
 
 #ifdef HPL_LACPY_USE_COPY
-   for( j = 0; j < N; j++, A0 += LDA, B0 += LDB ) blas::copy( M, A0, 1, B0, 1 );
+   for( j = 0; j < N; j++, A0 += LDA, B0 += LDB ) blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( M, A0, 1, B0, 1 );
 #else
    mu = (int)( ( (unsigned int)(M) >> HPL_LACPY_LOG2_M_DEPTH ) <<
                                       HPL_LACPY_LOG2_M_DEPTH );

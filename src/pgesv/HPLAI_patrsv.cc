@@ -136,7 +136,7 @@ void HPLAI_patrsv
       {
          blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
                     kb, Aptr+Anp, lda, XC+Anp, 1 );
-         blas::copy( kb, XC+Anp, 1, Xd, 1 );
+         blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( kb, XC+Anp, 1, Xd, 1 );
       }
    }
 
@@ -204,7 +204,7 @@ void HPLAI_patrsv
          if( n1pprev > 0 )
          {
             (void) HPLAI_recv( W, n1pprev, colprev, Rmsgid, Rcomm );
-            blas::axpy( n1pprev, HPLAI_rone, W, 1, XC+Anpprev-n1pprev, 1 );
+            blas::axpy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n1pprev, HPLAI_rone, W, 1, XC+Anpprev-n1pprev, 1 );
          }
       }
 /*
@@ -214,7 +214,7 @@ void HPLAI_patrsv
       {
          blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
                     kb, Aptr+Anp, lda, XC+Anp, 1 );
-         blas::copy( kb, XC+Anp, 1, XR+Anq, 1 );
+         blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( kb, XC+Anp, 1, XR+Anq, 1 );
       }
 /*
 *  Finish previous update

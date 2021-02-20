@@ -186,7 +186,7 @@ void HPLAI_papanrlN
  */
       if( WORK[0] != HPLAI_rzero )
          blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
-      blas::axpy( Mm1, -WORK[4+jj+1], Acur, 1, Anxt, 1 );
+      blas::axpy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( Mm1, -WORK[4+jj+1], Acur, 1, Anxt, 1 );
       HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
 #ifdef HPL_CALL_VSIPL
       if( Nm1 > 1 )

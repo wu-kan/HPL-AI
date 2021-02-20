@@ -166,10 +166,10 @@ void HPLAI_pamxswp
    if( M > 0 )
    {
       lda = PANEL->lda;
-      blas::copy( n0, Mptr( PANEL->A, II+(int)(WORK[1]), 0, lda ), lda,
+      blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n0, Mptr( PANEL->A, II+(int)(WORK[1]), 0, lda ), lda,
                  Wmx, 1 );
       if( myrow == icurrow )
-      { blas::copy( n0, Mptr( PANEL->A, II, 0, lda ), lda, A0, 1 ); }
+      { blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n0, Mptr( PANEL->A, II, 0, lda ), lda, A0, 1 ); }
    }
    else { for( i = 0; i < n0; i++ ) Wmx[i] = HPLAI_rzero; }
 /*
@@ -208,7 +208,7 @@ void HPLAI_pamxswp
          tmp1 = Mabs( Wwork[0] ); gmax = Mabs( WORK[0] );
          if( ( tmp1 > gmax ) ||
              ( ( tmp1 == gmax ) && ( Wwork[3] < WORK[3] ) ) )
-         { blas::copy( cnt_, Wwork, 1, WORK, 1 ); }
+         { blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( cnt_, Wwork, 1, WORK, 1 ); }
       }
    }
 
@@ -244,11 +244,11 @@ void HPLAI_pamxswp
          if( ( tmp1 > gmax ) ||
              ( ( tmp1 == gmax ) && ( Wwork[3] < WORK[3] ) ) )
          {
-            blas::copy( ( rcnt == cnt0 ? cnt0 : cnt_ ), Wwork, 1,
+            blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( ( rcnt == cnt0 ? cnt0 : cnt_ ), Wwork, 1,
                        WORK, 1 );
          }
          else if( rcnt == cnt0 )
-         { blas::copy( n0, Wwork+cnt_, 1, A0, 1 ); }
+         { blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n0, Wwork+cnt_, 1, A0, 1 ); }
  
          ipow <<= 1; k++;
       }
