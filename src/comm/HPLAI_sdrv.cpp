@@ -85,7 +85,9 @@ int HPLAI_sdrv
  *         The MPI communicator identifying the communication space.
  *
  * ---------------------------------------------------------------------
- */ 
+ */
+   if(SCOUNT && RCOUNT)
+      return( ( MPI_Sendrecv((const void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT, PARTNER, STAG, (void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT, PARTNER, RTAG, COMM, MPI_STATUS_IGNORE) == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE ) );
 /*
  * .. Local Variables ..
  */
