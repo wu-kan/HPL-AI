@@ -22,7 +22,7 @@ void blas::axpy<double, double>(
 }
 
 template <>
-void blas::copy<double>(
+void blas::copy<double, double>(
     int64_t n,
     double const *x,
     int64_t incx,
@@ -163,7 +163,7 @@ void blas::trsm<double, double>(
 }
 
 template <>
-void blas::trsv<double>(
+void blas::trsv<double, double>(
 	blas::Layout layout,
 	blas::Uplo uplo,
 	blas::Op trans,

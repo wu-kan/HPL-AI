@@ -42,7 +42,7 @@ void blas::axpy<double, double>(
     int64_t incy);
 
 template <>
-void blas::copy<double>(
+void blas::copy<double, double>(
     int64_t n,
     double const *x,
     int64_t incx,
@@ -100,6 +100,7 @@ void blas::scal<double>(
     double alpha,
     double *x,
     int64_t incx);
+
 template <>
 void blas::trsm<double, double>(
     blas::Layout layout,
@@ -116,7 +117,7 @@ void blas::trsm<double, double>(
     int64_t ldb);
 
 template <>
-void blas::trsv<double>(
+void blas::trsv<double, double>(
 	blas::Layout layout,
 	blas::Uplo uplo,
 	blas::Op trans,
