@@ -10,8 +10,8 @@ bin_PROGRAMS = xhpl xhplai
 xhplai_SOURCES =  \
 matgen/HPL_jumpit.c matgen/HPL_rand.c matgen/HPL_setran.c matgen/HPL_xjumpm.c \
 matgen/HPL_lmul.c matgen/HPL_ladd.c \
-pmatgen/HPLAI_pdmatgen.cpp \
-ptest/HPLAI_pddriver.cpp ptest/HPLAI_pdinfo.cpp ptest/HPLAI_pdtest.cpp \
+pmatgen/HPLAI_pdmatgen.cc \
+ptest/HPLAI_pddriver.cc ptest/HPLAI_pdinfo.cc ptest/HPLAI_pdtest.cc \
 ptimer/HPL_ptimer.c ptimer/HPL_ptimer_cputime.c ptimer/HPL_ptimer_walltime.c
 
 xhpl_SOURCES =  \

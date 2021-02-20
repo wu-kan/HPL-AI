@@ -3,37 +3,37 @@ AM_CPPFLAGS = -I$(top_srcdir)/../include
 lib_LIBRARIES = libhpl.a libhplai.a
 
 libhplai_a_SOURCES = \
-HPLAI_misc.cpp \
-auxil/HPLAI_alatcpy.cpp auxil/HPLAI_alacpy.cpp auxil/HPLAI_alamch.cpp \
-comm/HPLAI_sdrv.cpp comm/HPLAI_send.cpp comm/HPLAI_recv.cpp comm/HPLAI_bcast.cpp \
-comm/HPLAI_binit.cpp comm/HPLAI_bwait.cpp comm/HPLAI_blong.cpp comm/HPLAI_1ring.cpp \
-comm/HPLAI_1rinM.cpp comm/HPLAI_2rinM.cpp comm/HPLAI_2ring.cpp comm/HPLAI_blonM.cpp comm/HPLAI_packL.cpp \
-comm/HPLAI_copyL.cpp \
-grid/HPLAI_reduce_AFLOAT.cpp grid/HPLAI_sum_AFLOAT.cpp \
-grid/HPLAI_all_reduce_AFLOAT.cpp grid/HPLAI_broadcast_AFLOAT.cpp grid/HPLAI_max_AFLOAT.cpp \
-grid/HPLAI_min_AFLOAT.cpp \
-panel/HPLAI_papanel_disp.cpp panel/HPLAI_papanel_free.cpp panel/HPLAI_papanel_init.cpp panel/HPLAI_papanel_new.cpp \
+auxil/HPLAI_alatcpy.cc auxil/HPLAI_alacpy.cc auxil/HPLAI_alamch.cc \
+blas/HPLAI_blas.cc \
+comm/HPLAI_sdrv.cc comm/HPLAI_send.cc comm/HPLAI_recv.cc comm/HPLAI_bcast.cc \
+comm/HPLAI_binit.cc comm/HPLAI_bwait.cc comm/HPLAI_blong.cc comm/HPLAI_1ring.cc \
+comm/HPLAI_1rinM.cc comm/HPLAI_2rinM.cc comm/HPLAI_2ring.cc comm/HPLAI_blonM.cc comm/HPLAI_packL.cc \
+comm/HPLAI_copyL.cc \
+grid/HPLAI_reduce_AFLOAT.cc grid/HPLAI_sum_AFLOAT.cc \
+grid/HPLAI_all_reduce_AFLOAT.cc grid/HPLAI_broadcast_AFLOAT.cc grid/HPLAI_max_AFLOAT.cc \
+grid/HPLAI_min_AFLOAT.cc \
+panel/HPLAI_papanel_disp.cc panel/HPLAI_papanel_free.cc panel/HPLAI_papanel_init.cc panel/HPLAI_papanel_new.cc \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
-pauxil/HPLAI_palamch.cpp pauxil/HPLAI_palange.cpp \
-pauxil/HPLAI_alaswp00N.cpp pauxil/HPLAI_alaswp01N.cpp pauxil/HPLAI_alaswp01T.cpp \
-pauxil/HPLAI_alaswp02N.cpp pauxil/HPLAI_alaswp03N.cpp pauxil/HPLAI_alaswp03T.cpp \
-pauxil/HPLAI_alaswp04N.cpp pauxil/HPLAI_alaswp04T.cpp pauxil/HPLAI_alaswp05N.cpp \
-pauxil/HPLAI_alaswp05T.cpp pauxil/HPLAI_alaswp06N.cpp pauxil/HPLAI_alaswp06T.cpp \
-pauxil/HPLAI_alaswp10N.cpp \
-pfact/HPLAI_papanllN.cpp pfact/HPLAI_papanllT.cpp pfact/HPLAI_papanrlN.cpp \
-pfact/HPLAI_papanrlT.cpp pfact/HPLAI_parpancrN.cpp pfact/HPLAI_parpancrT.cpp \
-pfact/HPLAI_parpanllN.cpp pfact/HPLAI_parpanllT.cpp pfact/HPLAI_parpanrlN.cpp pfact/HPLAI_parpanrlT.cpp \
-pfact/HPLAI_pamxswp.cpp pfact/HPLAI_pafact.cpp pfact/HPLAI_alocmax.cpp \
-pfact/HPLAI_papancrT.cpp pfact/HPLAI_papancrN.cpp \
-pfact/HPLAI_alocswpN.cpp pfact/HPLAI_alocswpT.cpp \
-pgesv/HPLAI_pdgesv.cpp \
-pgesv/HPLAI_pagesv0.cpp pgesv/HPLAI_pagesv.cpp pgesv/HPLAI_pagesvK2.cpp \
-pgesv/HPLAI_patrsv.cpp \
-pgesv/HPLAI_paupdateNN.cpp pgesv/HPLAI_paupdateNT.cpp pgesv/HPLAI_paupdateTN.cpp pgesv/HPLAI_paupdateTT.cpp \
-pgesv/HPLAI_equil.cpp pgesv/HPLAI_pipid.cpp pgesv/HPLAI_plindx0.cpp \
-pgesv/HPLAI_plindx10.cpp pgesv/HPLAI_plindx1.cpp \
-pgesv/HPLAI_rollN.cpp pgesv/HPLAI_rollT.cpp pgesv/HPLAI_spreadN.cpp pgesv/HPLAI_spreadT.cpp \
-pgesv/HPLAI_palaswp00N.cpp pgesv/HPLAI_palaswp00T.cpp pgesv/HPLAI_palaswp01N.cpp pgesv/HPLAI_palaswp01T.cpp
+pauxil/HPLAI_palamch.cc pauxil/HPLAI_palange.cc \
+pauxil/HPLAI_alaswp00N.cc pauxil/HPLAI_alaswp01N.cc pauxil/HPLAI_alaswp01T.cc \
+pauxil/HPLAI_alaswp02N.cc pauxil/HPLAI_alaswp03N.cc pauxil/HPLAI_alaswp03T.cc \
+pauxil/HPLAI_alaswp04N.cc pauxil/HPLAI_alaswp04T.cc pauxil/HPLAI_alaswp05N.cc \
+pauxil/HPLAI_alaswp05T.cc pauxil/HPLAI_alaswp06N.cc pauxil/HPLAI_alaswp06T.cc \
+pauxil/HPLAI_alaswp10N.cc \
+pfact/HPLAI_papanllN.cc pfact/HPLAI_papanllT.cc pfact/HPLAI_papanrlN.cc \
+pfact/HPLAI_papanrlT.cc pfact/HPLAI_parpancrN.cc pfact/HPLAI_parpancrT.cc \
+pfact/HPLAI_parpanllN.cc pfact/HPLAI_parpanllT.cc pfact/HPLAI_parpanrlN.cc pfact/HPLAI_parpanrlT.cc \
+pfact/HPLAI_pamxswp.cc pfact/HPLAI_pafact.cc pfact/HPLAI_alocmax.cc \
+pfact/HPLAI_papancrT.cc pfact/HPLAI_papancrN.cc \
+pfact/HPLAI_alocswpN.cc pfact/HPLAI_alocswpT.cc \
+pgesv/HPLAI_pdgesv.cc \
+pgesv/HPLAI_pagesv0.cc pgesv/HPLAI_pagesv.cc pgesv/HPLAI_pagesvK2.cc \
+pgesv/HPLAI_patrsv.cc \
+pgesv/HPLAI_paupdateNN.cc pgesv/HPLAI_paupdateNT.cc pgesv/HPLAI_paupdateTN.cc pgesv/HPLAI_paupdateTT.cc \
+pgesv/HPLAI_equil.cc pgesv/HPLAI_pipid.cc pgesv/HPLAI_plindx0.cc \
+pgesv/HPLAI_plindx10.cc pgesv/HPLAI_plindx1.cc \
+pgesv/HPLAI_rollN.cc pgesv/HPLAI_rollT.cc pgesv/HPLAI_spreadN.cc pgesv/HPLAI_spreadT.cc \
+pgesv/HPLAI_palaswp00N.cc pgesv/HPLAI_palaswp00T.cc pgesv/HPLAI_palaswp01N.cc pgesv/HPLAI_palaswp01T.cc
 
 libhpl_a_SOURCES = \
 auxil/HPL_dlatcpy.c auxil/HPL_fprintf.c auxil/HPL_dlacpy.c auxil/HPL_dlamch.c \

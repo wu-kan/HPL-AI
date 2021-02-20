@@ -7,7 +7,7 @@
  */
 
 #ifdef __cplusplus
-#include <blas.hh>
+#include "hplai_blas.hh"
 #endif
 
 #ifdef __cplusplus

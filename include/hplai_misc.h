@@ -24,15 +24,6 @@
 
 #define HPLAI_PTR HPL_PTR
 
-extern MPI_Datatype HPLAI_MPI_AFLOAT;
-
-void HPLAI_init
-    STDC_ARGS((
-        const int,
-        const int));
-
-void HPLAI_finalize();
-
 #endif
 /*
  * End of hpl_misc.h
