@@ -172,7 +172,7 @@ void HPLAI_parpanrlT
  * Factor current panel - Replicated solve - Local update
  */
       HPLAI_parpanrlT( PANEL, m, jb, ioff, WORK );
-      blas::trsm( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Upper, blas::Op::NoTrans,
+      blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Upper, blas::Op::NoTrans,
                  blas::Diag::Unit, n, jb, HPLAI_rone, Mptr( L1ptr, jj, jj, n0 ),
                  n0, Mptr( L1ptr, jj+jb, jj, n0 ), n0 );
       if( curr != 0 ) { ii += jb; m -= jb; }

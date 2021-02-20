@@ -180,7 +180,7 @@ void HPLAI_papanllT
       HPLAI_alocswpT( PANEL,    ii, jj, WORK );
 
       L1ptr = Mptr( L1, jj+1, ICOFF, n0 ); kk = jj + 1 - ICOFF;
-      blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::Trans,   blas::Diag::Unit, kk,
+      blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::Trans,   blas::Diag::Unit, kk,
                  Mptr( L1, ICOFF, ICOFF, n0 ), n0, L1ptr, n0 );
 /*
  * Scale  current column by its absolute value max entry  -  Update  and 

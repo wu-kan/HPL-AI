@@ -180,7 +180,7 @@ void HPLAI_paupdateNT
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
-         blas::trsm( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans,
+         blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans,
                     blas::Diag::Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
 #ifdef HPL_CALL_VSIPL
 /*
@@ -217,7 +217,7 @@ void HPLAI_paupdateNT
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
-         blas::trsm( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans,
+         blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans,
                     blas::Diag::Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
 #ifdef HPL_CALL_VSIPL
 /*
@@ -301,7 +301,7 @@ void HPLAI_paupdateNT
       {
          nn = n - nq0; nn = Mmin( nb, nn );
 
-         blas::trsm( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Lower, blas::Op::Trans,
+         blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Lower, blas::Op::Trans,
                     blas::Diag::Unit, nn, jb, HPLAI_rone, L1ptr, jb, Uptr, LDU );
 
          if( curr != 0 )
@@ -359,7 +359,7 @@ void HPLAI_paupdateNT
  */
       if( ( nn = n - nq0 ) > 0 )
       {
-         blas::trsm( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Lower, blas::Op::Trans,
+         blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Lower, blas::Op::Trans,
                     blas::Diag::Unit, nn, jb, HPLAI_rone, L1ptr, jb, Uptr, LDU );
 
          if( curr != 0 )

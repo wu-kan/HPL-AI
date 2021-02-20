@@ -134,7 +134,7 @@ void HPLAI_patrsv
       Aprev = ( Aptr -= lda * kb ); Anq -= kb; Xdprev = ( Xd = XR + Anq );
       if( myrow == Alrow )
       {
-         blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
+         blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
                     kb, Aptr+Anp, lda, XC+Anp, 1 );
          blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( kb, XC+Anp, 1, Xd, 1 );
       }
@@ -212,7 +212,7 @@ void HPLAI_patrsv
  */
       if( ( mycol == Alcol ) && ( myrow == Alrow ) )
       {
-         blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
+         blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
                     kb, Aptr+Anp, lda, XC+Anp, 1 );
          blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( kb, XC+Anp, 1, XR+Anq, 1 );
       }

@@ -171,7 +171,7 @@ void HPLAI_parpanllN
 /*
  * Replicated solve - Local update - Factor current panel
  */
-      blas::trsm( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
+      blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
                  jj, jb, HPLAI_rone, L1ptr, n0, Mptr( L1ptr, 0, jj, n0 ),
                  n0 );
 #ifdef HPL_CALL_VSIPL

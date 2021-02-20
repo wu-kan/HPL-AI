@@ -265,7 +265,7 @@ void HPLAI_parpancrT
                     Mptr( L1ptr, 0, jj, n0 ), n0, HPLAI_rone,
                     Mptr( L1ptr, jj+jb, jj, n0 ), n0 );
 #endif
-         blas::trsm( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Upper, blas::Op::NoTrans,
+         blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Side::Right, blas::Uplo::Upper, blas::Op::NoTrans,
                     blas::Diag::Unit, n, jb, HPLAI_rone, Mptr( L1ptr, jj, jj,
                     n0 ), n0, Mptr( L1ptr, jj+jb, jj, n0 ), n0 );
       }
