@@ -1178,10 +1178,7 @@ static void HPL_pir(
         /* 
     * update X with d
     */
-        for (j = 0; j < nq; ++j)
-        {
-            *(A->X + j) += d[j];
-        }
+        blas::axpy<double, double>(nq, 1, d, 1, A->X, 1);
     }
 
     /* free dynamic memories */
@@ -1195,6 +1192,21 @@ static void HPL_pir(
  */
 }
 
+template <typename T1, typename T2>
+static void HPLAI_pmat_cpy(
+    T1 *DST,
+    const T2 *SRC)
+{
+    DST->n = SRC->n;
+    DST->nb = SRC->nb;
+    DST->ld = SRC->ld;
+    DST->mp = SRC->mp;
+    DST->nq = SRC->nq;
+    DST->info = SRC->info;
+    blas::copy(SRC->nq * SRC->ld, SRC->A, 1, DST->A, 1);
+    blas::copy(SRC->nq, SRC->X, 1, DST->X, 1);
+}
+
 template <typename T1, typename T2, typename T3>
 static void HPLAI_pmat_new(
     T1 *DST,
@@ -1205,18 +1217,20 @@ static void HPLAI_pmat_new(
 {
     *vptr = (void *)malloc(
             ((size_t)(ALGO->align) + (size_t)(SRC->ld + 1) * (size_t)(SRC->nq)) * sizeof(DST->A[0]));
+    if (*vptr == NULL)
+        HPLAI_pabort( __LINE__, "HPLAI_pmat_new", "Memory allocation failed" );
+
+#ifdef HPL_CALL_VSIPL
+    DST->block = vsip_blockbind_d( (vsip_scalar_d *)(SRC->A),
+                                 (vsip_length)(SRC->ld * SRC->nq),
+                                 VSIP_MEM_NONE );
+#endif
+
     DST->A = (T3 *)HPL_PTR((*vptr), ((size_t)(ALGO->align) * sizeof(DST->A[0])));
 
     DST->X = Mptr(DST->A, 0, SRC->nq, SRC->ld);
 
-    DST->n = SRC->n;
-    DST->nb = SRC->nb;
-    DST->ld = SRC->ld;
-    DST->mp = SRC->mp;
-    DST->nq = SRC->nq;
-    DST->info = SRC->info;
-    blas::copy(SRC->nq * SRC->ld, SRC->A, 1, DST->A, 1);
-    blas::copy(SRC->nq, SRC->X, 1, DST->X, 1);
+    HPLAI_pmat_cpy(DST, SRC);
 }
 
 #ifdef __cplusplus
@@ -1238,39 +1252,25 @@ HPLAI_T_pmat *A;
     {
         void *vptr_FA, *vptr_factors;
         HPLAI_T_pmat FA;
+        HPL_T_pmat factors;
         HPLAI_pmat_new(&FA, A, ALGO, &vptr_FA, FA.A);
 
         HPLAI_pagesv(GRID, ALGO, &FA);
-        /*
-        {
-            HPL_T_pmat TA;
 
-            void *vptr_TA = (void *)malloc(
-                ((size_t)(ALGO->align) + (size_t)(A->ld + 1) * (size_t)(A->nq)) *
-                sizeof(double));
 
-            TA.A = (double *)HPL_PTR(vptr_TA, ((size_t)(ALGO->align) * sizeof(double)));
-
-            TA.X = Mptr(TA.A, 0, A->nq, A->ld);
-
-            HPLAI_pmat_cpy(&TA, &FA);
-
-            HPL_pdgesv(GRID, ALGO, &TA);
-
-            HPLAI_pmat_cpy(&FA, &TA);
-
-            if (vptr_TA)
-                free(vptr_TA);
-        }
-        */
-
-        HPL_T_pmat factors;
+#ifdef HPLAI_REGEN
+        HPLAI_pmat_cpy(A, &FA);
+        if (vptr_FA)
+            free(vptr_FA);
+        HPLAI_pmat_new(&factors, A, ALGO, &vptr_factors, factors.A);
+        HPLAI_pdmatgen( GRID, A->n, A->n+1, A->nb, A->A, A->ld, HPL_ISEED );
+#else
         HPLAI_pmat_new(&factors, &FA, ALGO, &vptr_factors, factors.A);
         if (vptr_FA)
             free(vptr_FA);
+#endif
 
         HPL_pir(GRID, ALGO, A, &factors, 1e-14, 1, 50, 1, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));
-        //HPLAI_pmat_cpy(A, &FA);
 
         if (vptr_factors)
             free(vptr_factors);
