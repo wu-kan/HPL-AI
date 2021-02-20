@@ -5,15 +5,9 @@
 
 // https://github.com/schuangs/hpl-ai-with-IR/blob/master/src/pgesv/HPL_pLdtrsv.c
 
-#ifdef STDC_HEADERS
-void HPL_pLdtrsv(
+static void HPL_pLdtrsv(
     HPL_T_grid *GRID,
     HPL_T_pmat *AMAT)
-#else
-void HPL_pdtrsv(GRID, AMAT)
-    HPL_T_grid *GRID;
-HPL_T_pmat *AMAT;
-#endif
 {
     /* 
  * Purpose
@@ -323,9 +317,9 @@ HPL_T_pmat *AMAT;
  *      ---by Homer F. Walker, 1988
  */
 
-double sign(double x)
+static double sign(double x)
 {
-    return (x >= 0) ? 1 : -1;
+    return x < 0 ? -1 : 1;
 }
 
 /* 
@@ -344,7 +338,7 @@ double sign(double x)
  * 4. append v to R, that is:
  *   R = [R, v]
  */
-void givens_rotations(
+static void givens_rotations(
     HPL_T_grid *GRID, /* processes grid information */
     HPL_T_pmat *A,    /* local A */
     double *v,        /* kth column of H */
@@ -491,7 +485,7 @@ void givens_rotations(
  * solve for Householder vector u:
  *   s.t. Pkx = (I-2uuT)x = [x0,x1,..,xk-1,alpha,0,..0], alpha != 0
  */
-void generateHouseholder(
+static void generateHouseholder(
     HPL_T_grid *GRID, /* processes grid information */
     HPL_T_pmat *A,    /* local A */
     const double *x,  /* local object vector pointer */
@@ -552,7 +546,7 @@ void generateHouseholder(
  * perform:
  *    y = Pkx = (I-2uuT)x = x - 2u(x, u)
  */
-void applyHouseholder(
+static void applyHouseholder(
     HPL_T_grid *GRID, /* processes grid information */
     HPL_T_pmat *A,    /* local A */
     const double *x,  /* local object vector pointer */
@@ -600,7 +594,7 @@ void applyHouseholder(
  * when performing A*v, if v is distributed along different rows like b, some redistributions
  * needed to perform to make v distributed along different columns like x.
  */
-void redB2X(
+static void redB2X(
     HPL_T_grid *GRID,
     HPL_T_pmat *A,   /* local A */
     const double *v, /* the vector to be redistributed, size: mp */
@@ -634,7 +628,7 @@ void redB2X(
  * v is distributed along different columns like x, some redistributions
  * needed to perform to make v distributed along different columns like b.
  */
-void redX2B(
+static void redX2B(
     HPL_T_grid *GRID,
     HPL_T_pmat *A,   /* local A */
     const double *v, /* the vector to be redistributed, size: nq */
@@ -665,7 +659,7 @@ void redX2B(
  *  HPL_pgmres():
  * 
  */
-int HPL_pgmres(
+static int HPL_pgmres(
     HPL_T_grid *GRID,
     HPL_T_pmat *A,       /* local A */
     HPL_T_pmat *factors, /* local LU factors */
