@@ -17,8 +17,6 @@ int64_t blas::iamax<float>(
 	float const *x,
 	int64_t incx)
 {
-    //HPLAI_pabort( __LINE__, "blas::iamax<double>", "Use HPL_idamax" );
-    //去掉上一行注释可以显示模板特化效果
 	return blas::iamax(n, x, incx);
 }
 
@@ -76,12 +74,12 @@ void blas::gemm<double, double, double>(
     int64_t m,
     int64_t n,
     int64_t k,
-    double alpha,
+    blas::scalar_type<double, double, double> alpha,
     double const *A,
     int64_t lda,
     double const *B,
     int64_t ldb,
-    double beta,
+    blas::scalar_type<double, double, double> beta,
     double *C,
     int64_t ldc)
 {
@@ -110,12 +108,12 @@ void blas::gemm<float, float, float>(
     int64_t m,
     int64_t n,
     int64_t k,
-    float alpha,
+    blas::scalar_type<float, float, float> alpha,
     float const *A,
     int64_t lda,
     float const *B,
     int64_t ldb,
-    float beta,
+    blas::scalar_type<float, float, float> beta,
     float *C,
     int64_t ldc)
 {
@@ -142,12 +140,12 @@ void blas::gemv<double, double, double>(
     blas::Op trans,
     int64_t m,
     int64_t n,
-    double alpha,
+    blas::scalar_type<double, double, double> alpha,
     double const *A,
     int64_t lda,
     double const *x,
     int64_t incx,
-    double beta,
+    blas::scalar_type<double, double, double> beta,
     double *y,
     int64_t incy)
 {
@@ -172,12 +170,12 @@ void blas::gemv<float, float, float>(
     blas::Op trans,
     int64_t m,
     int64_t n,
-    float alpha,
+    blas::scalar_type<float, float, float> alpha,
     float const *A,
     int64_t lda,
     float const *x,
     int64_t incx,
-    float beta,
+    blas::scalar_type<float, float, float> beta,
     float *y,
     int64_t incy)
 {
@@ -201,7 +199,7 @@ void blas::ger<double, double, double>(
     blas::Layout layout,
     int64_t m,
     int64_t n,
-    double alpha,
+    blas::scalar_type<double, double, double> alpha,
     double const *x,
     int64_t incx,
     double const *y,
@@ -227,7 +225,7 @@ void blas::ger<float, float, float>(
     blas::Layout layout,
     int64_t m,
     int64_t n,
-    float alpha,
+    blas::scalar_type<float, float, float> alpha,
     float const *x,
     int64_t incx,
     float const *y,
@@ -277,7 +275,7 @@ void blas::trsm<double, double>(
     blas::Diag diag,
     int64_t m,
     int64_t n,
-    double alpha,
+    blas::scalar_type<double, double> alpha,
     double const *A,
     int64_t lda,
     double *B,
@@ -307,7 +305,7 @@ void blas::trsm<float, float>(
     blas::Diag diag,
     int64_t m,
     int64_t n,
-    float alpha,
+    blas::scalar_type<float, float> alpha,
     float const *A,
     int64_t lda,
     float *B,
