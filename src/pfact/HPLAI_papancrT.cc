@@ -216,7 +216,7 @@ void HPLAI_papancrT
  * could benefit from a specialized blocked implementation.
  */
       if( WORK[0] != HPLAI_rzero )
-         blas::scal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+         blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
@@ -250,7 +250,7 @@ void HPLAI_papancrT
    HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
    HPLAI_alocswpT( PANEL,    ii, jj, WORK );
    if( WORK[0] != HPLAI_rzero )
-      blas::scal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+      blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Release the blocks

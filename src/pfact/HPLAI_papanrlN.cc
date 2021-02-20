@@ -185,7 +185,7 @@ void HPLAI_papanrlN
  * operations could benefit from a specialized blocked implementation.
  */
       if( WORK[0] != HPLAI_rzero )
-         blas::scal( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
+         blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
       blas::axpy( Mm1, -WORK[4+jj+1], Acur, 1, Anxt, 1 );
       HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
 #ifdef HPL_CALL_VSIPL
@@ -233,7 +233,7 @@ void HPLAI_papanrlN
    HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
    HPLAI_alocswpN( PANEL,    ii, jj, WORK );
    if( WORK[0] != HPLAI_rzero )
-      blas::scal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+      blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Release the blocks

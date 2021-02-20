@@ -127,7 +127,7 @@ void HPLAI_alocmax
       myrow  = PANEL->grid->myrow;
       nprow  = PANEL->grid->nprow;
       nb     = PANEL->nb;
-      kk     = PANEL->ii + II + ( ilindx = blas::iamax( N, A, 1 ) );
+      kk     = PANEL->ii + II + ( ilindx = blas::iamax<HPLAI_T_AFLOAT>( N, A, 1 ) );
       Mindxl2g( igindx, kk, nb, nb, myrow, 0, nprow );
 /*
  * WORK[0] := local maximum absolute value scalar,
