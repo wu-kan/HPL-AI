@@ -67,6 +67,40 @@ void blas::gemm<double, double, double>(
 }
 
 template <>
+void blas::gemm<float, float, float>(
+    blas::Layout layout,
+    blas::Op transA,
+    blas::Op transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    float alpha,
+    float const *A,
+    int64_t lda,
+    float const *B,
+    int64_t ldb,
+    float beta,
+    float *C,
+    int64_t ldc)
+{
+    blas::gemm(
+        layout,
+        transA,
+        transB,
+        m,
+        n,
+        k,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb,
+        beta,
+        C,
+        ldc);
+}
+
+template <>
 void blas::gemv<double, double, double>(
     blas::Layout layout,
     blas::Op trans,
@@ -163,6 +197,36 @@ void blas::trsm<double, double>(
 }
 
 template <>
+void blas::trsm<float, float>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    float alpha,
+    float const *A,
+    int64_t lda,
+    float *B,
+    int64_t ldb)
+{
+    blas::trsm(
+        layout,
+        side,
+        uplo,
+        trans,
+        diag,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb);
+}
+
+template <>
 void blas::trsv<double, double>(
 	blas::Layout layout,
 	blas::Uplo uplo,
@@ -179,6 +243,30 @@ void blas::trsv<double, double>(
 		uplo == blas::Uplo::Upper ? HplUpper : HplLower,
 		trans == blas::Op::Trans ? HplTrans : HplNoTrans,
 		diag == blas::Diag::Unit ? HplUnit : HplNonUnit,
+		n,
+		A,
+		lda,
+		x,
+		incx);
+}
+
+template <>
+void blas::trsv<float, float>(
+	blas::Layout layout,
+	blas::Uplo uplo,
+	blas::Op trans,
+	blas::Diag diag,
+	int64_t n,
+	float const *A,
+	int64_t lda,
+	float *x,
+	int64_t incx)
+{
+	blas::trsv(
+		layout,
+		uplo,
+		trans,
+		diag,
 		n,
 		A,
 		lda,

@@ -67,6 +67,23 @@ void blas::gemm<double, double, double>(
     int64_t ldc);
 
 template <>
+void blas::gemm<float, float, float>(
+    blas::Layout layout,
+    blas::Op transA,
+    blas::Op transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    float alpha,
+    float const *A,
+    int64_t lda,
+    float const *B,
+    int64_t ldb,
+    float beta,
+    float *C,
+    int64_t ldc);
+
+template <>
 void blas::gemv<double, double, double>(
     blas::Layout layout,
     blas::Op trans,
@@ -117,6 +134,21 @@ void blas::trsm<double, double>(
     int64_t ldb);
 
 template <>
+void blas::trsm<float, float>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    float alpha,
+    float const *A,
+    int64_t lda,
+    float *B,
+    int64_t ldb);
+
+template <>
 void blas::trsv<double, double>(
 	blas::Layout layout,
 	blas::Uplo uplo,
@@ -126,6 +158,18 @@ void blas::trsv<double, double>(
 	double const *A,
 	int64_t lda,
 	double *x,
+	int64_t incx);
+
+template <>
+void blas::trsv<float, float>(
+	blas::Layout layout,
+	blas::Uplo uplo,
+	blas::Op trans,
+	blas::Diag diag,
+	int64_t n,
+	float const *A,
+	int64_t lda,
+	float *x,
 	int64_t incx);
 
 #endif
