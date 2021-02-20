@@ -1,14 +1,23 @@
-#ifndef HPLAI_PGESV_H
-#define HPLAI_PGESV_H
+#ifndef HPLAI_PGESV_HH
+#define HPLAI_PGESV_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
+
+#ifdef __cplusplus
+#include <blas.hh>
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "hpl_pgesv.h"
 
 #include "hplai_misc.h"
-#include "hplai_blas.h"
 #include "hplai_auxil.h"
 
 #include "hplai_grid.h"
@@ -76,7 +85,7 @@ STDC_ARGS( (
    HPLAI_T_panel *,
    int *,
    HPLAI_T_panel *,
-   const enum HPLAI_SIDE,
+   const blas::Side,
    const int,
    HPLAI_T_AFLOAT *,
    const int,
@@ -90,7 +99,7 @@ STDC_ARGS( (
    HPLAI_T_panel *,
    int *,
    HPLAI_T_panel *,
-   const enum HPLAI_SIDE,
+   const blas::Side,
    const int,
    HPLAI_T_AFLOAT *,
    const int,
@@ -104,7 +113,7 @@ STDC_ARGS( (
    HPLAI_T_panel *,
    int *,
    HPLAI_T_panel *,
-   const enum HPLAI_TRANS,
+   const blas::Op,
    const int,
    HPLAI_T_AFLOAT *,
    const int,
@@ -220,7 +229,11 @@ STDC_ARGS( (
    HPLAI_T_pmat *
 ) );
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
- * End of hplai_pgesv.h
+ * End of hplai_pgesv.hh
  */

@@ -55,7 +55,7 @@ void HPLAI_equil
    HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
    HPLAI_T_panel *                    PANEL,
-   const enum HPLAI_TRANS             TRANS,
+   const blas::Op             TRANS,
    const int                        N,
    HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
@@ -70,7 +70,7 @@ void HPLAI_equil
    HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
    HPLAI_T_panel *                    PANEL;
-   const enum HPLAI_TRANS             TRANS;
+   const blas::Op             TRANS;
    const int                        N;
    HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
@@ -106,7 +106,7 @@ void HPLAI_equil
  *         On entry,  PANEL  points to the data structure containing the
  *         panel (to be equilibrated) information.
  *
- * TRANS   (global input)                const enum HPLAI_TRANS
+ * TRANS   (global input)                const blas::Op
  *         On entry, TRANS specifies whether  U  is stored in transposed
  *         or non-transposed form.
  *
@@ -212,17 +212,17 @@ void HPLAI_equil
 /*
  * Equilibration phase
  */
-         if( TRANS == HPLAI_NoTrans )
+         if( TRANS == blas::Op::NoTrans )
          {
             if( left  )
             {
-               HPLAI_spreadN( PBCST, IFLAG, PANEL, HPLAI_Left,  N, U, LDU,
+               HPLAI_spreadN( PBCST, IFLAG, PANEL, blas::Side::Left,  N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
 
             if( right )
             {
-               HPLAI_spreadN( PBCST, IFLAG, PANEL, HPLAI_Right, N, U, LDU,
+               HPLAI_spreadN( PBCST, IFLAG, PANEL, blas::Side::Right, N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
          }
@@ -230,13 +230,13 @@ void HPLAI_equil
          {
             if( left  )
             {
-               HPLAI_spreadT( PBCST, IFLAG, PANEL, HPLAI_Left,  N, U, LDU,
+               HPLAI_spreadT( PBCST, IFLAG, PANEL, blas::Side::Left,  N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
 
             if( right )
             {
-               HPLAI_spreadT( PBCST, IFLAG, PANEL, HPLAI_Right, N, U, LDU,
+               HPLAI_spreadT( PBCST, IFLAG, PANEL, blas::Side::Right, N, U, LDU,
                             iprow, IWORK, IPMAP, IPMAPM1 );
             }
          }

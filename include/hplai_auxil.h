@@ -7,7 +7,6 @@
  */
 #include "hpl_auxil.h"
 #include "hplai_misc.h"
-#include "hplai_blas.h"
 
 #define HPLAI_NORM_A HPL_NORM_A
 #define HPLAI_NORM_1 HPL_NORM_1

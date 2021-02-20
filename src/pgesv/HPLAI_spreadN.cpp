@@ -55,7 +55,7 @@ void HPLAI_spreadN
    HPLAI_T_panel *                    PBCST,
    int *                            IFLAG,
    HPLAI_T_panel *                    PANEL,
-   const enum HPLAI_SIDE              SIDE,
+   const blas::Side              SIDE,
    const int                        N,
    HPLAI_T_AFLOAT *                         U,
    const int                        LDU,
@@ -70,7 +70,7 @@ void HPLAI_spreadN
    HPLAI_T_panel *                    PBCST;
    int *                            IFLAG;
    HPLAI_T_panel *                    PANEL;
-   const enum HPLAI_SIDE              SIDE;
+   const blas::Side              SIDE;
    const int                        N;
    HPLAI_T_AFLOAT *                         U;
    const int                        LDU;
@@ -108,7 +108,7 @@ void HPLAI_spreadN
  *         On entry,  PANEL  points to the data structure containing the
  *         panel (to be spread) information.
  *
- * SIDE    (global input)                const enum HPLAI_SIDE
+ * SIDE    (global input)                const blas::Side
  *         On entry, SIDE specifies whether the local piece of U located
  *         in process IPMAP[SRCDIST] should be spread to the right or to
  *         the left. This feature is used by the equilibration process.
@@ -168,7 +168,7 @@ void HPLAI_spreadN
 /*
  * Spread U to the left
  */
-   if( SIDE == HPLAI_Left )
+   if( SIDE == blas::Side::Left )
    {
       nprow = ( npm1 = SRCDIST ) + 1;
       if( ( ( mydist = (unsigned int)(IPMAPM1[myrow]) ) >

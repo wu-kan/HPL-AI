@@ -187,7 +187,7 @@ HPLAI_T_AFLOAT HPLAI_palange
  * Find maximum sum of columns for 1-norm
  */
          if( myrow == 0 )
-         { v0 = work[HPLAI_iaamax( nq, work, 1 )]; v0 = Mabs( v0 ); }
+         { v0 = work[blas::iamax( nq, work, 1 )]; v0 = Mabs( v0 ); }
          if( work ) free( work );
       }
 /*
@@ -225,7 +225,7 @@ HPLAI_T_AFLOAT HPLAI_palange
  * Find maximum sum of rows for inf-norm
  */      
          if( mycol == 0 )
-         { v0 = work[HPLAI_iaamax( mp, work, 1 )]; v0 = Mabs( v0 ); }
+         { v0 = work[blas::iamax( mp, work, 1 )]; v0 = Mabs( v0 ); }
          if( work ) free( work );
       }
 /*

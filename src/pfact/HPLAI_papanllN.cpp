@@ -181,7 +181,7 @@ void HPLAI_papanllN
       HPLAI_alocswpN( PANEL,    ii, jj, WORK );
 
       L1ptr = Mptr( L1, ICOFF, jj+1, n0 ); kk = jj + 1 - ICOFF;
-      HPLAI_atrsv( HPLAI_ColumnMajor, HPLAI_Lower, HPLAI_NoTrans, HPLAI_Unit, kk, 
+      blas::trsv( blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit, kk, 
                  Mptr( L1, ICOFF, ICOFF, n0 ), n0, L1ptr,  1 );
 /*
  * Scale  current column by its absolute value max entry  -  Update  and 
@@ -190,7 +190,7 @@ void HPLAI_papanllN
  * fit from a specialized  blocked implementation.
  */ 
       if( WORK[0] != HPLAI_rzero )
-         HPLAI_ascal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+         blas::scal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
@@ -208,14 +208,14 @@ void HPLAI_papanllN
       (void) vsip_mdestroy_d( Xv1 );
       (void) vsip_mdestroy_d( Av1 );
 #else
-      HPLAI_agemv( HPLAI_ColumnMajor, HPLAI_NoTrans, Mm1, kk,  -HPLAI_rone,
+      blas::gemv( blas::Layout::ColMajor, blas::Op::NoTrans, Mm1, kk,  -HPLAI_rone,
                  Mptr( A, iip1, ICOFF, lda ), lda, L1ptr, 1,
                  HPLAI_rone, Mptr( A, iip1, jj+1, lda ),  1 );
 #endif
       HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
       if( curr != 0 )
       {
-         HPLAI_acopy( kk, L1ptr,  1, Mptr( A, ICOFF, jj+1, lda ), 1 );
+         blas::copy( kk, L1ptr,  1, Mptr( A, ICOFF, jj+1, lda ), 1 );
          ii = iip1; iip1++; m = Mm1; Mm1--;
       }
       Nm1--; jj++;
@@ -227,7 +227,7 @@ void HPLAI_papanllN
    HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
    HPLAI_alocswpN( PANEL,    ii, jj, WORK );
    if( WORK[0] != HPLAI_rzero )
-      HPLAI_ascal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+      blas::scal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Release the blocks

@@ -180,8 +180,8 @@ void HPLAI_paupdateNN
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
-         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left, HPLAI_Lower, HPLAI_NoTrans,
-                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
+         blas::trsm( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans,
+                    blas::Diag::Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
 #ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
@@ -197,7 +197,7 @@ void HPLAI_paupdateNN
          (void) vsip_mdestroy_d( Av1 );
          (void) vsip_mdestroy_d( Uv1 );
 #else
-         HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
+         blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                     jb, -HPLAI_rone, L2ptr, ldl2, Aptr, lda, HPLAI_rone,
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -217,8 +217,8 @@ void HPLAI_paupdateNN
 #else
          HPLAI_alaswp00N( jb, nn, Aptr, lda, ipiv );
 #endif
-         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left, HPLAI_Lower, HPLAI_NoTrans,
-                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
+         blas::trsm( blas::Layout::ColMajor, blas::Side::Left, blas::Uplo::Lower, blas::Op::NoTrans,
+                    blas::Diag::Unit, jb, nn, HPLAI_rone, L1ptr, jb, Aptr, lda );
 #ifdef HPL_CALL_VSIPL
 /*
  * Create the matrix subviews
@@ -234,7 +234,7 @@ void HPLAI_paupdateNN
          (void) vsip_mdestroy_d( Av1 );
          (void) vsip_mdestroy_d( Uv1 );
 #else
-         HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
+         blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                     jb, -HPLAI_rone, L2ptr, ldl2, Aptr, lda, HPLAI_rone,
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -301,8 +301,8 @@ void HPLAI_paupdateNN
       {
          nn = n - nq0; nn = Mmin( nb, nn );
 
-         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left,  HPLAI_Lower, HPLAI_NoTrans,
-                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
+         blas::trsm( blas::Layout::ColMajor, blas::Side::Left,  blas::Uplo::Lower, blas::Op::NoTrans,
+                    blas::Diag::Unit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
          if( curr != 0 )
          {
 #ifdef HPL_CALL_VSIPL
@@ -320,7 +320,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
+            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -343,7 +343,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
+            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Aptr, lda );
 #endif
@@ -358,8 +358,8 @@ void HPLAI_paupdateNN
  */
       if( ( nn = n - nq0 ) > 0 )
       {
-         HPLAI_atrsm( HPLAI_ColumnMajor, HPLAI_Left,  HPLAI_Lower, HPLAI_NoTrans,
-                    HPLAI_Unit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
+         blas::trsm( blas::Layout::ColMajor, blas::Side::Left,  blas::Uplo::Lower, blas::Op::NoTrans,
+                    blas::Diag::Unit, jb, nn, HPLAI_rone, L1ptr, jb, Uptr, LDU );
 
          if( curr != 0 )
          {
@@ -378,7 +378,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
+            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -401,7 +401,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            HPLAI_agemm( HPLAI_ColumnMajor, HPLAI_NoTrans, HPLAI_NoTrans, mp, nn,
+            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Aptr, lda );
 #endif

@@ -7,7 +7,6 @@
  */
 #include "hpl_gesv.h"
 #include "hplai_misc.h"
-#include "hplai_blas.h"
 #include "hplai_auxil.h"
 
 #endif

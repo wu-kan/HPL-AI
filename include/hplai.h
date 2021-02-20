@@ -20,7 +20,6 @@ extern "C"
 #include "hplai_pauxil.h"
 #include "hplai_panel.h"
 #include "hplai_pfact.h"
-#include "hplai_pgesv.h"
 
 #include "hplai_pmatgen.h"
 #include "hplai_ptest.h"
@@ -33,18 +32,103 @@ extern "C"
 
 //use blaspp https://bitbucket.org/icl/blaspp/src/master/
 #include <blas.hh>
+#include "hplai_pgesv.hh"
 
-#endif
+template <>
+void blas::axpy<double, double>(
+    int64_t n,
+    double alpha,
+    double const *x,
+    int64_t incx,
+    double *y,
+    int64_t incy);
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+template <>
+void blas::copy<double>(
+    int64_t n,
+    double const *x,
+    int64_t incx,
+    double *y,
+    int64_t incy);
 
-#include "hplai_blas.h"
+template <>
+void blas::gemm<double, double, double>(
+    blas::Layout layout,
+    blas::Op transA,
+    blas::Op transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    double alpha,
+    double const *A,
+    int64_t lda,
+    double const *B,
+    int64_t ldb,
+    double beta,
+    double *C,
+    int64_t ldc);
 
-#ifdef __cplusplus
-}
+template <>
+void blas::gemv<double, double, double>(
+    blas::Layout layout,
+    blas::Op trans,
+    int64_t m,
+    int64_t n,
+    double alpha,
+    double const *A,
+    int64_t lda,
+    double const *x,
+    int64_t incx,
+    double beta,
+    double *y,
+    int64_t incy);
+
+template <>
+void blas::ger<double, double, double>(
+    blas::Layout layout,
+    int64_t m,
+    int64_t n,
+    double alpha,
+    double const *x,
+    int64_t incx,
+    double const *y,
+    int64_t incy,
+    double *A,
+    int64_t lda);
+
+template <>
+void blas::scal<double>(
+    int64_t n,
+    double alpha,
+    double *x,
+    int64_t incx);
+template <>
+void blas::trsm<double, double>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    double alpha,
+    double const *A,
+    int64_t lda,
+    double *B,
+    int64_t ldb);
+
+template <>
+void blas::trsv<double>(
+	blas::Layout layout,
+	blas::Uplo uplo,
+	blas::Op trans,
+	blas::Diag diag,
+	int64_t n,
+	double const *A,
+	int64_t lda,
+	double *x,
+	int64_t incx);
+
 #endif
 
 #endif

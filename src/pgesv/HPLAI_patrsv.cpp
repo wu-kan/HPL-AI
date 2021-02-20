@@ -134,9 +134,9 @@ void HPLAI_patrsv
       Aprev = ( Aptr -= lda * kb ); Anq -= kb; Xdprev = ( Xd = XR + Anq );
       if( myrow == Alrow )
       {
-         HPLAI_atrsv( HPLAI_ColumnMajor, HPLAI_Upper, HPLAI_NoTrans, HPLAI_NonUnit,
+         blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
                     kb, Aptr+Anp, lda, XC+Anp, 1 );
-         HPLAI_acopy( kb, XC+Anp, 1, Xd, 1 );
+         blas::copy( kb, XC+Anp, 1, Xd, 1 );
       }
    }
 
@@ -180,7 +180,7 @@ void HPLAI_patrsv
          if( n1pprev > 0 )
          {
             tmp1 = Anpprev - n1pprev;
-            HPLAI_agemv( HPLAI_ColumnMajor, HPLAI_NoTrans, n1pprev, kbprev,
+            blas::gemv( blas::Layout::ColMajor, blas::Op::NoTrans, n1pprev, kbprev,
                        -HPLAI_rone, Aprev+tmp1, lda, Xdprev, 1, HPLAI_rone,
                        XC+tmp1, 1 );
             if( GridIsNotPx1 )
@@ -204,7 +204,7 @@ void HPLAI_patrsv
          if( n1pprev > 0 )
          {
             (void) HPLAI_recv( W, n1pprev, colprev, Rmsgid, Rcomm );
-            HPLAI_aaxpy( n1pprev, HPLAI_rone, W, 1, XC+Anpprev-n1pprev, 1 );
+            blas::axpy( n1pprev, HPLAI_rone, W, 1, XC+Anpprev-n1pprev, 1 );
          }
       }
 /*
@@ -212,15 +212,15 @@ void HPLAI_patrsv
  */
       if( ( mycol == Alcol ) && ( myrow == Alrow ) )
       {
-         HPLAI_atrsv( HPLAI_ColumnMajor, HPLAI_Upper, HPLAI_NoTrans, HPLAI_NonUnit,
+         blas::trsv( blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit,
                     kb, Aptr+Anp, lda, XC+Anp, 1 );
-         HPLAI_acopy( kb, XC+Anp, 1, XR+Anq, 1 );
+         blas::copy( kb, XC+Anp, 1, XR+Anq, 1 );
       }
 /*
 *  Finish previous update
 */
       if( ( mycol == colprev ) && ( ( tmp1 = Anpprev - n1pprev ) > 0 ) )
-         HPLAI_agemv( HPLAI_ColumnMajor, HPLAI_NoTrans, tmp1, kbprev, -HPLAI_rone,
+         blas::gemv( blas::Layout::ColMajor, blas::Op::NoTrans, tmp1, kbprev, -HPLAI_rone,
                     Aprev, lda, Xdprev, 1, HPLAI_rone, XC, 1 );
 /*
 *  Save info of current step and update info for the next step

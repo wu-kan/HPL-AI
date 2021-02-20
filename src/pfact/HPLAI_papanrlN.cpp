@@ -185,8 +185,8 @@ void HPLAI_papanrlN
  * operations could benefit from a specialized blocked implementation.
  */
       if( WORK[0] != HPLAI_rzero )
-         HPLAI_ascal( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
-      HPLAI_aaxpy( Mm1, -WORK[4+jj+1], Acur, 1, Anxt, 1 );
+         blas::scal( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
+      blas::axpy( Mm1, -WORK[4+jj+1], Acur, 1, Anxt, 1 );
       HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
 #ifdef HPL_CALL_VSIPL
       if( Nm1 > 1 )
@@ -211,14 +211,14 @@ void HPLAI_papanrlN
       }
 #else
       if( Nm1 > 1 )
-         HPLAI_ager( HPLAI_ColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
+         blas::ger( blas::Layout::ColMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
                    WORK+4+jj+2, 1, Mptr( Anxt, 0, 1, lda ), lda );
 #endif
 /*
  * Same thing as above but with worse data access on y (A += x * y^T)
  *
  *    if( Nm1 > 1 ) )
- *       HPLAI_ager( HPLAI_ColumnMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
+ *       blas::ger( blas::Layout::ColMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
  *                 Mptr( L1, jj, jj+2, n0 ), n0, Mptr( Anxt, 0, 1, lda ),
  *                 lda );
  */  
@@ -233,7 +233,7 @@ void HPLAI_papanrlN
    HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
    HPLAI_alocswpN( PANEL,    ii, jj, WORK );
    if( WORK[0] != HPLAI_rzero )
-      HPLAI_ascal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+      blas::scal( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
 #ifdef HPL_CALL_VSIPL
 /*
  * Release the blocks

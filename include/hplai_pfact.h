@@ -7,7 +7,6 @@
  */
 #include "hpl_pfact.h"
 #include "hplai_misc.h"
-#include "hplai_blas.h"
 
 #include "hplai_panel.h"
 /*

@@ -8,7 +8,6 @@
 #include "hpl_pauxil.h"
 
 #include "hplai_misc.h"
-#include "hplai_blas.h"
 #include "hplai_auxil.h"
 
 #include "hplai_grid.h"
