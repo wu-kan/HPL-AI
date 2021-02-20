@@ -211,7 +211,7 @@ void HPLAI_papanrlT
          (void) vsip_mdestroy_d( Xv1 );
          (void) vsip_mdestroy_d( Av1 );
 #else
-         blas::ger( blas::Layout::ColMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
+         blas::ger<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
                    Mptr( L1, jj+2, jj, n0 ), 1, Mptr( Anxt, 0, 1, lda ),
                    lda );
 #endif
