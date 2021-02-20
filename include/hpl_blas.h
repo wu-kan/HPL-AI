@@ -541,7 +541,7 @@ STDC_ARGS( (
    const double,
    const double *,
    const int,
-   const double *,
+   double *,
    const int,
    double *,
    const int

@@ -60,7 +60,7 @@ void HPL_dger
    const double                     ALPHA,
    const double *                   X,
    const int                        INCX,
-   const double *                         Y,
+   double *                         Y,
    const int                        INCY,
    double *                         A,
    const int                        LDA
@@ -74,7 +74,7 @@ void HPL_dger
    const double                     ALPHA;
    const double *                   X;
    const int                        INCX;
-   const double *                         Y;
+   double *                         Y;
    const int                        INCY;
    double *                         A;
    const int                        LDA;

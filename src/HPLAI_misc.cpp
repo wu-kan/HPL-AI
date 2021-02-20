@@ -107,7 +107,7 @@ void blas::ger<double, double, double>(
         alpha,
         x,
         incx,
-        y,
+        const_cast<double*>(y),
         incy,
         A,
         lda);
