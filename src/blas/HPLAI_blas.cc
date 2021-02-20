@@ -12,6 +12,17 @@ int64_t blas::iamax<double>(
 }
 
 template <>
+int64_t blas::iamax<float>(
+	int64_t n,
+	float const *x,
+	int64_t incx)
+{
+    //HPLAI_pabort( __LINE__, "blas::iamax<double>", "Use HPL_idamax" );
+    //去掉上一行注释可以显示模板特化效果
+	return blas::iamax(n, x, incx);
+}
+
+template <>
 void blas::axpy<double, double>(
     int64_t n,
     double alpha,
@@ -24,6 +35,18 @@ void blas::axpy<double, double>(
 }
 
 template <>
+void blas::axpy<float, float>(
+    int64_t n,
+    float alpha,
+    float const *x,
+    int64_t incx,
+    float *y,
+    int64_t incy)
+{
+   blas::axpy(n, alpha, x, incx, y, incy);
+}
+
+template <>
 void blas::copy<double, double>(
     int64_t n,
     double const *x,
@@ -32,6 +55,17 @@ void blas::copy<double, double>(
     int64_t incy)
 {
     HPL_dcopy(n, x, incx, y, incy);
+}
+
+template <>
+void blas::copy<float, float>(
+    int64_t n,
+    float const *x,
+    int64_t incx,
+    float *y,
+    int64_t incy)
+{
+    blas::copy(n, x, incx, y, incy);
 }
 
 template <>
@@ -189,6 +223,32 @@ void blas::ger<double, double, double>(
 }
 
 template <>
+void blas::ger<float, float, float>(
+    blas::Layout layout,
+    int64_t m,
+    int64_t n,
+    float alpha,
+    float const *x,
+    int64_t incx,
+    float const *y,
+    int64_t incy,
+    float *A,
+    int64_t lda)
+{
+    blas::ger(
+        layout,
+        m,
+        n,
+        alpha,
+        x,
+        incx,
+        y,
+        incy,
+        A,
+        lda);
+}
+
+template <>
 void blas::scal<double>(
     int64_t n,
     double alpha,
@@ -196,6 +256,16 @@ void blas::scal<double>(
     int64_t incx)
 {
     HPL_dscal(n, alpha, x, incx);
+}
+
+template <>
+void blas::scal<float>(
+    int64_t n,
+    float alpha,
+    float *x,
+    int64_t incx)
+{
+    blas::scal(n, alpha, x, incx);
 }
 
 template <>

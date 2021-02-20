@@ -33,6 +33,12 @@ int64_t blas::iamax<double>(
 	int64_t incx);
 
 template <>
+int64_t blas::iamax<float>(
+	int64_t n,
+	float const *x,
+	int64_t incx);
+
+template <>
 void blas::axpy<double, double>(
     int64_t n,
     double alpha,
@@ -42,11 +48,28 @@ void blas::axpy<double, double>(
     int64_t incy);
 
 template <>
+void blas::axpy<float, float>(
+    int64_t n,
+    float alpha,
+    float const *x,
+    int64_t incx,
+    float *y,
+    int64_t incy);
+
+template <>
 void blas::copy<double, double>(
     int64_t n,
     double const *x,
     int64_t incx,
     double *y,
+    int64_t incy);
+
+template <>
+void blas::copy<float, float>(
+    int64_t n,
+    float const *x,
+    int64_t incx,
+    float *y,
     int64_t incy);
 
 template <>
@@ -127,10 +150,30 @@ void blas::ger<double, double, double>(
     int64_t lda);
 
 template <>
+void blas::ger<float, float, float>(
+    blas::Layout layout,
+    int64_t m,
+    int64_t n,
+    float alpha,
+    float const *x,
+    int64_t incx,
+    float const *y,
+    int64_t incy,
+    float *A,
+    int64_t lda);
+
+template <>
 void blas::scal<double>(
     int64_t n,
     double alpha,
     double *x,
+    int64_t incx);
+
+template <>
+void blas::scal<float>(
+    int64_t n,
+    float alpha,
+    float *x,
     int64_t incx);
 
 template <>
