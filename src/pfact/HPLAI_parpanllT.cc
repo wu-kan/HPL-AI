@@ -221,7 +221,7 @@ void HPLAI_parpanllT
       (void) vsip_mdestroy_d( Lv0 );
       (void) vsip_mdestroy_d( Av0 );
 #else
-      blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::Trans, m, jb,
+      blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::Trans, m, jb,
                  jj, -HPLAI_rone, Mptr( Aptr, ii, 0, lda ), lda,
                  Mptr( L1ptr, jj, 0, n0 ), n0, HPLAI_rone,
                  Mptr( Aptr, ii, jj, lda ), lda );

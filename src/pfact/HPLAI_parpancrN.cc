@@ -218,7 +218,7 @@ void HPLAI_parpancrN
       (void) vsip_mdestroy_d( Lv0 );
       (void) vsip_mdestroy_d( Av0 );
 #else
-      blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, m, jb, jj,
+      blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, m, jb, jj,
                  -HPLAI_rone, Mptr( Aptr, ii, 0, lda ), lda, Mptr( L1ptr,
                  0, jj, n0 ), n0, HPLAI_rone, Mptr( Aptr, ii, jj, lda ),
                  lda );
@@ -260,7 +260,7 @@ void HPLAI_parpancrN
  */
          (void) vsip_mdestroy_d( Lv0 );
 #else
-         blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, jb, n,
+         blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, jb, n,
                     jj, -HPLAI_rone, Mptr( L1ptr, jj, 0, n0 ), n0,
                     Mptr( L1ptr, 0, jj+jb, n0 ), n0, HPLAI_rone, 
                     Mptr( L1ptr, jj, jj+jb, n0 ), n0 );

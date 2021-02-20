@@ -197,7 +197,7 @@ void HPLAI_paupdateNN
          (void) vsip_mdestroy_d( Av1 );
          (void) vsip_mdestroy_d( Uv1 );
 #else
-         blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
+         blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                     jb, -HPLAI_rone, L2ptr, ldl2, Aptr, lda, HPLAI_rone,
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -234,7 +234,7 @@ void HPLAI_paupdateNN
          (void) vsip_mdestroy_d( Av1 );
          (void) vsip_mdestroy_d( Uv1 );
 #else
-         blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
+         blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                     jb, -HPLAI_rone, L2ptr, ldl2, Aptr, lda, HPLAI_rone,
                     Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -320,7 +320,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
+            blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -343,7 +343,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
+            blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Aptr, lda );
 #endif
@@ -378,7 +378,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
+            blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Mptr( Aptr, jb, 0, lda ), lda );
 #endif
@@ -401,7 +401,7 @@ void HPLAI_paupdateNN
             (void) vsip_mdestroy_d( Av1 );
             (void) vsip_mdestroy_d( Uv1 );
 #else
-            blas::gemm( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
+            blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, blas::Op::NoTrans, blas::Op::NoTrans, mp, nn,
                        jb, -HPLAI_rone, L2ptr, ldl2, Uptr, LDU, HPLAI_rone,
                        Aptr, lda );
 #endif
