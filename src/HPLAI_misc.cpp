@@ -1,6 +1,15 @@
 #include "hplai.h"
 
 template <>
+int64_t blas::iamax<double>(
+	int64_t n,
+	double const *x,
+	int64_t incx)
+{
+	return HPL_idamax(n, x, incx);
+}
+
+template <>
 void blas::axpy<double, double>(
     int64_t n,
     double alpha,

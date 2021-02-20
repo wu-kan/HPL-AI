@@ -165,9 +165,9 @@ HPL_T_pmat *AMAT;
     {
         if (myrow == Alrow)
         {
-            HPL_dtrsv(HplColumnMajor, HplLower, HplNoTrans, HplUnit,
+            blas::trsv(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
                       kb, Aptr, lda, XC, 1);
-            HPL_dcopy(kb, XC, 1, Xd, 1);
+            blas::copy(kb, XC, 1, Xd, 1);
         }
 
         /* update local variables */
@@ -218,7 +218,7 @@ HPL_T_pmat *AMAT;
  */
             if (n1pprev > 0)
             {
-                HPL_dgemv(HplColumnMajor, HplNoTrans, n1pprev, kbprev,
+                blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, n1pprev, kbprev,
                           -HPL_rone, Aprev + Anp, lda, Xdprev, 1, HPL_rone,
                           XC + Anp, 1);
                 if (GridIsNotPx1)
@@ -242,7 +242,7 @@ HPL_T_pmat *AMAT;
             if (n1pprev > 0)
             {
                 (void)HPL_recv(W, n1pprev, colprev, Rmsgid, Rcomm);
-                HPL_daxpy(n1pprev, HPL_rone, W, 1, XC + Anp, 1);
+                blas::axpy(n1pprev, HPL_rone, W, 1, XC + Anp, 1);
             }
         }
         /*
@@ -250,15 +250,15 @@ HPL_T_pmat *AMAT;
  */
         if ((mycol == Alcol) && (myrow == Alrow))
         {
-            HPL_dtrsv(HplColumnMajor, HplLower, HplNoTrans, HplUnit,
+            blas::trsv(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
                       kb, Aptr + Anp, lda, XC + Anp, 1);
-            HPL_dcopy(kb, XC + Anp, 1, Xd, 1);
+            blas::copy(kb, XC + Anp, 1, Xd, 1);
         }
         /*
  *  Finish previous update
  */
         if ((mycol == colprev) && ((tmp1 = Anp + n1pprev) < np))
-            HPL_dgemv(HplColumnMajor, HplNoTrans, np - tmp1, kbprev, -HPL_rone,
+            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, np - tmp1, kbprev, -HPL_rone,
                       Aprev + tmp1, lda, Xdprev, 1, HPL_rone, XC + tmp1, 1);
 
         /*
@@ -762,7 +762,7 @@ int HPL_pgmres(
         {
             /* there is initial guess stored in x here from last iteration */
             /* calculate v = Ax */
-            HPL_dgemv(HplColumnMajor, HplNoTrans, mp, nq, HPL_rone,
+            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
                       A->A, A->ld, x, 1, 0, v, 1);
             HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
@@ -822,7 +822,7 @@ int HPL_pgmres(
 
             /* calculate v = AP0P1..Pkv */
             redB2X(GRID, A, v, xt);
-            HPL_dgemv(HplColumnMajor, HplNoTrans, mp, nq, HPL_rone,
+            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
                       A->A, A->ld, xt, 1, 0, v, 1);
             HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
@@ -906,7 +906,7 @@ int HPL_pgmres(
         //     print_matrix(R, MM, MM, MM, 1);
         // }
         /* solve Ry = w, R is upper-tri, and w will be overwritten by solution y */
-        HPL_dtrsv(HplColumnMajor, HplUpper, HplNoTrans, HplNonUnit, k + 1, R, MM, w, 1);
+        blas::trsv(blas::Layout::ColMajor, blas::Uplo::Upper, blas::Op::NoTrans, blas::Diag::NonUnit, k + 1, R, MM, w, 1);
         // if (GRID->iam == 0)
         // {
         //     printf("After:\n");
@@ -940,7 +940,7 @@ int HPL_pgmres(
 
         // /* there is initial guess stored in x here from last iteration */
         // /* calculate v = Ax */
-        // HPL_dgemv( HplColumnMajor, HplNoTrans, mp, nq, HPL_rone,
+        // blas::gemv( blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
         //         A->A, A->ld, x, 1, 0, v, 1 );
         // HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
@@ -1113,7 +1113,7 @@ static void HPL_pir(
         *(factors->X + i) = 0;
     }
     */
-    HPL_dcopy(nq, factors->X, 1, A->X, 1);
+    blas::copy(nq, factors->X, 1, A->X, 1);
     //待检查能不能改成上面这个
 
     /*
@@ -1140,13 +1140,13 @@ static void HPL_pir(
         if (mycol == tarcol)
         {
             memcpy(res, Bptr, mp * sizeof(double));
-            HPL_dgemv(HplColumnMajor, HplNoTrans, mp, nq, -HPL_rone,
+            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, -HPL_rone,
                       A->A, A->ld, A->X, 1, HPL_rone, res, 1);
         }
         else if (nq > 0)
         {
             memset(res, 0, mp * sizeof(double));
-            HPL_dgemv(HplColumnMajor, HplNoTrans, mp, nq, -HPL_rone,
+            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, -HPL_rone,
                       A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
         }
         else
@@ -1195,23 +1195,6 @@ static void HPL_pir(
  */
 }
 
-template <typename T1, typename T2>
-static void HPLAI_pmat_cpy(
-    T1 *DST,
-    const T2 *SRC)
-{
-    DST->n = SRC->n;
-    DST->nb = SRC->nb;
-    DST->ld = SRC->ld;
-    DST->mp = SRC->mp;
-    DST->nq = SRC->nq;
-    DST->info = SRC->info;
-    for (int i = 0, sizeA = SRC->nq * SRC->ld; i < sizeA; ++i)
-        DST->A[i] = SRC->A[i];
-    for (int i = 0; i < SRC->nq; ++i)
-        DST->X[i] = SRC->X[i];
-}
-
 template <typename T1, typename T2, typename T3>
 static void HPLAI_pmat_new(
     T1 *DST,
@@ -1226,7 +1209,14 @@ static void HPLAI_pmat_new(
 
     DST->X = Mptr(DST->A, 0, SRC->nq, SRC->ld);
 
-    HPLAI_pmat_cpy(DST, SRC);
+    DST->n = SRC->n;
+    DST->nb = SRC->nb;
+    DST->ld = SRC->ld;
+    DST->mp = SRC->mp;
+    DST->nq = SRC->nq;
+    DST->info = SRC->info;
+    blas::copy(SRC->nq * SRC->ld, SRC->A, 1, DST->A, 1);
+    blas::copy(SRC->nq, SRC->X, 1, DST->X, 1);
 }
 
 #ifdef __cplusplus
