@@ -31,6 +31,10 @@ AC_CHECK_FUNCS([dgemm_])
 
 AC_CHECK_HEADERS([mpi.h])
 
+AC_CHECK_HEADERS([blas.hh])
+
+AC_CHECK_LIB(blaspp, dgemm_)
+
 AC_CONFIG_FILES([Makefile src/Makefile testing/Makefile])
 
 AC_OUTPUT

@@ -10,8 +10,7 @@ spack load openmpi@4.0.5%gcc@7.5.0
 spack load blaspp@2020.10.02%gcc@7.5.0
 
 autoreconf -ivf
-./configure \
-    LIBS="-lblaspp"
+./configure
 make -j
 
 if true; then
