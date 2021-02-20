@@ -3,11 +3,17 @@
 /* Define if you have a BLAS library. */
 #undef HAVE_BLAS
 
+/* Define to 1 if you have the <blas.hh> header file. */
+#undef HAVE_BLAS_HH
+
 /* Define to 1 if you have the `dgemm_' function. */
 #undef HAVE_DGEMM_
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `blaspp' library (-lblaspp). */
+#undef HAVE_LIBBLASPP
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
