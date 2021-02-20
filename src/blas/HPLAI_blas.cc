@@ -133,6 +133,36 @@ void blas::gemv<double, double, double>(
 }
 
 template <>
+void blas::gemv<float, float, float>(
+    blas::Layout layout,
+    blas::Op trans,
+    int64_t m,
+    int64_t n,
+    float alpha,
+    float const *A,
+    int64_t lda,
+    float const *x,
+    int64_t incx,
+    float beta,
+    float *y,
+    int64_t incy)
+{
+    blas::gemv(
+        layout,
+        trans,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        x,
+        incx,
+        beta,
+        y,
+        incy);
+}
+
+template <>
 void blas::ger<double, double, double>(
     blas::Layout layout,
     int64_t m,
