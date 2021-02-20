@@ -41,7 +41,7 @@ int64_t blas::iamax<float>(
 template <>
 void blas::axpy<double, double>(
     int64_t n,
-    double alpha,
+    blas::scalar_type<double, double> alpha,
     double const *x,
     int64_t incx,
     double *y,
@@ -50,7 +50,7 @@ void blas::axpy<double, double>(
 template <>
 void blas::axpy<float, float>(
     int64_t n,
-    float alpha,
+    blas::scalar_type<float, float> alpha,
     float const *x,
     int64_t incx,
     float *y,
