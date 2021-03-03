@@ -1,16 +1,15 @@
 #!/bin/bash
 
-source /GPUFS/sysu_hpcedu_302/asc21/WuK/spack/share/spack/setup-env.sh
 spack unload -a
-spack load gcc@7.5.0%gcc@4.8.5
+spack load gcc@7.5.0
 spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
-spack load automake@1.16.3%gcc@7.5.0
-spack load openmpi@4.0.5%gcc@7.5.0
-spack load blaspp@2020.10.02%gcc@7.5.0
+spack load automake@1.16.2%gcc@7.5.0
+spack load openmpi@3.1.6%gcc@7.5.0
+spack load blaspp@2020.10.02%gcc@7.5.0+openmp~cuda ^ openblas@0.3.5%gcc@7.5.0 threads=openmp
 
 autoreconf -ivf
-./configure
+./configure CPPFLAGS="-DHPLAI_BLAS_GEN"
 make -j
 
 if true; then
