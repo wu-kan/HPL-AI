@@ -6,8 +6,6 @@ AC_CONFIG_HEADERS([include/hplai_config.h])
 
 AX_PROG_CC_MPI
 
-AC_PROG_CXX
-
 AC_PROG_RANLIB
 
 AC_PROG_INSTALL
@@ -33,6 +31,9 @@ AC_CHECK_HEADERS([mpi.h])
 
 AC_CHECK_HEADERS([blas.hh])
 
+AC_PROG_CXX
+
+dnl FIXME: AX_CXX_CHECK_LIB(blaspp, [blas::blaspp_version()])
 AC_CHECK_LIB(blaspp, dgemm_)
 
 AC_CONFIG_FILES([Makefile src/Makefile testing/Makefile])
