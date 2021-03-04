@@ -412,37 +412,6 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         ldc);
 }
 
-// 已知问题：自动生成的矩阵向量乘法会产生过大的精度误差，不能通过测试；暂时使用重载的版本
-template <>
-void blas::gemv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
-    blas::Layout layout,
-    blas::Op trans,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> alpha,
-    HPLAI_T_AFLOAT const *A,
-    int64_t lda,
-    HPLAI_T_AFLOAT const *x,
-    int64_t incx,
-    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> beta,
-    HPLAI_T_AFLOAT *y,
-    int64_t incy)
-{
-    blas::gemv(
-        layout,
-        trans,
-        m,
-        n,
-        alpha,
-        A,
-        lda,
-        x,
-        incx,
-        beta,
-        y,
-        incy);
-}
-
 template <>
 void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
