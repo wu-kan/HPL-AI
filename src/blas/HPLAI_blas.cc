@@ -36,6 +36,31 @@ void HPLAI_blas_init(RANK, SIZE)
 }
 #endif
 
+static enum HPL_ORDER blaspp2Hpl(blas::Layout layout)
+{
+   return layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor;
+}
+
+static enum HPL_SIDE blaspp2Hpl(blas::Side side)
+{
+   return side == blas::Side::Left ? HplLeft : HplRight;
+}
+
+static enum HPL_UPLO blaspp2Hpl(blas::Uplo uplo)
+{
+   return uplo == blas::Uplo::Upper ? HplUpper : HplLower;
+}
+
+static enum HPL_TRANS blaspp2Hpl(blas::Op trans)
+{
+   return trans == blas::Op::NoTrans ? HplNoTrans :trans == blas::Op::Trans ? HplTrans : HplConjTrans;
+}
+
+static enum HPL_DIAG blaspp2Hpl(blas::Diag diag)
+{
+   return diag == blas::Diag::Unit ? HplUnit : HplNonUnit;
+}
+
 template <>
 int64_t blas::iamax<double>(
 	int64_t n,
@@ -118,9 +143,9 @@ void blas::gemm<double, double, double>(
     int64_t ldc)
 {
     HPL_dgemm(
-        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
-        transA == blas::Op::Trans ? HplTrans : HplNoTrans,
-        transB == blas::Op::Trans ? HplTrans : HplNoTrans,
+        blaspp2Hpl(layout),
+        blaspp2Hpl(transA),
+        blaspp2Hpl(transB),
         m,
         n,
         k,
@@ -372,8 +397,8 @@ void blas::gemv<double, double, double>(
     int64_t incy)
 {
     HPL_dgemv(
-        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
-        trans == blas::Op::Trans ? HplTrans : HplNoTrans,
+        blaspp2Hpl(layout),
+        blaspp2Hpl(trans),
         m,
         n,
         alpha,
@@ -430,7 +455,7 @@ void blas::ger<double, double, double>(
     int64_t lda)
 {
     HPL_dger(
-        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
+        blaspp2Hpl(layout),
         m,
         n,
         alpha,
@@ -504,11 +529,11 @@ void blas::trsm<double, double>(
     int64_t ldb)
 {
     HPL_dtrsm(
-        layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
-        side == blas::Side::Left ? HplLeft : HplRight,
-        uplo == blas::Uplo::Upper ? HplUpper : HplLower,
-        trans == blas::Op::Trans ? HplTrans : HplNoTrans,
-        diag == blas::Diag::Unit ? HplUnit : HplNonUnit,
+        blaspp2Hpl(layout),
+        blaspp2Hpl(side),
+        blaspp2Hpl(uplo),
+        blaspp2Hpl(trans),
+        blaspp2Hpl(diag),
         m,
         n,
         alpha,
@@ -1113,10 +1138,10 @@ void blas::trsv<double, double>(
 	int64_t incx)
 {
 	HPL_dtrsv(
-		layout == blas::Layout::RowMajor ? HplRowMajor : HplColumnMajor,
-		uplo == blas::Uplo::Upper ? HplUpper : HplLower,
-		trans == blas::Op::Trans ? HplTrans : HplNoTrans,
-		diag == blas::Diag::Unit ? HplUnit : HplNonUnit,
+		blaspp2Hpl(layout),
+		blaspp2Hpl(uplo),
+		blaspp2Hpl(trans),
+		blaspp2Hpl(diag),
 		n,
 		A,
 		lda,
