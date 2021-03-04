@@ -128,8 +128,6 @@ void blas::trsv<double, double>(
 	double *x,
 	int64_t incx);
 
-#ifndef HPLAI_BLAS_GEN
-
 template <>
 int64_t blas::iamax<float>(
 	int64_t n,
@@ -153,6 +151,8 @@ void blas::copy<float, float>(
     float *y,
     int64_t incy);
 
+#ifndef HPLAI_GEN_BLASPP_GEMM
+
 template <>
 void blas::gemm<float, float, float>(
     blas::Layout layout,
@@ -169,6 +169,27 @@ void blas::gemm<float, float, float>(
     blas::scalar_type<float, float, float> beta,
     float *C,
     int64_t ldc);
+
+#else
+
+template <>
+void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
+    blas::Layout layout,
+    blas::Op transA,
+    blas::Op transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> alpha,
+    HPLAI_T_AFLOAT const *A,
+    int64_t lda,
+    HPLAI_T_AFLOAT const *B,
+    int64_t ldb,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> beta,
+    HPLAI_T_AFLOAT *C,
+    int64_t ldc);
+
+#endif
 
 template <>
 void blas::gemv<float, float, float>(
@@ -205,6 +226,8 @@ void blas::scal<float>(
     float *x,
     int64_t incx);
 
+#ifndef HPLAI_GEN_BLASPP_TRSM
+
 template <>
 void blas::trsm<float, float>(
     blas::Layout layout,
@@ -220,36 +243,7 @@ void blas::trsm<float, float>(
     float *B,
     int64_t ldb);
 
-template <>
-void blas::trsv<float, float>(
-	blas::Layout layout,
-	blas::Uplo uplo,
-	blas::Op trans,
-	blas::Diag diag,
-	int64_t n,
-	float const *A,
-	int64_t lda,
-	float *x,
-	int64_t incx);
-
 #else
-
-template <>
-void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
-    blas::Layout layout,
-    blas::Op transA,
-    blas::Op transB,
-    int64_t m,
-    int64_t n,
-    int64_t k,
-    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> alpha,
-    HPLAI_T_AFLOAT const *A,
-    int64_t lda,
-    HPLAI_T_AFLOAT const *B,
-    int64_t ldb,
-    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> beta,
-    HPLAI_T_AFLOAT *C,
-    int64_t ldc);
 
 template <>
 void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -265,6 +259,24 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     int64_t lda,
     HPLAI_T_AFLOAT *B,
     int64_t ldb);
+
+#endif
+
+#ifndef HPLAI_GEN_BLASPP_TRSV
+
+template <>
+void blas::trsv<float, float>(
+	blas::Layout layout,
+	blas::Uplo uplo,
+	blas::Op trans,
+	blas::Diag diag,
+	int64_t n,
+	float const *A,
+	int64_t lda,
+	float *x,
+	int64_t incx);
+
+#else
 
 template <>
 void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(

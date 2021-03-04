@@ -9,7 +9,8 @@ spack load openmpi@3.1.6%gcc@7.5.0
 spack load blaspp@2020.10.02%gcc@7.5.0+openmp~cuda ^ openblas@0.3.5%gcc@7.5.0 threads=openmp
 
 autoreconf -ivf
-./configure # CPPFLAGS="-DHPLAI_T_AFLOAT=double"
+./configure \
+    CPPFLAGS="-DHPLAI_GEN_BLASPP_GEMM -DHPLAI_GEN_BLASPP_TRSM -DHPLAI_GEN_BLASPP_TRSV" #CPPFLAGS="-DHPLAI_T_AFLOAT=double"
 make -j
 
 if true; then
