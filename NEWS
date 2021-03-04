@@ -1,6 +1,5 @@
 ==============================================================
- High Performance Computing Linpack Benchmark (HPL)
- HPL - 2.3 - December 2, 2018
+   HPL-AI Mixed-Precision Benchmark  --   February 18, 2021
 ==============================================================
 
  History
@@ -101,3 +100,20 @@
  -- [A] acinclude.m4
  -- [A] src/Makefile.am
  -- [A] testing/Makefile.am
+
+ - 02/18/2021 HPL-AI Version 2.3.0.beta
+
+ Junkang Huang added the parallel GMRES and matrix construction
+ part (<https://github.com/schuangs/hpl-ai-with-IR>) for HPL-AI.
+ Note that the GMRES did not check the backward-error, which may
+ cause the result to be invalid.
+
+ Kan Wu fixed some bugs and reimplemented HPL-AI so that the C
+ souce code of hpl-2.3 remained the same, while took advantages
+ of modern C++ features such as templates, overloading, etc:
+ -- [A] include/hplai*
+ -- [A] src/*/HPLAI_*.cc
+ -- [A] testing/*/HPLAI_*.cc
+ -- [M] configure.ac
+ -- [M] src/Makefile.am
+ -- [M] testing/Makefile.am
