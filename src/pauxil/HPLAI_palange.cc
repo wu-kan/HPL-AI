@@ -1,49 +1,26 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
@@ -55,29 +32,26 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-HPLAI_T_AFLOAT HPLAI_palange
-(
-   const HPLAI_T_grid *               GRID,
-   const HPLAI_T_NORM                 NORM,
-   const int                        M,
-   const int                        N,
-   const int                        NB,
-   const HPLAI_T_AFLOAT *                   A,
-   const int                        LDA
-)
+    HPLAI_T_AFLOAT HPLAI_palange(
+        const HPLAI_T_grid *GRID,
+        const HPLAI_T_NORM NORM,
+        const int M,
+        const int N,
+        const int NB,
+        const HPLAI_T_AFLOAT *A,
+        const int LDA)
 #else
-HPLAI_T_AFLOAT HPLAI_palange
-( GRID, NORM, M, N, NB, A, LDA )
-   const HPLAI_T_grid *               GRID;
-   const HPLAI_T_NORM                 NORM;
-   const int                        M;
-   const int                        N;
-   const int                        NB;
-   const HPLAI_T_AFLOAT *                   A;
-   const int                        LDA;
+HPLAI_T_AFLOAT HPLAI_palange(GRID, NORM, M, N, NB, A, LDA)
+    const HPLAI_T_grid *GRID;
+const HPLAI_T_NORM NORM;
+const int M;
+const int N;
+const int NB;
+const HPLAI_T_AFLOAT *A;
+const int LDA;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -125,126 +99,156 @@ HPLAI_T_AFLOAT HPLAI_palange
  *         LDA must be at least max(1,LocP(M)).
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   HPLAI_T_AFLOAT                     s, v0=HPLAI_rzero, * work = NULL;
-   MPI_Comm                   Acomm, Ccomm, Rcomm;
-   int                        ii, jj, mp, mycol, myrow, npcol, nprow,
-                              nq;
-/* ..
+        HPLAI_T_AFLOAT s, v0 = HPLAI_rzero, *work = NULL;
+        MPI_Comm Acomm, Ccomm, Rcomm;
+        int ii, jj, mp, mycol, myrow, npcol, nprow,
+            nq;
+        /* ..
  * .. Executable Statements ..
  */
-   (void) HPLAI_grid_info( GRID, &nprow, &npcol, &myrow, &mycol );
-   Rcomm = GRID->row_comm; Ccomm = GRID->col_comm;
-   Acomm = GRID->all_comm;
+        (void)HPLAI_grid_info(GRID, &nprow, &npcol, &myrow, &mycol);
+        Rcomm = GRID->row_comm;
+        Ccomm = GRID->col_comm;
+        Acomm = GRID->all_comm;
 
-   Mnumroc( mp, M, NB, NB, myrow, 0, nprow );
-   Mnumroc( nq, N, NB, NB, mycol, 0, npcol );
+        Mnumroc(mp, M, NB, NB, myrow, 0, nprow);
+        Mnumroc(nq, N, NB, NB, mycol, 0, npcol);
 
-   if( Mmin( M, N ) == 0 ) { return( v0 ); }
-   else if( NORM == HPLAI_NORM_A )
-   {
-/*
+        if (Mmin(M, N) == 0)
+        {
+            return (v0);
+        }
+        else if (NORM == HPLAI_NORM_A)
+        {
+            /*
  * max( abs( A ) )
  */
-      if( ( nq > 0 ) && ( mp > 0 ) )
-      {
-         for( jj = 0; jj < nq; jj++ )
-         {
-            for( ii = 0; ii < mp; ii++ )
-            { v0 = Mmax( v0, Mabs( *A ) ); A++; }
-            A += LDA - mp;
-         }
-      }
-      (void) HPLAI_reduce_AFLOAT( (void *)(&v0), 1, HPLAI_max_AFLOAT, 0,
-                         Acomm );
-   }
-   else if( NORM == HPLAI_NORM_1 )
-   {
-/*
+            if ((nq > 0) && (mp > 0))
+            {
+                for (jj = 0; jj < nq; jj++)
+                {
+                    for (ii = 0; ii < mp; ii++)
+                    {
+                        v0 = Mmax(v0, Mabs(*A));
+                        A++;
+                    }
+                    A += LDA - mp;
+                }
+            }
+            (void)HPLAI_reduce_AFLOAT((void *)(&v0), 1, HPLAI_max_AFLOAT, 0,
+                                      Acomm);
+        }
+        else if (NORM == HPLAI_NORM_1)
+        {
+            /*
  * Find norm_1( A ).
  */
-      if( nq > 0 )
-      {
-         work = (HPLAI_T_AFLOAT*)malloc( (size_t)(nq) * sizeof( HPLAI_T_AFLOAT ) );
-         if( work == NULL )
-         { HPLAI_pabort( __LINE__, "HPLAI_palange", "Memory allocation failed" ); }
+            if (nq > 0)
+            {
+                work = (HPLAI_T_AFLOAT *)malloc((size_t)(nq) * sizeof(HPLAI_T_AFLOAT));
+                if (work == NULL)
+                {
+                    HPLAI_pabort(__LINE__, "HPLAI_palange", "Memory allocation failed");
+                }
 
-         for( jj = 0; jj < nq; jj++ )
-         {
-            s = HPLAI_rzero;
-            for( ii = 0; ii < mp; ii++ ) { s += Mabs( *A ); A++; }
-            work[jj] = s; A += LDA - mp;
-         }
-/*
+                for (jj = 0; jj < nq; jj++)
+                {
+                    s = HPLAI_rzero;
+                    for (ii = 0; ii < mp; ii++)
+                    {
+                        s += Mabs(*A);
+                        A++;
+                    }
+                    work[jj] = s;
+                    A += LDA - mp;
+                }
+                /*
  * Find sum of global matrix columns, store on row 0 of process grid
  */
-         (void) HPLAI_reduce_AFLOAT( (void *)(work), nq, HPLAI_sum_AFLOAT,
-                            0, Ccomm );
-/*
+                (void)HPLAI_reduce_AFLOAT((void *)(work), nq, HPLAI_sum_AFLOAT,
+                                          0, Ccomm);
+                /*
  * Find maximum sum of columns for 1-norm
  */
-         if( myrow == 0 )
-         { v0 = work[blas::iamax<HPLAI_T_AFLOAT>( nq, work, 1 )]; v0 = Mabs( v0 ); }
-         if( work ) free( work );
-      }
-/*
+                if (myrow == 0)
+                {
+                    v0 = work[blas::iamax<HPLAI_T_AFLOAT>(nq, work, 1)];
+                    v0 = Mabs(v0);
+                }
+                if (work)
+                    free(work);
+            }
+            /*
  * Find max in row 0, store result in process (0,0)
  */
-      if( myrow == 0 )
-         (void) HPLAI_reduce_AFLOAT( (void *)(&v0), 1, HPLAI_max_AFLOAT, 0,
-                            Rcomm );
-   }
-   else if( NORM == HPLAI_NORM_I )
-   {
-/*
+            if (myrow == 0)
+                (void)HPLAI_reduce_AFLOAT((void *)(&v0), 1, HPLAI_max_AFLOAT, 0,
+                                          Rcomm);
+        }
+        else if (NORM == HPLAI_NORM_I)
+        {
+            /*
  * Find norm_inf( A )
  */
-      if( mp > 0 )
-      {
-         work = (HPLAI_T_AFLOAT*)malloc( (size_t)(mp) * sizeof( HPLAI_T_AFLOAT ) );
-         if( work == NULL )
-         { HPLAI_pabort( __LINE__, "HPLAI_palange", "Memory allocation failed" ); }
+            if (mp > 0)
+            {
+                work = (HPLAI_T_AFLOAT *)malloc((size_t)(mp) * sizeof(HPLAI_T_AFLOAT));
+                if (work == NULL)
+                {
+                    HPLAI_pabort(__LINE__, "HPLAI_palange", "Memory allocation failed");
+                }
 
-         for( ii = 0; ii < mp; ii++ ) { work[ii] = HPLAI_rzero; }
+                for (ii = 0; ii < mp; ii++)
+                {
+                    work[ii] = HPLAI_rzero;
+                }
 
-         for( jj = 0; jj < nq; jj++ )
-         {
-            for( ii = 0; ii < mp; ii++ )
-            { work[ii] += Mabs( *A ); A++; }
-            A += LDA - mp;
-         }
-/*       
+                for (jj = 0; jj < nq; jj++)
+                {
+                    for (ii = 0; ii < mp; ii++)
+                    {
+                        work[ii] += Mabs(*A);
+                        A++;
+                    }
+                    A += LDA - mp;
+                }
+                /*       
  * Find sum of global matrix rows, store on column 0 of process grid
- */      
-         (void) HPLAI_reduce_AFLOAT( (void *)(work), mp, HPLAI_sum_AFLOAT,
-                            0, Rcomm );
-/*       
+ */
+                (void)HPLAI_reduce_AFLOAT((void *)(work), mp, HPLAI_sum_AFLOAT,
+                                          0, Rcomm);
+                /*       
  * Find maximum sum of rows for inf-norm
- */      
-         if( mycol == 0 )
-         { v0 = work[blas::iamax<HPLAI_T_AFLOAT>( mp, work, 1 )]; v0 = Mabs( v0 ); }
-         if( work ) free( work );
-      }
-/*
+ */
+                if (mycol == 0)
+                {
+                    v0 = work[blas::iamax<HPLAI_T_AFLOAT>(mp, work, 1)];
+                    v0 = Mabs(v0);
+                }
+                if (work)
+                    free(work);
+            }
+            /*
  * Find max in column 0, store result in process (0,0)
  */
-      if( mycol == 0 )
-         (void) HPLAI_reduce_AFLOAT( (void *)(&v0), 1, HPLAI_max_AFLOAT,
-                            0, Ccomm );
-   }
-/*
+            if (mycol == 0)
+                (void)HPLAI_reduce_AFLOAT((void *)(&v0), 1, HPLAI_max_AFLOAT,
+                                          0, Ccomm);
+        }
+        /*
  * Broadcast answer to every process in the grid
  */
-   (void) HPLAI_broadcast_AFLOAT( (void *)(&v0), 1, 0, Acomm );
+        (void)HPLAI_broadcast_AFLOAT((void *)(&v0), 1, 0, Acomm);
 
-   return( v0 );
-/*
+        return (v0);
+        /*
  * End of HPLAI_palange
  */
-}
+    }
 
 #ifdef __cplusplus
 }

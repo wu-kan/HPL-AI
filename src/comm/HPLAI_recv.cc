@@ -1,4 +1,27 @@
 /*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/*
  * Include files
  */
 #include "hplai.hh"
@@ -16,25 +39,22 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-int HPLAI_recv
-(
-   HPLAI_T_AFLOAT *                         RBUF,
-   int                              RCOUNT,
-   int                              SRC,
-   int                              RTAG,
-   MPI_Comm                         COMM
-)
+    int HPLAI_recv(
+        HPLAI_T_AFLOAT *RBUF,
+        int RCOUNT,
+        int SRC,
+        int RTAG,
+        MPI_Comm COMM)
 #else
-int HPLAI_recv
-( RBUF, RCOUNT, SRC, RTAG, COMM )
-   HPLAI_T_AFLOAT *                         RBUF;
-   int                              RCOUNT;
-   int                              SRC;
-   int                              RTAG;
-   MPI_Comm                         COMM;
+int HPLAI_recv(RBUF, RCOUNT, SRC, RTAG, COMM)
+    HPLAI_T_AFLOAT *RBUF;
+int RCOUNT;
+int SRC;
+int RTAG;
+MPI_Comm COMM;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -67,38 +87,39 @@ int HPLAI_recv
  *         The MPI communicator identifying the communication space.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   MPI_Status                 status;
+        MPI_Status status;
 #ifdef HPL_USE_MPI_DATATYPE
-   MPI_Datatype               type;
+        MPI_Datatype type;
 #endif
-   int                        ierr;
-/* ..
+        int ierr;
+        /* ..
  * .. Executable Statements ..
  */
-   if( RCOUNT <= 0 ) return( HPL_SUCCESS );
+        if (RCOUNT <= 0)
+            return (HPL_SUCCESS);
 
 #ifdef HPL_USE_MPI_DATATYPE
-   ierr =      MPI_Type_contiguous( RCOUNT, HPLAI_MPI_AFLOAT, &type );
-   if( ierr == MPI_SUCCESS )
-      ierr =   MPI_Type_commit( &type );
-   if( ierr == MPI_SUCCESS )
-      ierr =   MPI_Recv( (void *)(RBUF), 1, type, SRC, RTAG, COMM,
-                         &status );
-   if( ierr == MPI_SUCCESS )
-      ierr =   MPI_Type_free( &type );
+        ierr = MPI_Type_contiguous(RCOUNT, HPLAI_MPI_AFLOAT, &type);
+        if (ierr == MPI_SUCCESS)
+            ierr = MPI_Type_commit(&type);
+        if (ierr == MPI_SUCCESS)
+            ierr = MPI_Recv((void *)(RBUF), 1, type, SRC, RTAG, COMM,
+                            &status);
+        if (ierr == MPI_SUCCESS)
+            ierr = MPI_Type_free(&type);
 #else
-   ierr = MPI_Recv( (void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT, SRC, RTAG,
-                    COMM, &status );
+    ierr = MPI_Recv((void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT, SRC, RTAG,
+                    COMM, &status);
 #endif
-   return( ( ierr == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE ) );
-/*
+        return ((ierr == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE));
+        /*
  * End of HPLAI_recv
  */
-}
+    }
 
 #ifdef __cplusplus
 }

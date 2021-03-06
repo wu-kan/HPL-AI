@@ -1,86 +1,60 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
 #include "hplai.hh"
 
 #ifdef STDC_HEADERS
-void HPLAI_equil
-(
-   HPLAI_T_panel *                    PBCST,
-   int *                            IFLAG,
-   HPLAI_T_panel *                    PANEL,
-   const blas::Op             TRANS,
-   const int                        N,
-   HPLAI_T_AFLOAT *                         U,
-   const int                        LDU,
-   int *                            IPLEN,
-   const int *                      IPMAP,
-   const int *                      IPMAPM1,
-   int *                            IWORK
-)
+void HPLAI_equil(
+    HPLAI_T_panel *PBCST,
+    int *IFLAG,
+    HPLAI_T_panel *PANEL,
+    const blas::Op TRANS,
+    const int N,
+    HPLAI_T_AFLOAT *U,
+    const int LDU,
+    int *IPLEN,
+    const int *IPMAP,
+    const int *IPMAPM1,
+    int *IWORK)
 #else
-void HPLAI_equil
-( PBCST, IFLAG, PANEL, TRANS, N, U, LDU, IPLEN, IPMAP, IPMAPM1, IWORK )
-   HPLAI_T_panel *                    PBCST;
-   int *                            IFLAG;
-   HPLAI_T_panel *                    PANEL;
-   const blas::Op             TRANS;
-   const int                        N;
-   HPLAI_T_AFLOAT *                         U;
-   const int                        LDU;
-   int *                            IPLEN;
-   const int *                      IPMAP;
-   const int *                      IPMAPM1;
-   int *                            IWORK;
+void HPLAI_equil(PBCST, IFLAG, PANEL, TRANS, N, U, LDU, IPLEN, IPMAP, IPMAPM1, IWORK)
+    HPLAI_T_panel *PBCST;
+int *IFLAG;
+HPLAI_T_panel *PANEL;
+const blas::Op TRANS;
+const int N;
+HPLAI_T_AFLOAT *U;
+const int LDU;
+int *IPLEN;
+const int *IPMAP;
+const int *IPMAPM1;
+int *IWORK;
 #endif
 {
-/* 
+    /* 
  * Purpose
  * =======
  *
@@ -143,35 +117,38 @@ void HPLAI_equil
  *         On entry, IWORK is a workarray of dimension NPROW+1.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+    /*
  * .. Local Variables ..
  */
-   int                        i, ip, ipU, ipcur, iprow, iptgt, lastrow,
-                              left, npm1, nprow, ll, llU, llcur, lltgt,
-                              right, slen, smax, smin;
-/* ..
+    int i, ip, ipU, ipcur, iprow, iptgt, lastrow,
+        left, npm1, nprow, ll, llU, llcur, lltgt,
+        right, slen, smax, smin;
+    /* ..
  * .. Executable Statements ..
  */
-   if( ( npm1 = ( nprow = PANEL->grid->nprow ) - 1 ) <= 1 ) return;
-/*
+    if ((npm1 = (nprow = PANEL->grid->nprow) - 1) <= 1)
+        return;
+    /*
  * If the current distribution of the pieces of U is already optimal for
  * the rolling phase, then return imediately.  The  optimal distribution
  * is such that ip processes have smax items and the remaining processes
  * only have smin items. Another way to check this is to verify that all
  * differences IPLEN[i+1] - IPLEN[i] are either smin or smax.
  */
-   smax = ( ( slen = IPLEN[nprow] ) + npm1 ) / nprow;
-   ip   = slen - nprow * ( smin = slen / nprow );
+    smax = ((slen = IPLEN[nprow]) + npm1) / nprow;
+    ip = slen - nprow * (smin = slen / nprow);
 
-   iprow = 0;
-   do
-   {
-      ll = IPLEN[iprow+1] - IPLEN[iprow]; iprow++;
-   } while( ( iprow < nprow ) && ( ( ll == smin ) || ( ll == smax ) ) );
+    iprow = 0;
+    do
+    {
+        ll = IPLEN[iprow + 1] - IPLEN[iprow];
+        iprow++;
+    } while ((iprow < nprow) && ((ll == smin) || (ll == smax)));
 
-   if( iprow == nprow ) return;
-/*
+    if (iprow == nprow)
+        return;
+    /*
  * Now,  we are sure  the distribution of the pieces of U is not optimal
  * with respect to the rolling phase,  thus  perform  equilibration.  Go
  * through the list of processes:  Processes  that have rows that do not
@@ -180,74 +157,102 @@ void HPLAI_equil
  * mainly the packing, a source process row spreads its data to its left
  * first, and then to its right.
  */
-   IWORK[nprow] = slen;
+    IWORK[nprow] = slen;
 
-   for( iprow = 0; iprow < nprow; iprow++ )
-   {
-      llU = IPLEN[iprow+1] - ( ipU = IPLEN[iprow] );
-      if( iprow < ip ) { lltgt = smax; iptgt = iprow * smax;      }
-      else             { lltgt = smin; iptgt = iprow * smin + ip; }
+    for (iprow = 0; iprow < nprow; iprow++)
+    {
+        llU = IPLEN[iprow + 1] - (ipU = IPLEN[iprow]);
+        if (iprow < ip)
+        {
+            lltgt = smax;
+            iptgt = iprow * smax;
+        }
+        else
+        {
+            lltgt = smin;
+            iptgt = iprow * smin + ip;
+        }
 
-      left = ( ipU < iptgt ); right = ( iptgt + lltgt < ipU + llU );
-/*
+        left = (ipU < iptgt);
+        right = (iptgt + lltgt < ipU + llU);
+        /*
  * If I have something to spread to either the left or the right
  */
-      if( ( llU > 0 ) && ( left || right ) )
-      {        /* Figure out how much every other process should have */
+        if ((llU > 0) && (left || right))
+        { /* Figure out how much every other process should have */
 
-         ipcur = ipU; llcur = llU;
+            ipcur = ipU;
+            llcur = llU;
 
-         for( i = 0; i < nprow; i++ )
-         {
-            if( i < ip ) { lltgt = smax; iptgt = i * smax;      }
-            else         { lltgt = smin; iptgt = i * smin + ip; }
-            lastrow = iptgt + lltgt - 1;
+            for (i = 0; i < nprow; i++)
+            {
+                if (i < ip)
+                {
+                    lltgt = smax;
+                    iptgt = i * smax;
+                }
+                else
+                {
+                    lltgt = smin;
+                    iptgt = i * smin + ip;
+                }
+                lastrow = iptgt + lltgt - 1;
 
-            if( ( lastrow >= ipcur ) && ( llcur > 0 ) )
-            { ll = lastrow - ipcur + 1; ll = Mmin( ll, llcur ); llcur -= ll; }
-            else { ll = 0; }
+                if ((lastrow >= ipcur) && (llcur > 0))
+                {
+                    ll = lastrow - ipcur + 1;
+                    ll = Mmin(ll, llcur);
+                    llcur -= ll;
+                }
+                else
+                {
+                    ll = 0;
+                }
 
-            IWORK[i] = ipcur; ipcur += ll; IWORK[i+1] = ipcur;
-         }
-/*
+                IWORK[i] = ipcur;
+                ipcur += ll;
+                IWORK[i + 1] = ipcur;
+            }
+            /*
  * Equilibration phase
  */
-         if( TRANS == blas::Op::NoTrans )
-         {
-            if( left  )
+            if (TRANS == blas::Op::NoTrans)
             {
-               HPLAI_spreadN( PBCST, IFLAG, PANEL, blas::Side::Left,  N, U, LDU,
-                            iprow, IWORK, IPMAP, IPMAPM1 );
-            }
+                if (left)
+                {
+                    HPLAI_spreadN(PBCST, IFLAG, PANEL, blas::Side::Left, N, U, LDU,
+                                  iprow, IWORK, IPMAP, IPMAPM1);
+                }
 
-            if( right )
-            {
-               HPLAI_spreadN( PBCST, IFLAG, PANEL, blas::Side::Right, N, U, LDU,
-                            iprow, IWORK, IPMAP, IPMAPM1 );
+                if (right)
+                {
+                    HPLAI_spreadN(PBCST, IFLAG, PANEL, blas::Side::Right, N, U, LDU,
+                                  iprow, IWORK, IPMAP, IPMAPM1);
+                }
             }
-         }
-         else
-         {
-            if( left  )
+            else
             {
-               HPLAI_spreadT( PBCST, IFLAG, PANEL, blas::Side::Left,  N, U, LDU,
-                            iprow, IWORK, IPMAP, IPMAPM1 );
-            }
+                if (left)
+                {
+                    HPLAI_spreadT(PBCST, IFLAG, PANEL, blas::Side::Left, N, U, LDU,
+                                  iprow, IWORK, IPMAP, IPMAPM1);
+                }
 
-            if( right )
-            {
-               HPLAI_spreadT( PBCST, IFLAG, PANEL, blas::Side::Right, N, U, LDU,
-                            iprow, IWORK, IPMAP, IPMAPM1 );
+                if (right)
+                {
+                    HPLAI_spreadT(PBCST, IFLAG, PANEL, blas::Side::Right, N, U, LDU,
+                                  iprow, IWORK, IPMAP, IPMAPM1);
+                }
             }
-         }
-      }
-   }
-/*
+        }
+    }
+    /*
  * Finally update  IPLEN  with the indexes corresponding to the new dis-
  * tribution of U - IPLEN[nprow] remained unchanged.
  */
-   for( i = 0; i < nprow; i++ ) IPLEN[i] = ( i < ip ? i*smax : i*smin + ip );
-/*
+    for (i = 0; i < nprow; i++)
+        IPLEN[i] = (i < ip ? i * smax : i * smin + ip);
+    /*
  * End of HPLAI_equil
  */
 }

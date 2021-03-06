@@ -1,70 +1,44 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
 #include "hplai.hh"
 
 #ifdef STDC_HEADERS
-void HPLAI_pipid
-(
-   HPLAI_T_panel *                    PANEL,
-   int *                            K,
-   int *                            IPID
-)
+void HPLAI_pipid(
+    HPLAI_T_panel *PANEL,
+    int *K,
+    int *IPID)
 #else
-void HPLAI_pipid
-( PANEL, K, IPID )
-   HPLAI_T_panel *                    PANEL;
-   int *                            K;
-   int *                            IPID;
+void HPLAI_pipid(PANEL, K, IPID)
+    HPLAI_T_panel *PANEL;
+int *K;
+int *IPID;
 #endif
 {
-/* 
+    /* 
  * Purpose
  * =======
  *
@@ -129,59 +103,114 @@ void HPLAI_pipid
  *         in [0..N)
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+    /*
  * .. Local Variables ..
  */
-   int                        dst, fndd, fnds, ia, i, j, jb, lst, off,
-                              src;
-   HPLAI_T_AFLOAT                     * dpiv;
-/* ..
+    int dst, fndd, fnds, ia, i, j, jb, lst, off,
+        src;
+    HPLAI_T_AFLOAT *dpiv;
+    /* ..
  * .. Executable Statements ..
  */
-   dpiv = PANEL->DPIV; jb = PANEL->jb; src = ia = PANEL->ia;
-   dst  = (int)(dpiv[0]); IPID[0] = dst; IPID[1] = src; *K = 2;
-   if( src != dst ) { IPID[2] = src; IPID[3] = dst; *K += 2; }
+    dpiv = PANEL->DPIV;
+    jb = PANEL->jb;
+    src = ia = PANEL->ia;
+    dst = (int)(dpiv[0]);
+    IPID[0] = dst;
+    IPID[1] = src;
+    *K = 2;
+    if (src != dst)
+    {
+        IPID[2] = src;
+        IPID[3] = dst;
+        *K += 2;
+    }
 
-   for( i = 1; i < jb; i++ )
-   {
-      fnds = 0; j = 1;
+    for (i = 1; i < jb; i++)
+    {
+        fnds = 0;
+        j = 1;
 
-      if( ( src = ia + i ) == ( dst = (int)(dpiv[i]) ) )
-      {
-         do { if( src == IPID[j] ) { fnds = j; } else { j += 2; } }
-         while( !( fnds ) && ( j < *K ) );
-         if( !fnds ) { lst = *K;     off = 2; IPID[lst] = src; }
-         else        { lst = fnds-1; off = 0; }
-         IPID[lst+1] = dst;
-      }
-      else
-      {
-         fndd = 0;
-         do
-         {
-            if     ( src == IPID[j] ) { fnds = j; }
-            else if( dst == IPID[j] ) { fndd = j; }
-            j += 2;
-         }
-         while( ( !( fnds ) || !( fndd ) ) && ( j < *K ) );
-         if( !fnds ) { IPID[*K] = src; IPID[*K+1] = dst; off  = 2; }
-         else        {                 IPID[fnds] = dst; off  = 0; }
-         if( !fndd ) { lst = *K+off;   IPID[lst ] = dst; off += 2; }
-         else        { lst = fndd-1; }
-         IPID[lst+1] = src;
-      }
-/*
+        if ((src = ia + i) == (dst = (int)(dpiv[i])))
+        {
+            do
+            {
+                if (src == IPID[j])
+                {
+                    fnds = j;
+                }
+                else
+                {
+                    j += 2;
+                }
+            } while (!(fnds) && (j < *K));
+            if (!fnds)
+            {
+                lst = *K;
+                off = 2;
+                IPID[lst] = src;
+            }
+            else
+            {
+                lst = fnds - 1;
+                off = 0;
+            }
+            IPID[lst + 1] = dst;
+        }
+        else
+        {
+            fndd = 0;
+            do
+            {
+                if (src == IPID[j])
+                {
+                    fnds = j;
+                }
+                else if (dst == IPID[j])
+                {
+                    fndd = j;
+                }
+                j += 2;
+            } while ((!(fnds) || !(fndd)) && (j < *K));
+            if (!fnds)
+            {
+                IPID[*K] = src;
+                IPID[*K + 1] = dst;
+                off = 2;
+            }
+            else
+            {
+                IPID[fnds] = dst;
+                off = 0;
+            }
+            if (!fndd)
+            {
+                lst = *K + off;
+                IPID[lst] = dst;
+                off += 2;
+            }
+            else
+            {
+                lst = fndd - 1;
+            }
+            IPID[lst + 1] = src;
+        }
+        /*
  * Enforce IPID(1,i) equal to src = ia + i
  */
-      if( lst != ( j = ( i << 1 ) ) )
-      {
-         src = IPID[j  ]; IPID[j  ] = IPID[lst  ]; IPID[lst  ] = src;
-         dst = IPID[j+1]; IPID[j+1] = IPID[lst+1]; IPID[lst+1] = dst;
-      }
-      *K += off;
-   }
-/*
+        if (lst != (j = (i << 1)))
+        {
+            src = IPID[j];
+            IPID[j] = IPID[lst];
+            IPID[lst] = src;
+            dst = IPID[j + 1];
+            IPID[j + 1] = IPID[lst + 1];
+            IPID[lst + 1] = dst;
+        }
+        *K += off;
+    }
+    /*
  * End of HPLAI_pipid
  */
 }

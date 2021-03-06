@@ -1,86 +1,60 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
 #include "hplai.hh"
 
 #ifdef STDC_HEADERS
-void HPLAI_spreadN
-(
-   HPLAI_T_panel *                    PBCST,
-   int *                            IFLAG,
-   HPLAI_T_panel *                    PANEL,
-   const blas::Side              SIDE,
-   const int                        N,
-   HPLAI_T_AFLOAT *                         U,
-   const int                        LDU,
-   const int                        SRCDIST,
-   const int *                      IPLEN,
-   const int *                      IPMAP,
-   const int *                      IPMAPM1
-)
+void HPLAI_spreadN(
+    HPLAI_T_panel *PBCST,
+    int *IFLAG,
+    HPLAI_T_panel *PANEL,
+    const blas::Side SIDE,
+    const int N,
+    HPLAI_T_AFLOAT *U,
+    const int LDU,
+    const int SRCDIST,
+    const int *IPLEN,
+    const int *IPMAP,
+    const int *IPMAPM1)
 #else
-void HPLAI_spreadN
-( PBCST, IFLAG, PANEL, SIDE, N, U, LDU, SRCDIST, IPLEN, IPMAP, IPMAPM1 )
-   HPLAI_T_panel *                    PBCST;
-   int *                            IFLAG;
-   HPLAI_T_panel *                    PANEL;
-   const blas::Side              SIDE;
-   const int                        N;
-   HPLAI_T_AFLOAT *                         U;
-   const int                        LDU;
-   const int                        SRCDIST;
-   const int *                      IPLEN;
-   const int *                      IPMAP;
-   const int *                      IPMAPM1;
+void HPLAI_spreadN(PBCST, IFLAG, PANEL, SIDE, N, U, LDU, SRCDIST, IPLEN, IPMAP, IPMAPM1)
+    HPLAI_T_panel *PBCST;
+int *IFLAG;
+HPLAI_T_panel *PANEL;
+const blas::Side SIDE;
+const int N;
+HPLAI_T_AFLOAT *U;
+const int LDU;
+const int SRCDIST;
+const int *IPLEN;
+const int *IPMAP;
+const int *IPMAPM1;
 #endif
 {
-/* 
+    /* 
  * Purpose
  * =======
  *
@@ -149,155 +123,200 @@ void HPLAI_spreadN
  *         IPMAP: For i in [0.. NPROW) IPMAPM1[IPMAP[i]] = i.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+    /*
  * .. Local Variables ..
  */
-   MPI_Datatype              type;
-   MPI_Status                status;
-   MPI_Comm                  comm;
-   unsigned int              ip2=1, mask=1, mydist, mydist2;
-   int                       Cmsgid=MSGID_BEGIN_PFACT, ibuf,
-                             ierr=MPI_SUCCESS, il, k, lbuf, lgth, myrow,
-                             npm1, nprow, partner;
-/* ..
+    MPI_Datatype type;
+    MPI_Status status;
+    MPI_Comm comm;
+    unsigned int ip2 = 1, mask = 1, mydist, mydist2;
+    int Cmsgid = MSGID_BEGIN_PFACT, ibuf,
+        ierr = MPI_SUCCESS, il, k, lbuf, lgth, myrow,
+        npm1, nprow, partner;
+    /* ..
  * .. Executable Statements ..
  */
-   myrow = PANEL->grid->myrow;    nprow = PANEL->grid->nprow;
-   comm  = PANEL->grid->col_comm;
-/*
+    myrow = PANEL->grid->myrow;
+    nprow = PANEL->grid->nprow;
+    comm = PANEL->grid->col_comm;
+    /*
  * Spread U to the left
  */
-   if( SIDE == blas::Side::Left )
-   {
-      nprow = ( npm1 = SRCDIST ) + 1;
-      if( ( ( mydist = (unsigned int)(IPMAPM1[myrow]) ) >
-              (unsigned int)(SRCDIST) ) || ( npm1 == 0 ) ) return;
+    if (SIDE == blas::Side::Left)
+    {
+        nprow = (npm1 = SRCDIST) + 1;
+        if (((mydist = (unsigned int)(IPMAPM1[myrow])) >
+             (unsigned int)(SRCDIST)) ||
+            (npm1 == 0))
+            return;
 
-      k = npm1; while( k > 1 ) { k >>= 1; ip2 <<= 1; mask <<= 1; mask++; }
-      mydist2 = ( mydist = npm1 - mydist ); il = npm1 - ip2;
-      lgth    = IPLEN[nprow];
+        k = npm1;
+        while (k > 1)
+        {
+            k >>= 1;
+            ip2 <<= 1;
+            mask <<= 1;
+            mask++;
+        }
+        mydist2 = (mydist = npm1 - mydist);
+        il = npm1 - ip2;
+        lgth = IPLEN[nprow];
 
-      do
-      {
-         mask ^= ip2;
+        do
+        {
+            mask ^= ip2;
 
-         if( ( mydist & mask ) == 0 )
-         {
-            lbuf = IPLEN[il+1] - ( ibuf = IPLEN[il-Mmin(il, (int)(ip2))] ); 
-
-            if( lbuf > 0 )
+            if ((mydist & mask) == 0)
             {
-               partner = mydist ^ ip2;
+                lbuf = IPLEN[il + 1] - (ibuf = IPLEN[il - Mmin(il, (int)(ip2))]);
 
-               if( mydist & ip2 )
-               {
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
-                                               &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_commit( &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Recv( Mptr( U, ibuf, 0, LDU ), 1, type,
-                                        IPMAP[npm1-partner], Cmsgid, comm,
-                                        &status );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_free(   &type );
-               }
-               else if( partner < nprow )
-               {
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
-                                               &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_commit( &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Send( Mptr( U, ibuf, 0, LDU ), 1, type,
-                                        IPMAP[npm1-partner], Cmsgid, comm );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_free(   &type );
-               }
+                if (lbuf > 0)
+                {
+                    partner = mydist ^ ip2;
+
+                    if (mydist & ip2)
+                    {
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_vector(N, lbuf, LDU, HPLAI_MPI_AFLOAT,
+                                                   &type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_commit(&type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Recv(Mptr(U, ibuf, 0, LDU), 1, type,
+                                            IPMAP[npm1 - partner], Cmsgid, comm,
+                                            &status);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_free(&type);
+                    }
+                    else if (partner < nprow)
+                    {
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_vector(N, lbuf, LDU, HPLAI_MPI_AFLOAT,
+                                                   &type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_commit(&type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Send(Mptr(U, ibuf, 0, LDU), 1, type,
+                                            IPMAP[npm1 - partner], Cmsgid, comm);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_free(&type);
+                    }
+                }
             }
-         }
- 
-         if( mydist2 < ip2 ) {  ip2 >>= 1; il += ip2; }
-         else { mydist2 -= ip2; ip2 >>= 1; il -= ip2; }
-/*
+
+            if (mydist2 < ip2)
+            {
+                ip2 >>= 1;
+                il += ip2;
+            }
+            else
+            {
+                mydist2 -= ip2;
+                ip2 >>= 1;
+                il -= ip2;
+            }
+            /*
  * Probe for column panel - forward it when available
  */
-         if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
- 
-      } while( ip2 > 0 );
-   }
-   else
-   {
-      npm1 = ( nprow -= SRCDIST ) - 1;
-      if( ( ( mydist = (unsigned int)(IPMAPM1[myrow]) ) <
-              (unsigned int)(SRCDIST) ) || ( npm1 == 0 ) ) return;
+            if (*IFLAG == HPLAI_KEEP_TESTING)
+                (void)HPLAI_bcast(PBCST, IFLAG);
 
-      k = npm1; while( k > 1 ) { k >>= 1; ip2 <<= 1; mask <<= 1; mask++; }
-      mydist2 = ( mydist -= SRCDIST ); il = ip2;
-      lgth    = IPLEN[SRCDIST+nprow];
-/*
+        } while (ip2 > 0);
+    }
+    else
+    {
+        npm1 = (nprow -= SRCDIST) - 1;
+        if (((mydist = (unsigned int)(IPMAPM1[myrow])) <
+             (unsigned int)(SRCDIST)) ||
+            (npm1 == 0))
+            return;
+
+        k = npm1;
+        while (k > 1)
+        {
+            k >>= 1;
+            ip2 <<= 1;
+            mask <<= 1;
+            mask++;
+        }
+        mydist2 = (mydist -= SRCDIST);
+        il = ip2;
+        lgth = IPLEN[SRCDIST + nprow];
+        /*
  * Spread U to the right - offset the IPLEN, and IPMAP arrays
  */
-      do
-      {
-         mask ^= ip2;
+        do
+        {
+            mask ^= ip2;
 
-         if( ( mydist & mask ) == 0 )
-         {
-            k    = il      ; ibuf = ( k >= nprow ? lgth : IPLEN[SRCDIST+k] );
-            k    = il + ip2; lbuf = ( k >= nprow ? lgth : IPLEN[SRCDIST+k] ) - ibuf;
-
-            if( lbuf > 0 )
+            if ((mydist & mask) == 0)
             {
-               partner = mydist ^ ip2;
+                k = il;
+                ibuf = (k >= nprow ? lgth : IPLEN[SRCDIST + k]);
+                k = il + ip2;
+                lbuf = (k >= nprow ? lgth : IPLEN[SRCDIST + k]) - ibuf;
 
-               if( mydist & ip2 )
-               {
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
-                                               &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_commit( &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Recv( Mptr( U, ibuf, 0, LDU ), 1, type,
-                                        IPMAP[SRCDIST+partner], Cmsgid,
-                                        comm, &status );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_free(   &type );
-               }
-               else if( partner < nprow )
-               {
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_vector( N, lbuf, LDU, HPLAI_MPI_AFLOAT,
-                                               &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_commit( &type );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Send( Mptr( U, ibuf, 0, LDU ), 1, type,
-                                        IPMAP[SRCDIST+partner], Cmsgid,
-                                        comm );
-                  if( ierr == MPI_SUCCESS )  
-                     ierr =   MPI_Type_free(   &type );
-               }
+                if (lbuf > 0)
+                {
+                    partner = mydist ^ ip2;
+
+                    if (mydist & ip2)
+                    {
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_vector(N, lbuf, LDU, HPLAI_MPI_AFLOAT,
+                                                   &type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_commit(&type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Recv(Mptr(U, ibuf, 0, LDU), 1, type,
+                                            IPMAP[SRCDIST + partner], Cmsgid,
+                                            comm, &status);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_free(&type);
+                    }
+                    else if (partner < nprow)
+                    {
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_vector(N, lbuf, LDU, HPLAI_MPI_AFLOAT,
+                                                   &type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_commit(&type);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Send(Mptr(U, ibuf, 0, LDU), 1, type,
+                                            IPMAP[SRCDIST + partner], Cmsgid,
+                                            comm);
+                        if (ierr == MPI_SUCCESS)
+                            ierr = MPI_Type_free(&type);
+                    }
+                }
             }
-         }
- 
-         if( mydist2 < ip2 ) {  ip2 >>= 1; il -= ip2; }
-         else { mydist2 -= ip2; ip2 >>= 1; il += ip2; }
-/*
+
+            if (mydist2 < ip2)
+            {
+                ip2 >>= 1;
+                il -= ip2;
+            }
+            else
+            {
+                mydist2 -= ip2;
+                ip2 >>= 1;
+                il += ip2;
+            }
+            /*
  * Probe for column panel - forward it when available
  */
-         if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
- 
-      } while( ip2 > 0 );
-   }
+            if (*IFLAG == HPLAI_KEEP_TESTING)
+                (void)HPLAI_bcast(PBCST, IFLAG);
 
-   if( ierr != MPI_SUCCESS )
-   { HPLAI_pabort( __LINE__, "HPLAI_spreadN", "MPI call failed" ); }
-/*
+        } while (ip2 > 0);
+    }
+
+    if (ierr != MPI_SUCCESS)
+    {
+        HPLAI_pabort(__LINE__, "HPLAI_spreadN", "MPI call failed");
+    }
+    /*
  * End of HPLAI_spreadN
  */
 }

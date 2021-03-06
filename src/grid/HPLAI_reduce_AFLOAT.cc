@@ -1,49 +1,26 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
@@ -55,25 +32,21 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-int HPLAI_reduce_AFLOAT
-(
-   void *                           BUFFER,
-   const int                        COUNT,
-   const HPLAI_T_OP_AFLOAT          OP,
-   const int                        ROOT,
-   MPI_Comm                         COMM
-)
+    int HPLAI_reduce_AFLOAT(
+        void *BUFFER,
+        const int COUNT,
+        const HPLAI_T_OP_AFLOAT OP,
+        const int ROOT,
+        MPI_Comm COMM)
 #else
-int HPLAI_reduce_AFLOAT
-( BUFFER, COUNT, OP, ROOT, COMM )
-   void *                           BUFFER;
-   const int                        COUNT;
-   const HPLAI_T_OP_AFLOAT          OP;
-   const int                        ROOT;
-   MPI_Comm                         COMM;
+int HPLAI_reduce_AFLOAT(BUFFER, COUNT, OP, ROOT, COMM) void *BUFFER;
+const int COUNT;
+const HPLAI_T_OP_AFLOAT OP;
+const int ROOT;
+MPI_Comm COMM;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -104,75 +77,90 @@ int HPLAI_reduce_AFLOAT
  *         The MPI communicator identifying the process collection.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   MPI_Status                 status;
-   void                       * buffer = NULL;
-   int                        hplerr=MPI_SUCCESS, d=1, i, ip2=1, mask=0,
-                              mpierr, mydist, partner, rank, size, 
-                              tag = MSGID_BEGIN_COLL;
-/* ..
+        MPI_Status status;
+        void *buffer = NULL;
+        int hplerr = MPI_SUCCESS, d = 1, i, ip2 = 1, mask = 0,
+            mpierr, mydist, partner, rank, size,
+            tag = MSGID_BEGIN_COLL;
+        /* ..
  * .. Executable Statements ..
  */
-   if( COUNT <= 0 ) return( MPI_SUCCESS );
-   mpierr = MPI_Comm_size( COMM, &size );
-   if( size  == 1 ) return( MPI_SUCCESS );
-   mpierr = MPI_Comm_rank( COMM, &rank );
-   i = size - 1; while( i > 1 ) { i >>= 1; d++; }
+        if (COUNT <= 0)
+            return (MPI_SUCCESS);
+        mpierr = MPI_Comm_size(COMM, &size);
+        if (size == 1)
+            return (MPI_SUCCESS);
+        mpierr = MPI_Comm_rank(COMM, &rank);
+        i = size - 1;
+        while (i > 1)
+        {
+            i >>= 1;
+            d++;
+        }
 
-      buffer = (void *)( (HPLAI_T_AFLOAT *)malloc( (size_t)(COUNT) *
-                                           sizeof( HPLAI_T_AFLOAT ) ) );
+        buffer = (void *)((HPLAI_T_AFLOAT *)malloc((size_t)(COUNT) *
+                                                   sizeof(HPLAI_T_AFLOAT)));
 
-   if( !( buffer ) )
-   { HPL_pabort( __LINE__, "HPLAI_reduce_AFLOAT", "Memory allocation failed" ); }
+        if (!(buffer))
+        {
+            HPL_pabort(__LINE__, "HPLAI_reduce_AFLOAT", "Memory allocation failed");
+        }
 
-   if( ( mydist = MModSub( rank, ROOT, size ) ) == 0 )
-   {
-      do
-      {
-         mpierr = MPI_Recv( buffer, COUNT, HPLAI_MPI_AFLOAT,
-                            MModAdd( ROOT, ip2, size ), tag, COMM,
-                            &status );
-         if( mpierr != MPI_SUCCESS ) hplerr = mpierr;
-         OP( COUNT, buffer, BUFFER);
-         ip2 <<= 1; d--;
-      } while( d );
-   }
-   else
-   {
-      do
-      {
-         if( ( mydist & mask ) == 0 )
-         {
-            partner = mydist ^ ip2;
-
-            if( mydist & ip2 )
+        if ((mydist = MModSub(rank, ROOT, size)) == 0)
+        {
+            do
             {
-               partner = MModAdd( ROOT, partner, size );
-               mpierr = MPI_Send( BUFFER, COUNT, HPLAI_MPI_AFLOAT,
-                                  partner, tag, COMM );
-            }
-            else if( partner < size )
+                mpierr = MPI_Recv(buffer, COUNT, HPLAI_MPI_AFLOAT,
+                                  MModAdd(ROOT, ip2, size), tag, COMM,
+                                  &status);
+                if (mpierr != MPI_SUCCESS)
+                    hplerr = mpierr;
+                OP(COUNT, buffer, BUFFER);
+                ip2 <<= 1;
+                d--;
+            } while (d);
+        }
+        else
+        {
+            do
             {
-               partner = MModAdd( ROOT, partner, size );
-               mpierr  = MPI_Recv( buffer, COUNT, HPLAI_MPI_AFLOAT,
-                                   partner, tag, COMM, &status );
-               OP( COUNT, buffer, BUFFER);
-            }
-            if( mpierr != MPI_SUCCESS ) hplerr = mpierr;
-         }
-         mask ^= ip2; ip2 <<= 1; d--;
-      } while( d );
-   }
-   if( buffer ) free( buffer );
+                if ((mydist & mask) == 0)
+                {
+                    partner = mydist ^ ip2;
 
-   return( hplerr );
-/*
+                    if (mydist & ip2)
+                    {
+                        partner = MModAdd(ROOT, partner, size);
+                        mpierr = MPI_Send(BUFFER, COUNT, HPLAI_MPI_AFLOAT,
+                                          partner, tag, COMM);
+                    }
+                    else if (partner < size)
+                    {
+                        partner = MModAdd(ROOT, partner, size);
+                        mpierr = MPI_Recv(buffer, COUNT, HPLAI_MPI_AFLOAT,
+                                          partner, tag, COMM, &status);
+                        OP(COUNT, buffer, BUFFER);
+                    }
+                    if (mpierr != MPI_SUCCESS)
+                        hplerr = mpierr;
+                }
+                mask ^= ip2;
+                ip2 <<= 1;
+                d--;
+            } while (d);
+        }
+        if (buffer)
+            free(buffer);
+
+        return (hplerr);
+        /*
  * End of HPLAI_reduce_AFLOAT
  */
-}
+    }
 
 #ifdef __cplusplus
 }

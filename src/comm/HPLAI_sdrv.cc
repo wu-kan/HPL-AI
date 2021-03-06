@@ -1,4 +1,27 @@
 /*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/*
  * Include files
  */
 #include "hplai.hh"
@@ -16,31 +39,28 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-int HPLAI_sdrv
-(
-   HPLAI_T_AFLOAT *                         SBUF,
-   int                              SCOUNT,
-   int                              STAG,
-   HPLAI_T_AFLOAT *                         RBUF,
-   int                              RCOUNT,
-   int                              RTAG,
-   int                              PARTNER,
-   MPI_Comm                         COMM
-)
+    int HPLAI_sdrv(
+        HPLAI_T_AFLOAT *SBUF,
+        int SCOUNT,
+        int STAG,
+        HPLAI_T_AFLOAT *RBUF,
+        int RCOUNT,
+        int RTAG,
+        int PARTNER,
+        MPI_Comm COMM)
 #else
-int HPLAI_sdrv
-( SBUF, SCOUNT, STAG, RBUF, RCOUNT, RTAG, PARTNER, COMM )
-   HPLAI_T_AFLOAT *                         SBUF;
-   int                              SCOUNT;
-   int                              STAG;
-   HPLAI_T_AFLOAT *                         RBUF;
-   int                              RCOUNT;
-   int                              RTAG;
-   int                              PARTNER;
-   MPI_Comm                         COMM;
+int HPLAI_sdrv(SBUF, SCOUNT, STAG, RBUF, RCOUNT, RTAG, PARTNER, COMM)
+    HPLAI_T_AFLOAT *SBUF;
+int SCOUNT;
+int STAG;
+HPLAI_T_AFLOAT *RBUF;
+int RCOUNT;
+int RTAG;
+int PARTNER;
+MPI_Comm COMM;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -86,118 +106,121 @@ int HPLAI_sdrv
  *
  * ---------------------------------------------------------------------
  */
-   if(SCOUNT && RCOUNT)
-      return( ( MPI_Sendrecv((const void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT, PARTNER, STAG, (void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT, PARTNER, RTAG, COMM, MPI_STATUS_IGNORE) == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE ) );
+        if (SCOUNT && RCOUNT)
+            return ((MPI_Sendrecv((const void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT, PARTNER, STAG, (void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT, PARTNER, RTAG, COMM, MPI_STATUS_IGNORE) == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE));
 /*
  * .. Local Variables ..
  */
 #ifdef HPL_USE_MPI_DATATYPE
-   MPI_Datatype               type[2];
+        MPI_Datatype type[2];
 #endif
-   MPI_Request                request;
-   MPI_Status                 status;
-   int                        ierr;
-/* ..
+        MPI_Request request;
+        MPI_Status status;
+        int ierr;
+        /* ..
  * .. Executable Statements ..
  */
-   if( RCOUNT > 0 )
-   {
-      if( SCOUNT > 0 )
-      {
+        if (RCOUNT > 0)
+        {
+            if (SCOUNT > 0)
+            {
 #ifdef HPL_USE_MPI_DATATYPE
-/*
+                /*
  * Post asynchronous receive
  */
-         ierr =      MPI_Type_contiguous( RCOUNT, HPLAI_MPI_AFLOAT, &type[0] );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_commit( &type[0] );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Irecv( (void *)(RBUF), 1, type[0], PARTNER,
-                                RTAG, COMM, &request );
-/*
+                ierr = MPI_Type_contiguous(RCOUNT, HPLAI_MPI_AFLOAT, &type[0]);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_commit(&type[0]);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Irecv((void *)(RBUF), 1, type[0], PARTNER,
+                                     RTAG, COMM, &request);
+                /*
  * Blocking send
  */
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_contiguous( SCOUNT, HPLAI_MPI_AFLOAT, &type[1] );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_commit( &type[1] );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Send( (void *)(SBUF), 1, type[1], PARTNER,
-                               STAG, COMM );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_free( &type[1] );
-/*
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_contiguous(SCOUNT, HPLAI_MPI_AFLOAT, &type[1]);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_commit(&type[1]);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Send((void *)(SBUF), 1, type[1], PARTNER,
+                                    STAG, COMM);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_free(&type[1]);
+                /*
  * Wait for the receive to complete
  */
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Wait( &request, &status );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_free( &type[0] );
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Wait(&request, &status);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_free(&type[0]);
 #else
-/*
+            /*
  * Post asynchronous receive
  */
-         ierr =      MPI_Irecv( (void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT,
-                                PARTNER, RTAG, COMM, &request );
-/*
+            ierr = MPI_Irecv((void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT,
+                             PARTNER, RTAG, COMM, &request);
+            /*
  * Blocking send
  */
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Send( (void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT,
-                               PARTNER, STAG, COMM );
-/*
+            if (ierr == MPI_SUCCESS)
+                ierr = MPI_Send((void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT,
+                                PARTNER, STAG, COMM);
+            /*
  * Wait for the receive to complete
  */
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Wait( &request, &status );
+            if (ierr == MPI_SUCCESS)
+                ierr = MPI_Wait(&request, &status);
 #endif
-      }
-      else
-      {
+            }
+            else
+            {
 /*
  * Blocking receive
  */
 #ifdef HPL_USE_MPI_DATATYPE
-         ierr =      MPI_Type_contiguous( RCOUNT, HPLAI_MPI_AFLOAT, &type[0] );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_commit( &type[0] );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Recv( (void *)(RBUF), 1, type[0], PARTNER, RTAG,
-                               COMM, &status );
-         if( ierr == MPI_SUCCESS )
-            ierr =   MPI_Type_free( &type[0] );
+                ierr = MPI_Type_contiguous(RCOUNT, HPLAI_MPI_AFLOAT, &type[0]);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_commit(&type[0]);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Recv((void *)(RBUF), 1, type[0], PARTNER, RTAG,
+                                    COMM, &status);
+                if (ierr == MPI_SUCCESS)
+                    ierr = MPI_Type_free(&type[0]);
 #else
-         ierr =      MPI_Recv( (void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT,
-                               PARTNER, RTAG, COMM, &status );
+            ierr = MPI_Recv((void *)(RBUF), RCOUNT, HPLAI_MPI_AFLOAT,
+                            PARTNER, RTAG, COMM, &status);
 #endif
-      }
-   }
-   else if( SCOUNT > 0 )
-   {
+            }
+        }
+        else if (SCOUNT > 0)
+        {
 /*
  * Blocking send
  */
 #ifdef HPL_USE_MPI_DATATYPE
-      ierr =      MPI_Type_contiguous( SCOUNT, HPLAI_MPI_AFLOAT, &type[1] );
-      if( ierr == MPI_SUCCESS )
-         ierr =   MPI_Type_commit( &type[1] );
-      if( ierr == MPI_SUCCESS )
-         ierr =   MPI_Send( (void *)(SBUF), 1, type[1], PARTNER, STAG,
-                          COMM );
-      if( ierr == MPI_SUCCESS )
+            ierr = MPI_Type_contiguous(SCOUNT, HPLAI_MPI_AFLOAT, &type[1]);
+            if (ierr == MPI_SUCCESS)
+                ierr = MPI_Type_commit(&type[1]);
+            if (ierr == MPI_SUCCESS)
+                ierr = MPI_Send((void *)(SBUF), 1, type[1], PARTNER, STAG,
+                                COMM);
+            if (ierr == MPI_SUCCESS)
          ierr =   MPI_Type_free( &type[1] ) );
 #else
-      ierr =      MPI_Send( (void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT, PARTNER,
-                            STAG, COMM );
+        ierr = MPI_Send((void *)(SBUF), SCOUNT, HPLAI_MPI_AFLOAT, PARTNER,
+                        STAG, COMM);
 #endif
-   }
-   else { ierr = MPI_SUCCESS; }
+        }
+        else
+        {
+            ierr = MPI_SUCCESS;
+        }
 
-   return( ( ierr == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE ) );
-/*
+        return ((ierr == MPI_SUCCESS ? HPL_SUCCESS : HPL_FAILURE));
+        /*
  * End of HPLAI_sdrv
  */
-}
+    }
 
 #ifdef __cplusplus
 }

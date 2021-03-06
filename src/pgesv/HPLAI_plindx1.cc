@@ -1,86 +1,60 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
 #include "hplai.hh"
 
 #ifdef STDC_HEADERS
-void HPLAI_plindx1
-(
-   HPLAI_T_panel *                    PANEL,
-   const int                        K,
-   const int *                      IPID,
-   int *                            IPA,
-   int *                            LINDXA,
-   int *                            LINDXAU,
-   int *                            IPLEN,
-   int *                            IPMAP,
-   int *                            IPMAPM1,
-   int *                            PERMU,
-   int *                            IWORK
-)
+void HPLAI_plindx1(
+    HPLAI_T_panel *PANEL,
+    const int K,
+    const int *IPID,
+    int *IPA,
+    int *LINDXA,
+    int *LINDXAU,
+    int *IPLEN,
+    int *IPMAP,
+    int *IPMAPM1,
+    int *PERMU,
+    int *IWORK)
 #else
-void HPLAI_plindx1
-( PANEL, K, IPID, IPA, LINDXA, LINDXAU, IPLEN, IPMAP, IPMAPM1, PERMU, IWORK )
-   HPLAI_T_panel *                    PANEL;
-   const int                        K;
-   const int *                      IPID;
-   int *                            IPA;
-   int *                            LINDXA;
-   int *                            LINDXAU;
-   int *                            IPLEN;
-   int *                            IPMAP;
-   int *                            IPMAPM1;
-   int *                            PERMU;
-   int *                            IWORK;
+void HPLAI_plindx1(PANEL, K, IPID, IPA, LINDXA, LINDXAU, IPLEN, IPMAP, IPMAPM1, PERMU, IWORK)
+    HPLAI_T_panel *PANEL;
+const int K;
+const int *IPID;
+int *IPA;
+int *LINDXA;
+int *LINDXAU;
+int *IPLEN;
+int *IPMAP;
+int *IPMAPM1;
+int *PERMU;
+int *IWORK;
 #endif
 {
-/* 
+    /* 
  * Purpose
  * =======
  *
@@ -156,120 +130,148 @@ void HPLAI_plindx1
  *         On entry, IWORK is a workarray of dimension 2*JB.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+    /*
  * .. Local Variables ..
  */
-   int                        * iwork;
-   int                        dst, dstrow, fndd, i, ia, icurrow, il,
-                              ip, ipU, iroff, j, jb, myrow, nb, nprow,
-                              src, srcrow;
-/* ..
+    int *iwork;
+    int dst, dstrow, fndd, i, ia, icurrow, il,
+        ip, ipU, iroff, j, jb, myrow, nb, nprow,
+        src, srcrow;
+    /* ..
  * .. Executable Statements ..
  */
-/*
+    /*
  * Logarithmic sort of the processes - compute IPMAP, IPLEN and IPMAPM1
  */
-   HPLAI_plindx10( PANEL, K, IPID, IPLEN, IPMAP, IPMAPM1 );
-/*
+    HPLAI_plindx10(PANEL, K, IPID, IPLEN, IPMAP, IPMAPM1);
+    /*
  * Compute the local arrays  LINDXA  and  LINDXAU  containing  the local
  * source and final destination position resulting from  the application
  * of N interchanges. Compute LINDXA and LINDXAU in icurrow,  and LINDXA
  * elsewhere and PERMU in every process.
  */
-   myrow = PANEL->grid->myrow; nprow   = PANEL->grid->nprow;
-   jb    = PANEL->jb;          nb      = PANEL->nb;     ia = PANEL->ia;
-   iroff = PANEL->ii;          icurrow = PANEL->prow;
+    myrow = PANEL->grid->myrow;
+    nprow = PANEL->grid->nprow;
+    jb = PANEL->jb;
+    nb = PANEL->nb;
+    ia = PANEL->ia;
+    iroff = PANEL->ii;
+    icurrow = PANEL->prow;
 
-   iwork = IWORK + jb;
- 
-   if( myrow == icurrow )
-   {
-      for( i = 0, ip = 0, ipU = 0; i < K; i += 2 )
-      {
-         src = IPID[i]; Mindxg2p( src, nb, nb, srcrow, 0, nprow );
- 
-         if( srcrow == icurrow )
-         {
-            dst = IPID[i+1]; Mindxg2p( dst, nb, nb, dstrow, 0, nprow );
- 
-            Mindxg2l( il, src, nb, nb, myrow, 0, nprow );
-            LINDXA[ip] = il - iroff;
- 
-            if( ( dstrow == icurrow ) && ( dst - ia < jb ) )
+    iwork = IWORK + jb;
+
+    if (myrow == icurrow)
+    {
+        for (i = 0, ip = 0, ipU = 0; i < K; i += 2)
+        {
+            src = IPID[i];
+            Mindxg2p(src, nb, nb, srcrow, 0, nprow);
+
+            if (srcrow == icurrow)
             {
-               PERMU[ipU] = dst - ia;  il = IPMAPM1[dstrow];
-               j          = IPLEN[il]; iwork[ipU] = LINDXAU[ip] = j;
-               IPLEN[il]++; ipU++;
+                dst = IPID[i + 1];
+                Mindxg2p(dst, nb, nb, dstrow, 0, nprow);
+
+                Mindxg2l(il, src, nb, nb, myrow, 0, nprow);
+                LINDXA[ip] = il - iroff;
+
+                if ((dstrow == icurrow) && (dst - ia < jb))
+                {
+                    PERMU[ipU] = dst - ia;
+                    il = IPMAPM1[dstrow];
+                    j = IPLEN[il];
+                    iwork[ipU] = LINDXAU[ip] = j;
+                    IPLEN[il]++;
+                    ipU++;
+                }
+                else if (dstrow != icurrow)
+                {
+                    j = 0;
+                    do
+                    {
+                        fndd = (dst == IPID[j]);
+                        j += 2;
+                    } while (!fndd && (j < K));
+
+                    PERMU[ipU] = IPID[j - 1] - ia;
+                    il = IPMAPM1[dstrow];
+                    j = IPLEN[il];
+                    iwork[ipU] = LINDXAU[ip] = j;
+                    IPLEN[il]++;
+                    ipU++;
+                }
+                else if ((dstrow == icurrow) && (dst - ia >= jb))
+                {
+                    Mindxg2l(il, dst, nb, nb, myrow, 0, nprow);
+                    LINDXAU[ip] = iroff - il;
+                }
+                ip++;
             }
-            else if( dstrow != icurrow )
-            {
-               j = 0;
-               do { fndd = ( dst == IPID[j] ); j+=2; }
-               while( !fndd && ( j < K ) );
- 
-               PERMU[ipU] = IPID[j-1]-ia; il = IPMAPM1[dstrow];
-               j          = IPLEN[il];    iwork[ipU] = LINDXAU[ip] = j;
-               IPLEN[il]++; ipU++;
-            }
-            else if( ( dstrow == icurrow ) && ( dst - ia >= jb ) )
-            {
-               Mindxg2l( il, dst, nb, nb, myrow, 0, nprow );
-               LINDXAU[ip] = iroff - il;
-            }
-            ip++;
-         }
-      }
-      *IPA = ip;
-   }
-   else
-   {
-      for( i = 0, ip = 0, ipU = 0; i < K; i += 2 )
-      {
-         src = IPID[i  ]; Mindxg2p( src, nb, nb, srcrow, 0, nprow );
-         dst = IPID[i+1]; Mindxg2p( dst, nb, nb, dstrow, 0, nprow );
-/*
+        }
+        *IPA = ip;
+    }
+    else
+    {
+        for (i = 0, ip = 0, ipU = 0; i < K; i += 2)
+        {
+            src = IPID[i];
+            Mindxg2p(src, nb, nb, srcrow, 0, nprow);
+            dst = IPID[i + 1];
+            Mindxg2p(dst, nb, nb, dstrow, 0, nprow);
+            /*
  * LINDXA[i] is the local index of the row of A that belongs into U
  */
-         if( myrow == dstrow )
-         {
-            Mindxg2l( il, dst, nb, nb, myrow, 0, nprow );
-            LINDXA[ip] = il - iroff; ip++;
-         }
-/*
+            if (myrow == dstrow)
+            {
+                Mindxg2l(il, dst, nb, nb, myrow, 0, nprow);
+                LINDXA[ip] = il - iroff;
+                ip++;
+            }
+            /*
  * iwork[i] is the local (current) position  index in U
  * PERMU[i] is the local (final) destination index in U
  */
-         if( srcrow == icurrow )
-         {
-            if( ( dstrow == icurrow ) && ( dst - ia < jb ) )
+            if (srcrow == icurrow)
             {
-               PERMU[ipU] = dst - ia;  il = IPMAPM1[dstrow];
-               iwork[ipU] = IPLEN[il]; IPLEN[il]++; ipU++;
+                if ((dstrow == icurrow) && (dst - ia < jb))
+                {
+                    PERMU[ipU] = dst - ia;
+                    il = IPMAPM1[dstrow];
+                    iwork[ipU] = IPLEN[il];
+                    IPLEN[il]++;
+                    ipU++;
+                }
+                else if (dstrow != icurrow)
+                {
+                    j = 0;
+                    do
+                    {
+                        fndd = (dst == IPID[j]);
+                        j += 2;
+                    } while (!fndd && (j < K));
+                    PERMU[ipU] = IPID[j - 1] - ia;
+                    il = IPMAPM1[dstrow];
+                    iwork[ipU] = IPLEN[il];
+                    IPLEN[il]++;
+                    ipU++;
+                }
             }
-            else if( dstrow != icurrow )
-            {
-               j = 0;
-               do { fndd = ( dst == IPID[j] ); j+=2; }
-               while( !fndd && ( j < K ) );
-               PERMU[ipU] = IPID[j-1] - ia; il = IPMAPM1[dstrow];
-               iwork[ipU] = IPLEN[il]; IPLEN[il]++; ipU++;
-            }
-         }
-      }
-      *IPA = 0;
-   }
-/*
+        }
+        *IPA = 0;
+    }
+    /*
  * Simplify iwork and PERMU, return in PERMU the sequence of permutation
  * that need to be apply to U after it has been broadcast.
  */
-   HPLAI_perm( jb, iwork, PERMU, IWORK );
-/*
+    HPLAI_perm(jb, iwork, PERMU, IWORK);
+    /*
  * Reset IPLEN to its correct value
  */
-   for( i = nprow; i > 0; i-- ) IPLEN[i] = IPLEN[i-1];
-   IPLEN[0] = 0; 
-/*
+    for (i = nprow; i > 0; i--)
+        IPLEN[i] = IPLEN[i - 1];
+    IPLEN[0] = 0;
+    /*
  * End of HPLAI_plindx1
  */
 }

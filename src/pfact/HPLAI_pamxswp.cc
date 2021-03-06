@@ -1,49 +1,26 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
@@ -55,25 +32,22 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_pamxswp
-(
-   HPLAI_T_panel *                    PANEL,
-   const int                        M,
-   const int                        II,
-   const int                        JJ,
-   HPLAI_T_AFLOAT *                         WORK
-)
+    void HPLAI_pamxswp(
+        HPLAI_T_panel *PANEL,
+        const int M,
+        const int II,
+        const int JJ,
+        HPLAI_T_AFLOAT *WORK)
 #else
-void HPLAI_pamxswp
-( PANEL, M, II, JJ, WORK )
-   HPLAI_T_panel *                    PANEL;
-   const int                        M;
-   const int                        II;
-   const int                        JJ;
-   HPLAI_T_AFLOAT *                         WORK;
+void HPLAI_pamxswp(PANEL, M, II, JJ, WORK)
+    HPLAI_T_panel *PANEL;
+const int M;
+const int II;
+const int JJ;
+HPLAI_T_AFLOAT *WORK;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -121,58 +95,70 @@ void HPLAI_pamxswp
  *         remaining part is used as a temporary array.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   HPLAI_T_AFLOAT                     gmax, tmp1;
-   HPLAI_T_AFLOAT                     * A0, * Wmx, * Wwork;
-   HPLAI_T_grid                 * grid;
-   MPI_Comm                   comm;
-   unsigned int               hdim, ip2, ip2_, ipow, k, mask;
-   int                        Np2, cnt_, cnt0, i, icurrow, lda, mydist,
-                              mydis_, myrow, n0, nprow, partner, rcnt,
-                              root, scnt, size_;
+        HPLAI_T_AFLOAT gmax, tmp1;
+        HPLAI_T_AFLOAT *A0, *Wmx, *Wwork;
+        HPLAI_T_grid *grid;
+        MPI_Comm comm;
+        unsigned int hdim, ip2, ip2_, ipow, k, mask;
+        int Np2, cnt_, cnt0, i, icurrow, lda, mydist,
+            mydis_, myrow, n0, nprow, partner, rcnt,
+            root, scnt, size_;
 /* ..
  * .. Executable Statements ..
  */
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_MXSWP );
+        HPL_ptimer(HPL_TIMING_MXSWP);
 #endif
-   grid = PANEL->grid; myrow = grid->myrow; nprow = grid->nprow;
-/*
+        grid = PANEL->grid;
+        myrow = grid->myrow;
+        nprow = grid->nprow;
+        /*
  * ip2  : the smallest power of two less than or equal to nprow;
  * hdim : dimension of the hypercube made of those ip2 processes;
  * Np2  : logical flag indicating whether or not nprow is a power of 2;
  */
-   comm    = grid->col_comm; ip2 = (unsigned int)(grid->row_ip2);
-   hdim    = (unsigned int)(grid->row_hdim);     n0  = PANEL->jb;
-   icurrow = PANEL->prow; Np2 = (int)( ( size_ = nprow - ip2 ) != 0 );
-   mydist  = MModSub( myrow, icurrow, nprow );
-/*
+        comm = grid->col_comm;
+        ip2 = (unsigned int)(grid->row_ip2);
+        hdim = (unsigned int)(grid->row_hdim);
+        n0 = PANEL->jb;
+        icurrow = PANEL->prow;
+        Np2 = (int)((size_ = nprow - ip2) != 0);
+        mydist = MModSub(myrow, icurrow, nprow);
+        /*
  * Set up pointers in workspace:  WORK and Wwork  point to the beginning
  * of the buffers of size 4 + 2*N0 to be combined. Wmx points to the row
  * owning the local (before combine) and global (after combine) absolute
  * value max. A0 points to the copy of the current row of the matrix.
  */
-   cnt0  = ( cnt_ = n0 + 4 ) + n0; A0 = ( Wmx = WORK + 4 ) + n0;
-   Wwork = WORK + cnt0;
-/*
+        cnt0 = (cnt_ = n0 + 4) + n0;
+        A0 = (Wmx = WORK + 4) + n0;
+        Wwork = WORK + cnt0;
+        /*
  * Wmx[0:N0-1] := A[ilindx,0:N0-1] where ilindx is  (int)(WORK[1])  (row
  * with max in current column). If I am the current process row, pack in
  * addition the current row of A in A0[0:N0-1].  If I do not own any row
  * of A, then zero out Wmx[0:N0-1].
  */
-   if( M > 0 )
-   {
-      lda = PANEL->lda;
-      blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n0, Mptr( PANEL->A, II+(int)(WORK[1]), 0, lda ), lda,
-                 Wmx, 1 );
-      if( myrow == icurrow )
-      { blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n0, Mptr( PANEL->A, II, 0, lda ), lda, A0, 1 ); }
-   }
-   else { for( i = 0; i < n0; i++ ) Wmx[i] = HPLAI_rzero; }
-/*
+        if (M > 0)
+        {
+            lda = PANEL->lda;
+            blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(n0, Mptr(PANEL->A, II + (int)(WORK[1]), 0, lda), lda,
+                                                       Wmx, 1);
+            if (myrow == icurrow)
+            {
+                blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(n0, Mptr(PANEL->A, II, 0, lda), lda, A0, 1);
+            }
+        }
+        else
+        {
+            for (i = 0; i < n0; i++)
+                Wmx[i] = HPLAI_rzero;
+        }
+        /*
  * Combine the results (bi-directional exchange):  the process coordina-
  * tes are relative to icurrow,  this allows to reduce the communication
  * volume when nprow is not a power of 2.
@@ -182,39 +168,38 @@ void HPLAI_pamxswp
  * sends to proc[ip2] the current row of A  for later broadcast in procs
  * [ip2..nprow).
  */
-   if( ( Np2 != 0 ) &&
-       ( ( partner = (int)((unsigned int)(mydist) ^ ip2 ) ) < nprow ) )
-   {
-      if( ( mydist & ip2 ) != 0 )
-      {
-         if( mydist == (int)(ip2) )
-            (void) HPLAI_sdrv( WORK, cnt_, MSGID_BEGIN_PFACT, A0, n0,
-                             MSGID_BEGIN_PFACT, MModAdd( partner,
-                             icurrow, nprow ), comm );
-         else
-            (void) HPLAI_send( WORK, cnt_, MModAdd( partner, icurrow,
-                             nprow ), MSGID_BEGIN_PFACT, comm );
-      }
-      else
-      {
-         if( mydist == 0 )
-            (void) HPLAI_sdrv( A0, n0, MSGID_BEGIN_PFACT, Wwork, cnt_,
-                             MSGID_BEGIN_PFACT, MModAdd( partner,
-                             icurrow, nprow ), comm );
-         else
-            (void) HPLAI_recv( Wwork, cnt_, MModAdd( partner, icurrow,
-                             nprow ), MSGID_BEGIN_PFACT, comm );
- 
-         tmp1 = Mabs( Wwork[0] ); gmax = Mabs( WORK[0] );
-         if( ( tmp1 > gmax ) ||
-             ( ( tmp1 == gmax ) && ( Wwork[3] < WORK[3] ) ) )
-         { blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( cnt_, Wwork, 1, WORK, 1 ); }
-      }
-   }
+        if ((Np2 != 0) &&
+            ((partner = (int)((unsigned int)(mydist) ^ ip2)) < nprow))
+        {
+            if ((mydist & ip2) != 0)
+            {
+                if (mydist == (int)(ip2))
+                    (void)HPLAI_sdrv(WORK, cnt_, MSGID_BEGIN_PFACT, A0, n0,
+                                     MSGID_BEGIN_PFACT, MModAdd(partner, icurrow, nprow), comm);
+                else
+                    (void)HPLAI_send(WORK, cnt_, MModAdd(partner, icurrow, nprow), MSGID_BEGIN_PFACT, comm);
+            }
+            else
+            {
+                if (mydist == 0)
+                    (void)HPLAI_sdrv(A0, n0, MSGID_BEGIN_PFACT, Wwork, cnt_,
+                                     MSGID_BEGIN_PFACT, MModAdd(partner, icurrow, nprow), comm);
+                else
+                    (void)HPLAI_recv(Wwork, cnt_, MModAdd(partner, icurrow, nprow), MSGID_BEGIN_PFACT, comm);
 
-   if( mydist < (int)(ip2) )
-   {
-/*
+                tmp1 = Mabs(Wwork[0]);
+                gmax = Mabs(WORK[0]);
+                if ((tmp1 > gmax) ||
+                    ((tmp1 == gmax) && (Wwork[3] < WORK[3])))
+                {
+                    blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(cnt_, Wwork, 1, WORK, 1);
+                }
+            }
+        }
+
+        if (mydist < (int)(ip2))
+        {
+            /*
  * power of 2 part of the processes collection: processes  [0..ip2)  are
  * combining (binary exchange); proc[0] has two rows to send, but one to
  * receive.  At every step  k  in [0..hdim) of the algorithm,  a process 
@@ -222,98 +207,114 @@ void HPLAI_pamxswp
  * processes the ones  that are sending one more row than  what they are
  * receiving are such that myrow >> k is equal to 0.
  */
-      k = 0; ipow = 1;
- 
-      while( k < hdim )
-      {
-         if( ( (unsigned int)(mydist) >> ( k + 1 ) ) == 0 )
-         {
-            if( ( (unsigned int)(mydist) >> k ) == 0 )
-            { scnt = cnt0; rcnt = cnt_; }
-            else
-            { scnt = cnt_; rcnt = cnt0; }
-         }
-         else { scnt = rcnt = cnt_; }
- 
-         partner = (int)( (unsigned int)(mydist) ^ ipow );
-         (void) HPLAI_sdrv( WORK, scnt, MSGID_BEGIN_PFACT, Wwork, rcnt,
-                          MSGID_BEGIN_PFACT, MModAdd( partner, icurrow,
-                          nprow ), comm );
- 
-         tmp1 = Mabs( Wwork[0] ); gmax = Mabs( WORK[0] );
-         if( ( tmp1 > gmax ) ||
-             ( ( tmp1 == gmax ) && ( Wwork[3] < WORK[3] ) ) )
-         {
-            blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( ( rcnt == cnt0 ? cnt0 : cnt_ ), Wwork, 1,
-                       WORK, 1 );
-         }
-         else if( rcnt == cnt0 )
-         { blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( n0, Wwork+cnt_, 1, A0, 1 ); }
- 
-         ipow <<= 1; k++;
-      }
-   }
-   else if( size_ > 1 )
-   {
-/*
+            k = 0;
+            ipow = 1;
+
+            while (k < hdim)
+            {
+                if (((unsigned int)(mydist) >> (k + 1)) == 0)
+                {
+                    if (((unsigned int)(mydist) >> k) == 0)
+                    {
+                        scnt = cnt0;
+                        rcnt = cnt_;
+                    }
+                    else
+                    {
+                        scnt = cnt_;
+                        rcnt = cnt0;
+                    }
+                }
+                else
+                {
+                    scnt = rcnt = cnt_;
+                }
+
+                partner = (int)((unsigned int)(mydist) ^ ipow);
+                (void)HPLAI_sdrv(WORK, scnt, MSGID_BEGIN_PFACT, Wwork, rcnt,
+                                 MSGID_BEGIN_PFACT, MModAdd(partner, icurrow, nprow), comm);
+
+                tmp1 = Mabs(Wwork[0]);
+                gmax = Mabs(WORK[0]);
+                if ((tmp1 > gmax) ||
+                    ((tmp1 == gmax) && (Wwork[3] < WORK[3])))
+                {
+                    blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>((rcnt == cnt0 ? cnt0 : cnt_), Wwork, 1,
+                                                               WORK, 1);
+                }
+                else if (rcnt == cnt0)
+                {
+                    blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(n0, Wwork + cnt_, 1, A0, 1);
+                }
+
+                ipow <<= 1;
+                k++;
+            }
+        }
+        else if (size_ > 1)
+        {
+            /*
  * proc[ip2] broadcast current row of A to procs [ip2+1..nprow).
  */
-      k = (unsigned int)(size_) - 1; ip2_ = mask = 1;
-      while( k > 1 ) { k >>= 1; ip2_ <<= 1; mask <<= 1; mask++; }
- 
-      root   = MModAdd( icurrow, (int)(ip2), nprow );
-      mydis_ = MModSub( myrow,   root,       nprow );
- 
-      do
-      {
-         mask ^= ip2_;
-         if( ( mydis_ & mask ) == 0 )
-         {
-            partner = (int)(mydis_ ^ ip2_);
-            if( ( mydis_ & ip2_ ) != 0 )
+            k = (unsigned int)(size_)-1;
+            ip2_ = mask = 1;
+            while (k > 1)
             {
-               (void) HPLAI_recv( A0, n0, MModAdd( root, partner,
-                                nprow ), MSGID_BEGIN_PFACT, comm );
+                k >>= 1;
+                ip2_ <<= 1;
+                mask <<= 1;
+                mask++;
             }
-            else if( partner < size_ )
+
+            root = MModAdd(icurrow, (int)(ip2), nprow);
+            mydis_ = MModSub(myrow, root, nprow);
+
+            do
             {
-               (void) HPLAI_send( A0, n0, MModAdd( root, partner,
-                                nprow ), MSGID_BEGIN_PFACT, comm );
-            }
-         }
-         ip2_ >>= 1;
-      } while( ip2_ > 0 );
-   }
-/*
+                mask ^= ip2_;
+                if ((mydis_ & mask) == 0)
+                {
+                    partner = (int)(mydis_ ^ ip2_);
+                    if ((mydis_ & ip2_) != 0)
+                    {
+                        (void)HPLAI_recv(A0, n0, MModAdd(root, partner, nprow), MSGID_BEGIN_PFACT, comm);
+                    }
+                    else if (partner < size_)
+                    {
+                        (void)HPLAI_send(A0, n0, MModAdd(root, partner, nprow), MSGID_BEGIN_PFACT, comm);
+                    }
+                }
+                ip2_ >>= 1;
+            } while (ip2_ > 0);
+        }
+        /*
  * If nprow is not a power of 2,  for all i in [ip2..nprow), proc[i-ip2]
  * sends the pivot row to proc[i]  along  with the first four entries of
  * the WORK array.
  */
-   if( ( Np2 != 0 ) &&
-       ( ( partner = (int)((unsigned int)(mydist) ^ ip2 ) ) < nprow ) )
-   {
-      if( ( mydist & ip2 ) != 0 )
-      {
-         (void) HPLAI_recv( WORK, cnt_, MModAdd( partner, icurrow,
-                          nprow ), MSGID_BEGIN_PFACT, comm );
-      }
-      else
-      {
-         (void) HPLAI_send( WORK, cnt_, MModAdd( partner, icurrow,
-                          nprow ), MSGID_BEGIN_PFACT, comm );
-      }
-   }
-/*
+        if ((Np2 != 0) &&
+            ((partner = (int)((unsigned int)(mydist) ^ ip2)) < nprow))
+        {
+            if ((mydist & ip2) != 0)
+            {
+                (void)HPLAI_recv(WORK, cnt_, MModAdd(partner, icurrow, nprow), MSGID_BEGIN_PFACT, comm);
+            }
+            else
+            {
+                (void)HPLAI_send(WORK, cnt_, MModAdd(partner, icurrow, nprow), MSGID_BEGIN_PFACT, comm);
+            }
+        }
+        /*
  * Save the global pivot index in pivot array
  */
-   (PANEL->DPIV)[JJ] = WORK[2];
+        (PANEL->DPIV)[JJ] = WORK[2];
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_MXSWP );
+        HPL_ptimer(HPL_TIMING_MXSWP);
 #endif
-/*
+        /*
  * End of HPLAI_pamxswp
  */
-}
+    }
 
 #ifdef __cplusplus
 }

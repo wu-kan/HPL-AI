@@ -1,26 +1,26 @@
 #!/bin/bash
-# ============================================================
+##############################################################
 #
 #  HPL-AI Mixed-Precision Benchmark  --   February 18, 2021
 #
-# ============================================================
+##############################################################
 #
-#  Check out <https://wu-kan.cn/_posts/2021-02-18-HPL-AI/> for
-#  the full document and the latest information.
+# Check out <https://wu-kan.cn/_posts/2021-02-18-HPL-AI/> for
+# the full document and the latest information.
 #
-# ============================================================
+##############################################################
 #
-#  A Quick start to build and run a few tests: ./README
+# A Quick start to build and run a few tests: ./README
 
-#  First the following softwares are required in your system:
-#  C&C++ compiler, autoconf, autoconf-archive, automake, mpi,
-#  blas, blaspp
+# First the following softwares are required on your system:
+# C&C++ compiler, autoconf, autoconf-archive, automake, mpi,
+# blas, blaspp
 #
-#  You can easily install and load the requirements via spack
-#  <https://github.com/spack/spack/releases/tag/v0.16.1>.
+# You can easily install and load the requirements via spack
+# <https://github.com/spack/spack/releases/tag/v0.16.1>.
 #
-#  I just tested with the followings, while other versions or
-#  libraries might work as well:
+# I just tested with the followings, while other versions or
+# libraries might work as well:
 
 spack unload -a
 spack load gcc@7.5.0
@@ -68,10 +68,10 @@ make -j
 
 # The configuration file must be called HPL.dat.
 #
-# Most of the performance parameters can be tuned.
-#
 # You can copy the configuration file from the original HPL,
 # or create a configuration file anew.
+#
+# Most of the performance parameters can be tuned.
 
 if true; then
     cp testing/ptest/HPL.dat HPL.dat
@@ -118,20 +118,20 @@ mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhplai
 
 git clean -d -f -q -x
 
-# ============================================================
+##############################################################
 #
 # The newest version of HPL-AI is available at
 # <https://github.com/wu-kan/HPL-AI/releases>
 #
-# ============================================================
+##############################################################
 #
 # Bugs are tracked at
 # <https://github.com/wu-kan/HPL-AI/issues>
 #
-# ============================================================
+##############################################################
 #
 # The souce code of HPL-AI is licensed under `LICENSE`.
 #
 # The souce code of hpl-2.3 is licensed under `COPYING`.
 #
-# ============================================================
+##############################################################

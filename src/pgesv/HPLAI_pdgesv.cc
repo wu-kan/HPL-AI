@@ -1,4 +1,27 @@
 /*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/*
  * Include files
  */
 #include "hplai.hh"
@@ -160,7 +183,7 @@ static void HPL_pLdtrsv(
         if (myrow == Alrow)
         {
             blas::trsv<double, double>(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
-                      kb, Aptr, lda, XC, 1);
+                                       kb, Aptr, lda, XC, 1);
             blas::copy<double, double>(kb, XC, 1, Xd, 1);
         }
 
@@ -213,8 +236,8 @@ static void HPL_pLdtrsv(
             if (n1pprev > 0)
             {
                 blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, n1pprev, kbprev,
-                          -HPL_rone, Aprev + Anp, lda, Xdprev, 1, HPL_rone,
-                          XC + Anp, 1);
+                           -HPL_rone, Aprev + Anp, lda, Xdprev, 1, HPL_rone,
+                           XC + Anp, 1);
                 if (GridIsNotPx1)
                     (void)HPL_send(XC + Anp, n1pprev, Alcol, Rmsgid, Rcomm);
             }
@@ -245,7 +268,7 @@ static void HPL_pLdtrsv(
         if ((mycol == Alcol) && (myrow == Alrow))
         {
             blas::trsv<double, double>(blas::Layout::ColMajor, blas::Uplo::Lower, blas::Op::NoTrans, blas::Diag::Unit,
-                      kb, Aptr + Anp, lda, XC + Anp, 1);
+                                       kb, Aptr + Anp, lda, XC + Anp, 1);
             blas::copy<double, double>(kb, XC + Anp, 1, Xd, 1);
         }
         /*
@@ -253,7 +276,7 @@ static void HPL_pLdtrsv(
  */
         if ((mycol == colprev) && ((tmp1 = Anp + n1pprev) < np))
             blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, np - tmp1, kbprev, -HPL_rone,
-                      Aprev + tmp1, lda, Xdprev, 1, HPL_rone, XC + tmp1, 1);
+                       Aprev + tmp1, lda, Xdprev, 1, HPL_rone, XC + tmp1, 1);
 
         /*
  *  Save info of current step and update info for the next step
@@ -757,7 +780,7 @@ static int HPL_pgmres(
             /* there is initial guess stored in x here from last iteration */
             /* calculate v = Ax */
             blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
-                      A->A, A->ld, x, 1, 0, v, 1);
+                       A->A, A->ld, x, 1, 0, v, 1);
             HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
             /* preconditioning A */
@@ -817,7 +840,7 @@ static int HPL_pgmres(
             /* calculate v = AP0P1..Pkv */
             redB2X(GRID, A, v, xt);
             blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
-                      A->A, A->ld, xt, 1, 0, v, 1);
+                       A->A, A->ld, xt, 1, 0, v, 1);
             HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
             /* preconditioning A */
@@ -1035,7 +1058,7 @@ static void HPL_pir(
     HPL_T_pmat *factors,
     double PRE, /* solution tolerance */
     int IR,
-    int MM,   /* restart size for GMRES */
+    int MM,    /* restart size for GMRES */
     int MAXIT, /* maximum number of GMRES iteration */
     double TOL)
 {
@@ -1135,13 +1158,13 @@ static void HPL_pir(
         {
             memcpy(res, Bptr, mp * sizeof(double));
             blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, -HPL_rone,
-                      A->A, A->ld, A->X, 1, HPL_rone, res, 1);
+                       A->A, A->ld, A->X, 1, HPL_rone, res, 1);
         }
         else if (nq > 0)
         {
             memset(res, 0, mp * sizeof(double));
             blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, -HPL_rone,
-                      A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
+                       A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
         }
         else
         {
@@ -1210,14 +1233,14 @@ static void HPLAI_pmat_new(
     T3 *DSTA)
 {
     *vptr = (void *)malloc(
-            ((size_t)(ALGO->align) + (size_t)(SRC->ld + 1) * (size_t)(SRC->nq)) * sizeof(DST->A[0]));
+        ((size_t)(ALGO->align) + (size_t)(SRC->ld + 1) * (size_t)(SRC->nq)) * sizeof(DST->A[0]));
     if (*vptr == NULL)
-        HPLAI_pabort( __LINE__, "HPLAI_pmat_new", "Memory allocation failed" );
+        HPLAI_pabort(__LINE__, "HPLAI_pmat_new", "Memory allocation failed");
 
 #ifdef HPL_CALL_VSIPL
-    DST->block = vsip_blockbind_d( (vsip_scalar_d *)(SRC->A),
-                                 (vsip_length)(SRC->ld * SRC->nq),
-                                 VSIP_MEM_NONE );
+    DST->block = vsip_blockbind_d((vsip_scalar_d *)(SRC->A),
+                                  (vsip_length)(SRC->ld * SRC->nq),
+                                  VSIP_MEM_NONE);
 #endif
 
     DST->A = (T3 *)HPL_PTR((*vptr), ((size_t)(ALGO->align) * sizeof(DST->A[0])));
@@ -1251,17 +1274,16 @@ HPLAI_T_pmat *A;
 
         HPLAI_pagesv(GRID, ALGO, &FA);
 
-
 #ifdef HPLAI_REGEN
         HPLAI_pmat_cpy(A, &FA);
         if (vptr_FA)
             free(vptr_FA);
         HPLAI_pmat_new(&factors, A, ALGO, &vptr_factors, factors.A);
-        HPLAI_pdmatgen( GRID, A->n, A->n+1, A->nb, A->A, A->ld, HPL_ISEED );
+        HPLAI_pdmatgen(GRID, A->n, A->n + 1, A->nb, A->A, A->ld, HPL_ISEED);
 #else
-        HPLAI_pmat_new(&factors, &FA, ALGO, &vptr_factors, factors.A);
-        if (vptr_FA)
-            free(vptr_FA);
+    HPLAI_pmat_new(&factors, &FA, ALGO, &vptr_factors, factors.A);
+    if (vptr_FA)
+        free(vptr_FA);
 #endif
 
         HPL_pir(GRID, ALGO, A, &factors, 1e-14, 1, 50, 1, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));

@@ -1,72 +1,46 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
 #include "hplai.hh"
 
 #ifdef STDC_HEADERS
-void HPLAI_palaswp00T
-(
-   HPLAI_T_panel *                    PBCST,
-   int *                            IFLAG,
-   HPLAI_T_panel *                    PANEL,
-   const int                        NN
-)
+void HPLAI_palaswp00T(
+    HPLAI_T_panel *PBCST,
+    int *IFLAG,
+    HPLAI_T_panel *PANEL,
+    const int NN)
 #else
-void HPLAI_palaswp00T
-( PBCST, IFLAG, PANEL, NN )
-   HPLAI_T_panel *                    PBCST;
-   int *                            IFLAG;
-   HPLAI_T_panel *                    PANEL;
-   const int                        NN;
+void HPLAI_palaswp00T(PBCST, IFLAG, PANEL, NN)
+    HPLAI_T_panel *PBCST;
+int *IFLAG;
+HPLAI_T_panel *PANEL;
+const int NN;
 #endif
 {
-/* 
+    /* 
  * Purpose
  * =======
  *
@@ -108,100 +82,120 @@ void HPLAI_palaswp00T
  *         the current position. NN must be at least zero.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+    /*
  * .. Local Variables ..
  */
-   MPI_Comm                  comm;
-   HPLAI_T_grid                * grid;
-   HPLAI_T_AFLOAT                    * A, * U, * W;
-   void                       * vptr = NULL;
-   int                       * ipID, * lindxA, * lindxAU, * llen,
-                             * llen_sv;
-   unsigned int              ip2, ip2_=1, ipdist, ipow=1, mask=1,
-                             mydist, mydis_;
-   int                       Cmsgid=MSGID_BEGIN_PFACT, Np2, align,
-                             hdim, i, icurrow, *iflag, ipA, ipW, *ipl,
-                             iprow, jb, k, lda, ldW, myrow, n, nprow,
-                             partner, root, size_, usize;
-#define LDU                  n
-/* ..
+    MPI_Comm comm;
+    HPLAI_T_grid *grid;
+    HPLAI_T_AFLOAT *A, *U, *W;
+    void *vptr = NULL;
+    int *ipID, *lindxA, *lindxAU, *llen,
+        *llen_sv;
+    unsigned int ip2, ip2_ = 1, ipdist, ipow = 1, mask = 1,
+                      mydist, mydis_;
+    int Cmsgid = MSGID_BEGIN_PFACT, Np2, align,
+        hdim, i, icurrow, *iflag, ipA, ipW, *ipl,
+        iprow, jb, k, lda, ldW, myrow, n, nprow,
+        partner, root, size_, usize;
+#define LDU n
+    /* ..
  * .. Executable Statements ..
  */
-   n = Mmin( NN, PANEL->n ); jb = PANEL->jb;
-/*
+    n = Mmin(NN, PANEL->n);
+    jb = PANEL->jb;
+    /*
  * Quick return if there is nothing to do
  */
-   if( ( n <= 0 ) || ( jb <= 0 ) ) return;
+    if ((n <= 0) || (jb <= 0))
+        return;
 
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+    HPL_ptimer(HPL_TIMING_LASWP);
 #endif
-/*
+    /*
  * Retrieve parameters from the PANEL data structure
  */
-   grid  = PANEL->grid;    nprow   = grid->nprow; myrow = grid->myrow;
-   comm  = grid->col_comm; ip2     = (unsigned int)grid->row_ip2;
-   hdim  = grid->row_hdim; align   = PANEL->algo->align;
-   A     = PANEL->A;       U       = PANEL->U;    iflag = PANEL->IWORK;
-   lda   = PANEL->lda;     icurrow = PANEL->prow; usize = jb * n;
-   ldW   = n + 1;
-/*
+    grid = PANEL->grid;
+    nprow = grid->nprow;
+    myrow = grid->myrow;
+    comm = grid->col_comm;
+    ip2 = (unsigned int)grid->row_ip2;
+    hdim = grid->row_hdim;
+    align = PANEL->algo->align;
+    A = PANEL->A;
+    U = PANEL->U;
+    iflag = PANEL->IWORK;
+    lda = PANEL->lda;
+    icurrow = PANEL->prow;
+    usize = jb * n;
+    ldW = n + 1;
+    /*
  * Allocate space for temporary W (ldW * jb)
  */
-   vptr = (void*)malloc( ( (size_t)(align) + 
-                           ((size_t)(jb) * (size_t)(ldW))) * 
-                           sizeof(HPLAI_T_AFLOAT) );
-   if( vptr == NULL )
-   { HPLAI_pabort( __LINE__, "HPLAI_palaswp00T", "Memory allocation failed" ); }
+    vptr = (void *)malloc(((size_t)(align) +
+                           ((size_t)(jb) * (size_t)(ldW))) *
+                          sizeof(HPLAI_T_AFLOAT));
+    if (vptr == NULL)
+    {
+        HPLAI_pabort(__LINE__, "HPLAI_palaswp00T", "Memory allocation failed");
+    }
 
-   W = (HPLAI_T_AFLOAT *)HPLAI_PTR( vptr, ((size_t)(align) * sizeof(HPLAI_T_AFLOAT) ) );
-/*
+    W = (HPLAI_T_AFLOAT *)HPLAI_PTR(vptr, ((size_t)(align) * sizeof(HPLAI_T_AFLOAT)));
+    /*
  * Construct ipID and its local counter parts lindxA, lindxAU -  llen is
  * the number of rows/columns that I have in workspace and that I should
  * send.  Compute  lindx_, ipA, llen if it has not already been done for
  * this panel;
  */
-   k = (int)((unsigned int)(jb) << 1); ipl = iflag + 1; ipID = ipl + 1;
-   lindxA  = ipID + ((unsigned int)(k) << 1); lindxAU = lindxA + k;
-   llen    = lindxAU + k; llen_sv = llen + nprow;
+    k = (int)((unsigned int)(jb) << 1);
+    ipl = iflag + 1;
+    ipID = ipl + 1;
+    lindxA = ipID + ((unsigned int)(k) << 1);
+    lindxAU = lindxA + k;
+    llen = lindxAU + k;
+    llen_sv = llen + nprow;
 
-   if( *iflag == -1 )    /* no index arrays have been computed so far */
-   {
-      HPLAI_pipid(   PANEL,  ipl, ipID );
-      HPLAI_plindx0( PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv );
-      *iflag = 0;
-   }
-   else if( *iflag == 1 ) /* HPLAI_palaswp01T called before: reuse ipID */
-   {
-      HPLAI_plindx0( PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv );
-      *iflag = 0;
-   }
-/*
+    if (*iflag == -1) /* no index arrays have been computed so far */
+    {
+        HPLAI_pipid(PANEL, ipl, ipID);
+        HPLAI_plindx0(PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv);
+        *iflag = 0;
+    }
+    else if (*iflag == 1) /* HPLAI_palaswp01T called before: reuse ipID */
+    {
+        HPLAI_plindx0(PANEL, *ipl, ipID, lindxA, lindxAU, llen_sv);
+        *iflag = 0;
+    }
+    /*
  * Copy the llen_sv into llen - Reset ipA to its correct value
  */
-   ipA = llen_sv[myrow];
-   for( i = 0; i < nprow; i++ ) { llen[i]  = llen_sv[i]; }
-/*
+    ipA = llen_sv[myrow];
+    for (i = 0; i < nprow; i++)
+    {
+        llen[i] = llen_sv[i];
+    }
+    /*
  * For i in [0..2*jb),  lindxA[i] is the offset in A of a row that ulti-
  * mately goes to U( lindxAU[i], : ) or U( :, lindxAU[i] ).  In icurrow,
  * we directly pack into U, otherwise we pack into workspace. The  first
  * entry of each column packed in workspace is in fact the row or column
  * offset in U where it should go to.
  */
-   if( myrow == icurrow ) 
-   {
-      HPLAI_alaswp01T( ipA, n, A, lda, U, LDU, lindxA, lindxAU );
-   }
-   else
-   {
-      HPLAI_alaswp02N( ipA, n, A, lda, W, W+1, ldW, lindxA, lindxAU );
-   }
-/*
+    if (myrow == icurrow)
+    {
+        HPLAI_alaswp01T(ipA, n, A, lda, U, LDU, lindxA, lindxAU);
+    }
+    else
+    {
+        HPLAI_alaswp02N(ipA, n, A, lda, W, W + 1, ldW, lindxA, lindxAU);
+    }
+    /*
  * Probe for column panel - forward it when available 
  */
-   if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
-/*
+    if (*IFLAG == HPLAI_KEEP_TESTING)
+        (void)HPLAI_bcast(PBCST, IFLAG);
+    /*
  * Algorithm for bi-directional data exchange:
  *
  * As long as I have not talked to a process that  already  had the data
@@ -235,59 +229,65 @@ void HPLAI_palaswp00T
  * first exchange,  and  then  broadcast internally this U so that those 
  * processes can grab their piece of A.
  */
-   if( myrow == icurrow ) { llen[myrow] = 0; ipA = 0; }
-   ipW    = ipA;
-   Np2    = ( ( size_ = nprow - ip2 ) != 0 );
-   mydist = (unsigned int)MModSub( myrow, icurrow, nprow );
-/*
+    if (myrow == icurrow)
+    {
+        llen[myrow] = 0;
+        ipA = 0;
+    }
+    ipW = ipA;
+    Np2 = ((size_ = nprow - ip2) != 0);
+    mydist = (unsigned int)MModSub(myrow, icurrow, nprow);
+    /*
  * bi-directional exchange:   If nprow is not a power of 2,  proc[i-ip2]
  * receives local data from proc[i] for all i in  [ip2..nprow);  icurrow
  * is the source, these last process indexes are relative to icurrow.
  */
-   if( ( Np2 != 0 ) && ( ( partner = (int)(mydist ^ ip2) ) < nprow ) )
-   {
-      partner = MModAdd( icurrow, partner, nprow );
+    if ((Np2 != 0) && ((partner = (int)(mydist ^ ip2)) < nprow))
+    {
+        partner = MModAdd(icurrow, partner, nprow);
 
-      if( mydist == 0 )  /* I am the current row: I send U and recv W */
-      {
-         (void) HPLAI_sdrv( U, usize, Cmsgid, W, llen[partner] * ldW,
-                          Cmsgid, partner, comm );
-         if( llen[partner] > 0 )
-            HPLAI_alaswp03T( llen[partner], n, U, LDU, W, W+1, ldW );
-      }
-      else if( mydist == ip2 )
-      {                      /* I recv U for later Bcast, I send my W */
-         (void) HPLAI_sdrv( W, llen[myrow]*ldW, Cmsgid, U, usize,
-                          Cmsgid, partner, comm );
-      }
-      else               /* None of us is icurrow, we exchange our Ws */
-      {
-         if( ( mydist & ip2 ) != 0 ) 
-         {
-            (void) HPLAI_send( W, llen[myrow]*ldW, partner, Cmsgid, comm );
-         }
-         else
-         {
-            (void) HPLAI_recv( Mptr( W, 0, ipW, ldW ), llen[partner]*ldW,
-                             partner, Cmsgid, comm );
-            if( llen[partner] > 0 ) ipW += llen[partner];
-         }
-      }
-   }
-/*
+        if (mydist == 0) /* I am the current row: I send U and recv W */
+        {
+            (void)HPLAI_sdrv(U, usize, Cmsgid, W, llen[partner] * ldW,
+                             Cmsgid, partner, comm);
+            if (llen[partner] > 0)
+                HPLAI_alaswp03T(llen[partner], n, U, LDU, W, W + 1, ldW);
+        }
+        else if (mydist == ip2)
+        { /* I recv U for later Bcast, I send my W */
+            (void)HPLAI_sdrv(W, llen[myrow] * ldW, Cmsgid, U, usize,
+                             Cmsgid, partner, comm);
+        }
+        else /* None of us is icurrow, we exchange our Ws */
+        {
+            if ((mydist & ip2) != 0)
+            {
+                (void)HPLAI_send(W, llen[myrow] * ldW, partner, Cmsgid, comm);
+            }
+            else
+            {
+                (void)HPLAI_recv(Mptr(W, 0, ipW, ldW), llen[partner] * ldW,
+                                 partner, Cmsgid, comm);
+                if (llen[partner] > 0)
+                    ipW += llen[partner];
+            }
+        }
+    }
+    /*
  * Update llen
  */
-   for( i = 1; i < size_; i++ )
-   {
-      iprow   = MModAdd( icurrow, i,          nprow );
-      partner = MModAdd( iprow,   (int)(ip2), nprow );
-      llen[ iprow ] += llen[ partner ];
-   }
-/*
+    for (i = 1; i < size_; i++)
+    {
+        iprow = MModAdd(icurrow, i, nprow);
+        partner = MModAdd(iprow, (int)(ip2), nprow);
+        llen[iprow] += llen[partner];
+    }
+    /*
  * Probe for column panel - forward it when available 
  */
-   if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
-/*
+    if (*IFLAG == HPLAI_KEEP_TESTING)
+        (void)HPLAI_bcast(PBCST, IFLAG);
+    /*
  * power of 2 part of the processes collection:  only processes [0..ip2)
  * are working;  some of them  (mydist >> (k+1) == 0) either send or re-
  * ceive U.  At every step k, k is in [0 .. hdim),  of the algorithm,  a
@@ -295,15 +295,15 @@ void HPLAI_palaswp00T
  * Among  those  processes,  the  ones  that are sending U are such that 
  * mydist >> k == 0.
  */
-   if( mydist < ip2 )
-   {
-      k = 0;
+    if (mydist < ip2)
+    {
+        k = 0;
 
-      while( k < hdim )
-      {
-         partner = (int)(mydist ^ ipow);
-         partner = MModAdd( icurrow, partner, nprow );
-/*
+        while (k < hdim)
+        {
+            partner = (int)(mydist ^ ipow);
+            partner = MModAdd(icurrow, partner, nprow);
+            /*
  * Exchange and combine the local results - If I receive U,  then I must
  * copy from U the rows that belong to my piece of A, and then update  U
  * by  copying in it the rows I have accumulated in W.  Otherwise, I re-
@@ -311,123 +311,134 @@ void HPLAI_palaswp00T
  * U by copying in it the rows I have accumulated in  W.  If  I  did not
  * have U before, I simply need to update my pointer in W for later use.
  */
-         if( ( mydist >> (unsigned int)( k + 1 ) ) == 0 )
-         {
-            if( ( mydist >> (unsigned int)(k) ) == 0 )
+            if ((mydist >> (unsigned int)(k + 1)) == 0)
             {
-               (void) HPLAI_sdrv( U, usize, Cmsgid, Mptr( W, 0, ipW,
-                                ldW ), llen[partner]*ldW, Cmsgid,
-                                partner, comm );
-               HPLAI_alaswp03T( llen[partner], n, U, LDU, Mptr( W, 0, ipW,
-                              ldW ), Mptr( W, 1, ipW, ldW ), ldW );
-               ipW += llen[partner];
+                if ((mydist >> (unsigned int)(k)) == 0)
+                {
+                    (void)HPLAI_sdrv(U, usize, Cmsgid, Mptr(W, 0, ipW, ldW), llen[partner] * ldW, Cmsgid,
+                                     partner, comm);
+                    HPLAI_alaswp03T(llen[partner], n, U, LDU, Mptr(W, 0, ipW, ldW), Mptr(W, 1, ipW, ldW), ldW);
+                    ipW += llen[partner];
+                }
+                else
+                {
+                    (void)HPLAI_sdrv(W, llen[myrow] * ldW, Cmsgid, U, usize,
+                                     Cmsgid, partner, comm);
+                    HPLAI_alaswp04T(ipA, llen[myrow], n, U, LDU, A, lda, W,
+                                    W + 1, ldW, lindxA, lindxAU);
+                }
             }
             else
             {
-               (void) HPLAI_sdrv( W, llen[myrow]*ldW, Cmsgid, U, usize,
-                                Cmsgid, partner, comm );
-               HPLAI_alaswp04T( ipA, llen[myrow], n, U, LDU, A, lda, W,
-                              W+1, ldW, lindxA, lindxAU );
+                (void)HPLAI_sdrv(W, llen[myrow] * ldW, Cmsgid, Mptr(W, 0, ipW, ldW), llen[partner] * ldW, Cmsgid,
+                                 partner, comm);
+                ipW += llen[partner];
             }
-         }
-         else
-         {
-            (void) HPLAI_sdrv( W, llen[myrow]*ldW, Cmsgid, Mptr( W, 0,
-                             ipW, ldW ), llen[partner]*ldW, Cmsgid,
-                             partner, comm );
-            ipW += llen[partner];
-         }
-/*
+            /*
  * Update llen - Go to next process pairs
  */
-         iprow = icurrow; ipdist = 0;
-         do
-         {
-            if( (unsigned int)( partner = (int)(ipdist ^ ipow) ) > ipdist )
+            iprow = icurrow;
+            ipdist = 0;
+            do
             {
-               partner = MModAdd( icurrow, partner, nprow );
-               llen[iprow]  += llen[partner];
-               llen[partner] = llen[iprow];
-            }
-            iprow = MModAdd( iprow, 1, nprow ); ipdist++;
+                if ((unsigned int)(partner = (int)(ipdist ^ ipow)) > ipdist)
+                {
+                    partner = MModAdd(icurrow, partner, nprow);
+                    llen[iprow] += llen[partner];
+                    llen[partner] = llen[iprow];
+                }
+                iprow = MModAdd(iprow, 1, nprow);
+                ipdist++;
 
-         } while( ipdist < ip2 );
+            } while (ipdist < ip2);
 
-         ipow <<= 1; k++;
-/*
+            ipow <<= 1;
+            k++;
+            /*
  * Probe for column panel - forward it when available 
  */
-         if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
-      }
-   }
-   else
-   {
-/*
+            if (*IFLAG == HPLAI_KEEP_TESTING)
+                (void)HPLAI_bcast(PBCST, IFLAG);
+        }
+    }
+    else
+    {
+        /*
  * non power of 2 part of the process collection:  proc[ip2] broadcast U
  * to procs[ip2..nprow) (relatively to icurrow).
  */
-      if( size_ > 1 )
-      {
-         k = size_ - 1;
-         while( k > 1 ) { k >>= 1; ip2_ <<= 1; mask <<= 1; mask++; }
-         root   = MModAdd( icurrow, (int)(ip2), nprow );
-         mydis_ = (unsigned int)MModSub( myrow,  root, nprow );
-
-         do
-         {
-            mask ^= ip2_;
-            if( ( mydis_ & mask ) == 0 )
+        if (size_ > 1)
+        {
+            k = size_ - 1;
+            while (k > 1)
             {
-               partner = (int)(mydis_ ^ ip2_);
-               if( ( mydis_ & ip2_ ) != 0 )
-               {
-                  (void) HPLAI_recv( U, usize, MModAdd( root, partner,
-                                   nprow ), Cmsgid, comm );
-
-               }
-               else if( partner < size_ )
-               {
-                  (void) HPLAI_send( U, usize, MModAdd( root, partner,
-                                   nprow ), Cmsgid, comm );
-               }
+                k >>= 1;
+                ip2_ <<= 1;
+                mask <<= 1;
+                mask++;
             }
-            ip2_ >>= 1;
-/*
+            root = MModAdd(icurrow, (int)(ip2), nprow);
+            mydis_ = (unsigned int)MModSub(myrow, root, nprow);
+
+            do
+            {
+                mask ^= ip2_;
+                if ((mydis_ & mask) == 0)
+                {
+                    partner = (int)(mydis_ ^ ip2_);
+                    if ((mydis_ & ip2_) != 0)
+                    {
+                        (void)HPLAI_recv(U, usize, MModAdd(root, partner, nprow), Cmsgid, comm);
+                    }
+                    else if (partner < size_)
+                    {
+                        (void)HPLAI_send(U, usize, MModAdd(root, partner, nprow), Cmsgid, comm);
+                    }
+                }
+                ip2_ >>= 1;
+                /*
  * Probe for column panel - forward it when available 
  */
-            if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
+                if (*IFLAG == HPLAI_KEEP_TESTING)
+                    (void)HPLAI_bcast(PBCST, IFLAG);
 
-         } while( ip2_ > 0 );
-      }
-/*
+            } while (ip2_ > 0);
+        }
+        /*
  * Every process in [ip2..nprow) (relatively to icurrow) grabs its piece
  * of A.
  */
-      HPLAI_alaswp05T( ipA, n, A, lda, U, LDU, lindxA, lindxAU );
-   }
-/*
+        HPLAI_alaswp05T(ipA, n, A, lda, U, LDU, lindxA, lindxAU);
+    }
+    /*
  * If  nprow  is not a power of 2,  proc[i-ip2]  sends  global result to
  * proc[i] for all i in [ip2..nprow);
  */
-   if( ( Np2 != 0 ) && ( ( partner = (int)(mydist ^ ip2) ) < nprow ) )
-   {
-      partner = MModAdd( icurrow, partner, nprow );
-      if( ( mydist & ip2 ) != 0 )
-      { (void) HPLAI_recv( U, usize, partner, Cmsgid, comm ); }
-      else
-      { (void) HPLAI_send( U, usize, partner, Cmsgid, comm ); }
-   }
+    if ((Np2 != 0) && ((partner = (int)(mydist ^ ip2)) < nprow))
+    {
+        partner = MModAdd(icurrow, partner, nprow);
+        if ((mydist & ip2) != 0)
+        {
+            (void)HPLAI_recv(U, usize, partner, Cmsgid, comm);
+        }
+        else
+        {
+            (void)HPLAI_send(U, usize, partner, Cmsgid, comm);
+        }
+    }
 
-   if( vptr ) free( vptr );
-/*
+    if (vptr)
+        free(vptr);
+    /*
  * Probe for column panel - forward it when available 
  */
-   if( *IFLAG == HPLAI_KEEP_TESTING ) (void) HPLAI_bcast( PBCST, IFLAG );
+    if (*IFLAG == HPLAI_KEEP_TESTING)
+        (void)HPLAI_bcast(PBCST, IFLAG);
 
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+    HPL_ptimer(HPL_TIMING_LASWP);
 #endif
-/*
+    /*
  * End of HPLAI_palaswp00T
  */
 }

@@ -1,49 +1,26 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
@@ -58,38 +35,35 @@ extern "C"
  * Define default value for unrolling factor
  */
 #ifndef HPL_LASWP02N_DEPTH
-#define    HPL_LASWP02N_DEPTH       32
-#define    HPL_LASWP02N_LOG2_DEPTH   5
+#define HPL_LASWP02N_DEPTH 32
+#define HPL_LASWP02N_LOG2_DEPTH 5
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_alaswp02N
-(
-   const int                        M,
-   const int                        N,
-   const HPLAI_T_AFLOAT *                   A,
-   const int                        LDA,
-   HPLAI_T_AFLOAT *                         W0,
-   HPLAI_T_AFLOAT *                         W,
-   const int                        LDW,
-   const int *                      LINDXA,
-   const int *                      LINDXAU
-)
+    void HPLAI_alaswp02N(
+        const int M,
+        const int N,
+        const HPLAI_T_AFLOAT *A,
+        const int LDA,
+        HPLAI_T_AFLOAT *W0,
+        HPLAI_T_AFLOAT *W,
+        const int LDW,
+        const int *LINDXA,
+        const int *LINDXAU)
 #else
-void HPLAI_alaswp02N
-( M, N, A, LDA, W0, W, LDW, LINDXA, LINDXAU )
-   const int                        M;
-   const int                        N;
-   const HPLAI_T_AFLOAT *                   A;
-   const int                        LDA;
-   HPLAI_T_AFLOAT *                         W0;
-   HPLAI_T_AFLOAT *                         W;
-   const int                        LDW;
-   const int *                      LINDXA;
-   const int *                      LINDXAU;
+void HPLAI_alaswp02N(M, N, A, LDA, W0, W, LDW, LINDXA, LINDXAU)
+    const int M;
+const int N;
+const HPLAI_T_AFLOAT *A;
+const int LDA;
+HPLAI_T_AFLOAT *W0;
+HPLAI_T_AFLOAT *W;
+const int LDW;
+const int *LINDXA;
+const int *LINDXAU;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -139,76 +113,127 @@ void HPLAI_alaswp02N
  *         replaced by the rows of W.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   const HPLAI_T_AFLOAT               * A0 = A, * a0;
-   HPLAI_T_AFLOAT                     * w0;
-   const int                  incA = (int)( (unsigned int)(LDA) <<
-                                            HPL_LASWP02N_LOG2_DEPTH );
-   int                        nr, nu;
-   register int               i, j;
-/* ..
+        const HPLAI_T_AFLOAT *A0 = A, *a0;
+        HPLAI_T_AFLOAT *w0;
+        const int incA = (int)((unsigned int)(LDA) << HPL_LASWP02N_LOG2_DEPTH);
+        int nr, nu;
+        register int i, j;
+        /* ..
  * .. Executable Statements ..
  */
-   if( ( M <= 0 ) || ( N <= 0 ) ) return;
+        if ((M <= 0) || (N <= 0))
+            return;
 
-   for( i = 0; i < M; i++ ) 
-      *(W0+(size_t)(i)*(size_t)(LDW)) = (HPLAI_T_AFLOAT)(LINDXAU[i]);
+        for (i = 0; i < M; i++)
+            *(W0 + (size_t)(i) * (size_t)(LDW)) = (HPLAI_T_AFLOAT)(LINDXAU[i]);
 
-   nr = N - ( nu = (int)( ( (unsigned int)(N) >> HPL_LASWP02N_LOG2_DEPTH ) <<
-                          HPL_LASWP02N_LOG2_DEPTH ) );
+        nr = N - (nu = (int)(((unsigned int)(N) >> HPL_LASWP02N_LOG2_DEPTH) << HPL_LASWP02N_LOG2_DEPTH));
 
-   for( j = 0; j < nu;
-        j += HPL_LASWP02N_DEPTH, A0 += incA, W += HPL_LASWP02N_DEPTH )
-   {
-      for( i = 0; i < M; i++ )
-      {
-         a0 = A0 + (size_t)(LINDXA[i]); w0 = W + (size_t)(i) * (size_t)(LDW);
+        for (j = 0; j < nu;
+             j += HPL_LASWP02N_DEPTH, A0 += incA, W += HPL_LASWP02N_DEPTH)
+        {
+            for (i = 0; i < M; i++)
+            {
+                a0 = A0 + (size_t)(LINDXA[i]);
+                w0 = W + (size_t)(i) * (size_t)(LDW);
 
-         w0[ 0] = *a0; a0 += LDA;
-#if ( HPL_LASWP02N_DEPTH >  1 )
-         w0[ 1] = *a0; a0 += LDA;
+                w0[0] = *a0;
+                a0 += LDA;
+#if (HPL_LASWP02N_DEPTH > 1)
+                w0[1] = *a0;
+                a0 += LDA;
 #endif
-#if ( HPL_LASWP02N_DEPTH >  2 )
-         w0[ 2] = *a0; a0 += LDA; w0[ 3] = *a0; a0 += LDA;
+#if (HPL_LASWP02N_DEPTH > 2)
+                w0[2] = *a0;
+                a0 += LDA;
+                w0[3] = *a0;
+                a0 += LDA;
 #endif
-#if ( HPL_LASWP02N_DEPTH >  4 )
-         w0[ 4] = *a0; a0 += LDA; w0[ 5] = *a0; a0 += LDA;
-         w0[ 6] = *a0; a0 += LDA; w0[ 7] = *a0; a0 += LDA;
+#if (HPL_LASWP02N_DEPTH > 4)
+                w0[4] = *a0;
+                a0 += LDA;
+                w0[5] = *a0;
+                a0 += LDA;
+                w0[6] = *a0;
+                a0 += LDA;
+                w0[7] = *a0;
+                a0 += LDA;
 #endif
-#if ( HPL_LASWP02N_DEPTH >  8 )
-         w0[ 8] = *a0; a0 += LDA; w0[ 9] = *a0; a0 += LDA;
-         w0[10] = *a0; a0 += LDA; w0[11] = *a0; a0 += LDA;
-         w0[12] = *a0; a0 += LDA; w0[13] = *a0; a0 += LDA;
-         w0[14] = *a0; a0 += LDA; w0[15] = *a0; a0 += LDA;
+#if (HPL_LASWP02N_DEPTH > 8)
+                w0[8] = *a0;
+                a0 += LDA;
+                w0[9] = *a0;
+                a0 += LDA;
+                w0[10] = *a0;
+                a0 += LDA;
+                w0[11] = *a0;
+                a0 += LDA;
+                w0[12] = *a0;
+                a0 += LDA;
+                w0[13] = *a0;
+                a0 += LDA;
+                w0[14] = *a0;
+                a0 += LDA;
+                w0[15] = *a0;
+                a0 += LDA;
 #endif
-#if ( HPL_LASWP02N_DEPTH > 16 )
-         w0[16] = *a0; a0 += LDA; w0[17] = *a0; a0 += LDA;
-         w0[18] = *a0; a0 += LDA; w0[19] = *a0; a0 += LDA;
-         w0[20] = *a0; a0 += LDA; w0[21] = *a0; a0 += LDA;
-         w0[22] = *a0; a0 += LDA; w0[23] = *a0; a0 += LDA;
-         w0[24] = *a0; a0 += LDA; w0[25] = *a0; a0 += LDA;
-         w0[26] = *a0; a0 += LDA; w0[27] = *a0; a0 += LDA;
-         w0[28] = *a0; a0 += LDA; w0[29] = *a0; a0 += LDA;
-         w0[30] = *a0; a0 += LDA; w0[31] = *a0; a0 += LDA;
+#if (HPL_LASWP02N_DEPTH > 16)
+                w0[16] = *a0;
+                a0 += LDA;
+                w0[17] = *a0;
+                a0 += LDA;
+                w0[18] = *a0;
+                a0 += LDA;
+                w0[19] = *a0;
+                a0 += LDA;
+                w0[20] = *a0;
+                a0 += LDA;
+                w0[21] = *a0;
+                a0 += LDA;
+                w0[22] = *a0;
+                a0 += LDA;
+                w0[23] = *a0;
+                a0 += LDA;
+                w0[24] = *a0;
+                a0 += LDA;
+                w0[25] = *a0;
+                a0 += LDA;
+                w0[26] = *a0;
+                a0 += LDA;
+                w0[27] = *a0;
+                a0 += LDA;
+                w0[28] = *a0;
+                a0 += LDA;
+                w0[29] = *a0;
+                a0 += LDA;
+                w0[30] = *a0;
+                a0 += LDA;
+                w0[31] = *a0;
+                a0 += LDA;
 #endif
-      }
-   }
+            }
+        }
 
-   if( nr > 0 )
-   {
-      for( i = 0; i < M; i++ )
-      {
-         a0 = A0 + (size_t)(LINDXA[i]); w0 = W + (size_t)(i) * (size_t)(LDW);
-         for( j = 0; j < nr; j++, a0 += LDA ) { w0[j] = *a0; }
-      }
-   }
-/*
+        if (nr > 0)
+        {
+            for (i = 0; i < M; i++)
+            {
+                a0 = A0 + (size_t)(LINDXA[i]);
+                w0 = W + (size_t)(i) * (size_t)(LDW);
+                for (j = 0; j < nr; j++, a0 += LDA)
+                {
+                    w0[j] = *a0;
+                }
+            }
+        }
+        /*
  * End of HPLAI_alaswp02N
  */
-} 
+    }
 
 #ifdef __cplusplus
 }

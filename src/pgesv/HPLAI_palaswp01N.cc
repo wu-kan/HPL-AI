@@ -1,72 +1,46 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
 #include "hplai.hh"
 
 #ifdef STDC_HEADERS
-void HPLAI_palaswp01N
-(
-   HPLAI_T_panel *                    PBCST,
-   int *                            IFLAG,
-   HPLAI_T_panel *                    PANEL,
-   const int                        NN
-)
+void HPLAI_palaswp01N(
+    HPLAI_T_panel *PBCST,
+    int *IFLAG,
+    HPLAI_T_panel *PANEL,
+    const int NN)
 #else
-void HPLAI_palaswp01N
-( PBCST, IFLAG, PANEL, NN )
-   HPLAI_T_panel *                    PBCST;
-   int *                            IFLAG;
-   HPLAI_T_panel *                    PANEL;
-   const int                        NN;
+void HPLAI_palaswp01N(PBCST, IFLAG, PANEL, NN)
+    HPLAI_T_panel *PBCST;
+int *IFLAG;
+HPLAI_T_panel *PANEL;
+const int NN;
 #endif
 {
-/* 
+    /* 
  * Purpose
  * =======
  *
@@ -110,40 +84,48 @@ void HPLAI_palaswp01N
  *         the current position. NN must be at least zero.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+    /*
  * .. Local Variables ..
  */
-   HPLAI_T_AFLOAT                    * A, * U;
-   int                       * ipID, * iplen, * ipmap, * ipmapm1,
-                             * iwork, * lindxA = NULL, * lindxAU,
-                             * permU;
-   static int                equil=-1;
-   int                       icurrow, * iflag, * ipA, * ipl, jb, k,
-                             lda, myrow, n, nprow;
-#define LDU                  jb
-/* ..
+    HPLAI_T_AFLOAT *A, *U;
+    int *ipID, *iplen, *ipmap, *ipmapm1,
+        *iwork, *lindxA = NULL, *lindxAU,
+                *permU;
+    static int equil = -1;
+    int icurrow, *iflag, *ipA, *ipl, jb, k,
+        lda, myrow, n, nprow;
+#define LDU jb
+    /* ..
  * .. Executable Statements ..
  */
-   n = PANEL->n; n = Mmin( NN, n ); jb = PANEL->jb;
-/*
+    n = PANEL->n;
+    n = Mmin(NN, n);
+    jb = PANEL->jb;
+    /*
  * Quick return if there is nothing to do
  */
-   if( ( n <= 0 ) || ( jb <= 0 ) ) return;
+    if ((n <= 0) || (jb <= 0))
+        return;
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+    HPL_ptimer(HPL_TIMING_LASWP);
 #endif
-/*
+    /*
  * Decide whether equilibration should be performed or not
  */
-   if( equil == -1 ) equil = PANEL->algo->equil;
-/*
+    if (equil == -1)
+        equil = PANEL->algo->equil;
+    /*
  * Retrieve parameters from the PANEL data structure
  */
-   nprow = PANEL->grid->nprow; myrow = PANEL->grid->myrow;
-   A     = PANEL->A;   U       = PANEL->U;     iflag  = PANEL->IWORK;
-   lda   = PANEL->lda; icurrow = PANEL->prow;
-/*
+    nprow = PANEL->grid->nprow;
+    myrow = PANEL->grid->myrow;
+    A = PANEL->A;
+    U = PANEL->U;
+    iflag = PANEL->IWORK;
+    lda = PANEL->lda;
+    icurrow = PANEL->prow;
+    /*
  * Compute ipID (if not already done for this panel). lindxA and lindxAU
  * are of length at most 2*jb - iplen is of size nprow+1, ipmap, ipmapm1
  * are of size nprow,  permU is of length jb, and  this function needs a 
@@ -151,67 +133,75 @@ void HPLAI_palaswp01N
  * 1(iflag) + 1(ipl) + 1(ipA) + 9*jb + 3*nprow + 1 + MAX(2*jb,nprow+1)
  * i.e. 4 + 9*jb + 3*nprow + max(2*jb, nprow+1);
  */
-   k = (int)((unsigned int)(jb) << 1);  ipl = iflag + 1; ipID = ipl + 1;
-   ipA     = ipID + ((unsigned int)(k) << 1); lindxA = ipA + 1;
-   lindxAU = lindxA + k; iplen = lindxAU + k; ipmap = iplen + nprow + 1;
-   ipmapm1 = ipmap + nprow; permU = ipmapm1 + nprow; iwork = permU + jb;
+    k = (int)((unsigned int)(jb) << 1);
+    ipl = iflag + 1;
+    ipID = ipl + 1;
+    ipA = ipID + ((unsigned int)(k) << 1);
+    lindxA = ipA + 1;
+    lindxAU = lindxA + k;
+    iplen = lindxAU + k;
+    ipmap = iplen + nprow + 1;
+    ipmapm1 = ipmap + nprow;
+    permU = ipmapm1 + nprow;
+    iwork = permU + jb;
 
-   if( *iflag == -1 )    /* no index arrays have been computed so far */
-   {
-      HPLAI_pipid(   PANEL,  ipl, ipID );
-      HPLAI_plindx1( PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
-                   ipmap, ipmapm1, permU, iwork );
-      *iflag = 1;
-   }
-   else if( *iflag == 0 ) /* HPLAI_palaswp00N called before: reuse ipID */
-   {
-      HPLAI_plindx1( PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
-                   ipmap, ipmapm1, permU, iwork );
-      *iflag = 1;
-   }
-   else if( ( *iflag == 1 ) && ( equil != 0 ) )
-   {   /* HPLAI_palaswp01N was call before only re-compute IPLEN, IPMAP */
-      HPLAI_plindx10( PANEL, *ipl, ipID, iplen, ipmap, ipmapm1 );
-      *iflag = 1;
-   }
-/*
+    if (*iflag == -1) /* no index arrays have been computed so far */
+    {
+        HPLAI_pipid(PANEL, ipl, ipID);
+        HPLAI_plindx1(PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
+                      ipmap, ipmapm1, permU, iwork);
+        *iflag = 1;
+    }
+    else if (*iflag == 0) /* HPLAI_palaswp00N called before: reuse ipID */
+    {
+        HPLAI_plindx1(PANEL, *ipl, ipID, ipA, lindxA, lindxAU, iplen,
+                      ipmap, ipmapm1, permU, iwork);
+        *iflag = 1;
+    }
+    else if ((*iflag == 1) && (equil != 0))
+    { /* HPLAI_palaswp01N was call before only re-compute IPLEN, IPMAP */
+        HPLAI_plindx10(PANEL, *ipl, ipID, iplen, ipmap, ipmapm1);
+        *iflag = 1;
+    }
+    /*
  * Copy into U the rows to be spread (local to icurrow)
  */
-   if( myrow == icurrow )
-   { HPLAI_alaswp01N( *ipA, n, A, lda, U, LDU, lindxA, lindxAU ); }
-/*
+    if (myrow == icurrow)
+    {
+        HPLAI_alaswp01N(*ipA, n, A, lda, U, LDU, lindxA, lindxAU);
+    }
+    /*
  * Spread U - optionally probe for column panel
  */
-   HPLAI_spreadN( PBCST, IFLAG, PANEL, blas::Side::Right, n, U, LDU, 0, iplen,
-                ipmap, ipmapm1 );
-/*
+    HPLAI_spreadN(PBCST, IFLAG, PANEL, blas::Side::Right, n, U, LDU, 0, iplen,
+                  ipmap, ipmapm1);
+    /*
  * Local exchange (everywhere but in process row icurrow)
  */
-   if( myrow != icurrow )
-   {
-      k = ipmapm1[myrow];
-      HPLAI_alaswp06N( iplen[k+1]-iplen[k], n, A, lda, Mptr( U, iplen[k],
-                     0, LDU ), LDU, lindxA );
-   }
-/*
+    if (myrow != icurrow)
+    {
+        k = ipmapm1[myrow];
+        HPLAI_alaswp06N(iplen[k + 1] - iplen[k], n, A, lda, Mptr(U, iplen[k], 0, LDU), LDU, lindxA);
+    }
+    /*
  * Equilibration
  */
-   if( equil != 0 )
-      HPLAI_equil( PBCST, IFLAG, PANEL, blas::Op::NoTrans, n, U, LDU, iplen,
-                 ipmap, ipmapm1, iwork );
-/*
+    if (equil != 0)
+        HPLAI_equil(PBCST, IFLAG, PANEL, blas::Op::NoTrans, n, U, LDU, iplen,
+                    ipmap, ipmapm1, iwork);
+    /*
  * Rolling phase
  */
-   HPLAI_rollN( PBCST, IFLAG, PANEL, n, U, LDU, iplen, ipmap, ipmapm1 );
-/*
+    HPLAI_rollN(PBCST, IFLAG, PANEL, n, U, LDU, iplen, ipmap, ipmapm1);
+    /*
  * Permute U in every process row
  */
-   HPLAI_alaswp00N( jb, n, U, LDU, permU );
+    HPLAI_alaswp00N(jb, n, U, LDU, permU);
 
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_LASWP );
+    HPL_ptimer(HPL_TIMING_LASWP);
 #endif
-/*
+    /*
  * End of HPLAI_palaswp01N
  */
 }

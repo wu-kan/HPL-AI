@@ -1,4 +1,27 @@
 /*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/*
  * Include files
  */
 #include "hplai.hh"
@@ -8,42 +31,39 @@ extern "C"
 {
 #endif
 
-#ifdef HPL_NO_MPI_DATATYPE  /* The user insists to not use MPI types */
-#ifndef HPL_COPY_L       /* and also want to avoid the copy of L ... */
-#define HPL_COPY_L   /* well, sorry, can not do that: force the copy */
+#ifdef HPL_NO_MPI_DATATYPE /* The user insists to not use MPI types */
+#ifndef HPL_COPY_L         /* and also want to avoid the copy of L ... */
+#define HPL_COPY_L         /* well, sorry, can not do that: force the copy */
 #endif
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_papanel_init
-(
-   HPLAI_T_grid *                     GRID,
-   HPLAI_T_palg *                   ALGO,
-   const int                        M,
-   const int                        N,
-   const int                        JB,
-   HPLAI_T_pmat *                  A,
-   const int                        IA,
-   const int                        JA,
-   const int                        TAG,
-   HPLAI_T_panel *                 PANEL
-)
+    void HPLAI_papanel_init(
+        HPLAI_T_grid *GRID,
+        HPLAI_T_palg *ALGO,
+        const int M,
+        const int N,
+        const int JB,
+        HPLAI_T_pmat *A,
+        const int IA,
+        const int JA,
+        const int TAG,
+        HPLAI_T_panel *PANEL)
 #else
-void HPLAI_papanel_init
-( GRID, ALGO, M, N, JB, A, IA, JA, TAG, PANEL )
-   HPLAI_T_grid *                     GRID;
-   HPL_T_palg *                     ALGO;
-   const int                        M;
-   const int                        N;
-   const int                        JB;
-   HPLAI_T_pmat *                  A;
-   const int                        IA;
-   const int                        JA;
-   const int                        TAG;
-   HPLAI_T_panel *                 PANEL;
+void HPLAI_papanel_init(GRID, ALGO, M, N, JB, A, IA, JA, TAG, PANEL)
+    HPLAI_T_grid *GRID;
+HPL_T_palg *ALGO;
+const int M;
+const int N;
+const int JB;
+HPLAI_T_pmat *A;
+const int IA;
+const int JA;
+const int TAG;
+HPLAI_T_panel *PANEL;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -93,60 +113,67 @@ void HPLAI_papanel_init
  *         panel information.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   size_t                     dalign;
-   int                        icurcol, icurrow, ii, itmp1, jj, lwork,
-                              ml2, mp, mycol, myrow, nb, npcol, nprow,
-                              nq, nu;
-/* ..
+        size_t dalign;
+        int icurcol, icurrow, ii, itmp1, jj, lwork,
+            ml2, mp, mycol, myrow, nb, npcol, nprow,
+            nq, nu;
+        /* ..
  * .. Executable Statements ..
  */
-   PANEL->grid    = GRID;                  /* ptr to the process grid */
-   PANEL->algo    = ALGO;               /* ptr to the algo parameters */
-   PANEL->pmat    = A;                 /* ptr to the local array info */
+        PANEL->grid = GRID; /* ptr to the process grid */
+        PANEL->algo = ALGO; /* ptr to the algo parameters */
+        PANEL->pmat = A;    /* ptr to the local array info */
 
-   myrow = GRID->myrow; mycol = GRID->mycol;
-   nprow = GRID->nprow; npcol = GRID->npcol; nb = A->nb;
+        myrow = GRID->myrow;
+        mycol = GRID->mycol;
+        nprow = GRID->nprow;
+        npcol = GRID->npcol;
+        nb = A->nb;
 
-   HPL_infog2l( IA, JA, nb, nb, nb, nb, 0, 0, myrow, mycol,
-                nprow, npcol, &ii, &jj, &icurrow, &icurcol );
-   mp = HPL_numrocI( M, IA, nb, nb, myrow, 0, nprow );
-   nq = HPL_numrocI( N, JA, nb, nb, mycol, 0, npcol );
-                                         /* ptr to trailing part of A */
-   PANEL->A       = Mptr( (HPLAI_T_AFLOAT *)(A->A), ii, jj, A->ld );
-/*
+        HPL_infog2l(IA, JA, nb, nb, nb, nb, 0, 0, myrow, mycol,
+                    nprow, npcol, &ii, &jj, &icurrow, &icurcol);
+        mp = HPL_numrocI(M, IA, nb, nb, myrow, 0, nprow);
+        nq = HPL_numrocI(N, JA, nb, nb, mycol, 0, npcol);
+        /* ptr to trailing part of A */
+        PANEL->A = Mptr((HPLAI_T_AFLOAT *)(A->A), ii, jj, A->ld);
+        /*
  * Workspace pointers are initialized to NULL.
  */
-   PANEL->WORK    = NULL; PANEL->L2      = NULL; PANEL->L1      = NULL;
-   PANEL->DPIV    = NULL; PANEL->DINFO   = NULL; PANEL->U       = NULL;
-   PANEL->IWORK   = NULL;
-/*
+        PANEL->WORK = NULL;
+        PANEL->L2 = NULL;
+        PANEL->L1 = NULL;
+        PANEL->DPIV = NULL;
+        PANEL->DINFO = NULL;
+        PANEL->U = NULL;
+        PANEL->IWORK = NULL;
+        /*
  * Local lengths, indexes process coordinates
  */
-   PANEL->nb      = nb;               /* distribution blocking factor */
-   PANEL->jb      = JB;                                /* panel width */
-   PANEL->m       = M;      /* global # of rows of trailing part of A */
-   PANEL->n       = N;      /* global # of cols of trailing part of A */
-   PANEL->ia      = IA;     /* global row index of trailing part of A */
-   PANEL->ja      = JA;     /* global col index of trailing part of A */
-   PANEL->mp      = mp;      /* local # of rows of trailing part of A */
-   PANEL->nq      = nq;      /* local # of cols of trailing part of A */
-   PANEL->ii      = ii;      /* local row index of trailing part of A */
-   PANEL->jj      = jj;      /* local col index of trailing part of A */
-   PANEL->lda     = A->ld;            /* local leading dim of array A */
-   PANEL->prow    = icurrow; /* proc row owning 1st row of trailing A */
-   PANEL->pcol    = icurcol; /* proc col owning 1st col of trailing A */
-   PANEL->msgid   = TAG;     /* message id to be used for panel bcast */
-/*
+        PANEL->nb = nb;        /* distribution blocking factor */
+        PANEL->jb = JB;        /* panel width */
+        PANEL->m = M;          /* global # of rows of trailing part of A */
+        PANEL->n = N;          /* global # of cols of trailing part of A */
+        PANEL->ia = IA;        /* global row index of trailing part of A */
+        PANEL->ja = JA;        /* global col index of trailing part of A */
+        PANEL->mp = mp;        /* local # of rows of trailing part of A */
+        PANEL->nq = nq;        /* local # of cols of trailing part of A */
+        PANEL->ii = ii;        /* local row index of trailing part of A */
+        PANEL->jj = jj;        /* local col index of trailing part of A */
+        PANEL->lda = A->ld;    /* local leading dim of array A */
+        PANEL->prow = icurrow; /* proc row owning 1st row of trailing A */
+        PANEL->pcol = icurcol; /* proc col owning 1st col of trailing A */
+        PANEL->msgid = TAG;    /* message id to be used for panel bcast */
+                               /*
  * Initialize  ldl2 and len to temporary dummy values and Update tag for
  * next panel
  */
-   PANEL->ldl2    = 0;               /* local leading dim of array L2 */
-   PANEL->len     = 0;           /* length of the buffer to broadcast */
-/*
+        PANEL->ldl2 = 0;       /* local leading dim of array L2 */
+        PANEL->len = 0;        /* length of the buffer to broadcast */
+                               /*
  * Figure out the exact amount of workspace  needed by the factorization
  * and the update - Allocate that space - Finish the panel data structu-
  * re initialization.
@@ -160,98 +187,107 @@ void HPLAI_papanel_init
  * right  after  L2 (when it exist) so that one can receive a contiguous
  * buffer.
  */
-   dalign = ALGO->align * sizeof( HPLAI_T_AFLOAT );
+        dalign = ALGO->align * sizeof(HPLAI_T_AFLOAT);
 
-   if( npcol == 1 )                             /* P x 1 process grid */
-   {                                     /* space for L1, DPIV, DINFO */
-      lwork = ALGO->align + ( PANEL->len = JB * JB + JB + 1 );
-      if( nprow > 1 )                                 /* space for U */
-      { nu = nq - JB; lwork += JB * Mmax( 0, nu ); }
+        if (npcol == 1) /* P x 1 process grid */
+        {               /* space for L1, DPIV, DINFO */
+            lwork = ALGO->align + (PANEL->len = JB * JB + JB + 1);
+            if (nprow > 1) /* space for U */
+            {
+                nu = nq - JB;
+                lwork += JB * Mmax(0, nu);
+            }
 
-      if( !( PANEL->WORK = (HPLAI_T_AFLOAT *)malloc( (size_t)(lwork) * 
-                                           sizeof( HPLAI_T_AFLOAT ) ) ) )
-      {
-         HPL_pabort( __LINE__, "HPLAI_papanel_init",
-                     "Memory allocation failed" );
-      }
-/*
+            if (!(PANEL->WORK = (HPLAI_T_AFLOAT *)malloc((size_t)(lwork) *
+                                                         sizeof(HPLAI_T_AFLOAT))))
+            {
+                HPL_pabort(__LINE__, "HPLAI_papanel_init",
+                           "Memory allocation failed");
+            }
+            /*
  * Initialize the pointers of the panel structure  -  Always re-use A in
  * the only process column
  */
-      PANEL->L2    = PANEL->A + ( myrow == icurrow ? JB : 0 );
-      PANEL->ldl2  = A->ld;
-      PANEL->L1    = (HPLAI_T_AFLOAT *)HPL_PTR( PANEL->WORK, dalign );
-      PANEL->DPIV  = PANEL->L1    + JB * JB;
-      PANEL->DINFO = PANEL->DPIV + JB;       *(PANEL->DINFO) = 0.0;
-      PANEL->U     = ( nprow > 1 ? PANEL->DINFO + 1: NULL );
-   }
-   else
-   {                                        /* space for L2, L1, DPIV */
-      ml2 = ( myrow == icurrow ? mp - JB : mp ); ml2 = Mmax( 0, ml2 );
-      PANEL->len = ml2*JB + ( itmp1 = JB*JB + JB + 1 );
+            PANEL->L2 = PANEL->A + (myrow == icurrow ? JB : 0);
+            PANEL->ldl2 = A->ld;
+            PANEL->L1 = (HPLAI_T_AFLOAT *)HPL_PTR(PANEL->WORK, dalign);
+            PANEL->DPIV = PANEL->L1 + JB * JB;
+            PANEL->DINFO = PANEL->DPIV + JB;
+            *(PANEL->DINFO) = 0.0;
+            PANEL->U = (nprow > 1 ? PANEL->DINFO + 1 : NULL);
+        }
+        else
+        { /* space for L2, L1, DPIV */
+            ml2 = (myrow == icurrow ? mp - JB : mp);
+            ml2 = Mmax(0, ml2);
+            PANEL->len = ml2 * JB + (itmp1 = JB * JB + JB + 1);
 #ifdef HPL_COPY_L
-      lwork = ALGO->align + PANEL->len;
+            lwork = ALGO->align + PANEL->len;
 #else
-      lwork = ALGO->align + ( mycol == icurcol ? itmp1 : PANEL->len );
+        lwork = ALGO->align + (mycol == icurcol ? itmp1 : PANEL->len);
 #endif
-      if( nprow > 1 )                                 /* space for U */
-      { 
-         nu = ( mycol == icurcol ? nq - JB : nq );
-         lwork += JB * Mmax( 0, nu );
-      }
+            if (nprow > 1) /* space for U */
+            {
+                nu = (mycol == icurcol ? nq - JB : nq);
+                lwork += JB * Mmax(0, nu);
+            }
 
-      if( !( PANEL->WORK = (HPLAI_T_AFLOAT *)malloc( (size_t)(lwork) *
-                                           sizeof( HPLAI_T_AFLOAT ) ) ) )
-      {
-         HPL_pabort( __LINE__, "HPLAI_papanel_init",
-                     "Memory allocation failed" );
-      }
+            if (!(PANEL->WORK = (HPLAI_T_AFLOAT *)malloc((size_t)(lwork) *
+                                                         sizeof(HPLAI_T_AFLOAT))))
+            {
+                HPL_pabort(__LINE__, "HPLAI_papanel_init",
+                           "Memory allocation failed");
+            }
 /*
  * Initialize the pointers of the panel structure - Re-use A in the cur-
  * rent process column when HPL_COPY_L is not defined.
  */
 #ifdef HPL_COPY_L
-      PANEL->L2    = (HPLAI_T_AFLOAT *)HPL_PTR( PANEL->WORK, dalign );
-      PANEL->ldl2  = Mmax( 1, ml2 );
-      PANEL->L1    = PANEL->L2 + ml2 * JB;
+            PANEL->L2 = (HPLAI_T_AFLOAT *)HPL_PTR(PANEL->WORK, dalign);
+            PANEL->ldl2 = Mmax(1, ml2);
+            PANEL->L1 = PANEL->L2 + ml2 * JB;
 #else
-      if( mycol == icurcol )
-      {
-         PANEL->L2   = PANEL->A + ( myrow == icurrow ? JB : 0 );
-         PANEL->ldl2 = A->ld;
-         PANEL->L1   = (HPLAI_T_AFLOAT *)HPL_PTR( PANEL->WORK, dalign );
-      }
-      else
-      {
-         PANEL->L2   = (HPLAI_T_AFLOAT *)HPL_PTR( PANEL->WORK, dalign );
-         PANEL->ldl2 = Mmax( 1, ml2 );
-         PANEL->L1   = PANEL->L2 + ml2 * JB;
-      } 
+        if (mycol == icurcol)
+        {
+            PANEL->L2 = PANEL->A + (myrow == icurrow ? JB : 0);
+            PANEL->ldl2 = A->ld;
+            PANEL->L1 = (HPLAI_T_AFLOAT *)HPL_PTR(PANEL->WORK, dalign);
+        }
+        else
+        {
+            PANEL->L2 = (HPLAI_T_AFLOAT *)HPL_PTR(PANEL->WORK, dalign);
+            PANEL->ldl2 = Mmax(1, ml2);
+            PANEL->L1 = PANEL->L2 + ml2 * JB;
+        }
 #endif
-      PANEL->DPIV  = PANEL->L1   + JB * JB;
-      PANEL->DINFO = PANEL->DPIV + JB;     *(PANEL->DINFO) = 0.0;
-      PANEL->U     = ( nprow > 1 ? PANEL->DINFO + 1 : NULL );
-   }
+            PANEL->DPIV = PANEL->L1 + JB * JB;
+            PANEL->DINFO = PANEL->DPIV + JB;
+            *(PANEL->DINFO) = 0.0;
+            PANEL->U = (nprow > 1 ? PANEL->DINFO + 1 : NULL);
+        }
 #ifdef HPL_CALL_VSIPL
-   PANEL->Ablock  = A->block;
-/*
+        PANEL->Ablock = A->block;
+        /*
  * Create blocks and bind them to the data pointers
  */
-   PANEL->L1block = vsip_blockbind_d( (vsip_scalar_d *)(PANEL->L1),
-                                      (vsip_length)(JB*JB), VSIP_MEM_NONE );
-   PANEL->L2block = vsip_blockbind_d( (vsip_scalar_d *)(PANEL->L2),
-                                      (vsip_length)(PANEL->ldl2*JB),
-                                      VSIP_MEM_NONE );
-   if( nprow > 1 )
-   { 
-      nu = ( mycol == icurcol ? nq - JB : nq );
-      PANEL->Ublock = vsip_blockbind_d( (vsip_scalar_d *)(PANEL->U),
-                                        (vsip_length)(JB * Mmax( 0, nu )),
-                                        VSIP_MEM_NONE );
-   }
-   else { PANEL->Ublock = A->block; }
+        PANEL->L1block = vsip_blockbind_d((vsip_scalar_d *)(PANEL->L1),
+                                          (vsip_length)(JB * JB), VSIP_MEM_NONE);
+        PANEL->L2block = vsip_blockbind_d((vsip_scalar_d *)(PANEL->L2),
+                                          (vsip_length)(PANEL->ldl2 * JB),
+                                          VSIP_MEM_NONE);
+        if (nprow > 1)
+        {
+            nu = (mycol == icurcol ? nq - JB : nq);
+            PANEL->Ublock = vsip_blockbind_d((vsip_scalar_d *)(PANEL->U),
+                                             (vsip_length)(JB * Mmax(0, nu)),
+                                             VSIP_MEM_NONE);
+        }
+        else
+        {
+            PANEL->Ublock = A->block;
+        }
 #endif
-/*
+        /*
  * If nprow is 1, we just allocate an array of JB integers for the swap.
  * When nprow > 1, we allocate the space for the index arrays immediate-
  * ly. The exact size of this array depends on the swapping routine that
@@ -288,23 +324,30 @@ void HPLAI_papanel_init
  *    IWORK[0] =  1: HPL_pdlaswp01 already computed those arrays;
  * This allows to save some redundant and useless computations.
  */
-   if( nprow == 1 ) { lwork = JB; }
-   else             
-   {
-      itmp1 = (JB << 1); lwork = nprow + 1; itmp1 = Mmax( itmp1, lwork );
-      lwork = 4 + (9 * JB) + (3 * nprow) + itmp1;
-   }
+        if (nprow == 1)
+        {
+            lwork = JB;
+        }
+        else
+        {
+            itmp1 = (JB << 1);
+            lwork = nprow + 1;
+            itmp1 = Mmax(itmp1, lwork);
+            lwork = 4 + (9 * JB) + (3 * nprow) + itmp1;
+        }
 
-   PANEL->IWORK = (int *)malloc( (size_t)(lwork) * sizeof( int ) );
+        PANEL->IWORK = (int *)malloc((size_t)(lwork) * sizeof(int));
 
-   if( PANEL->IWORK == NULL )
-   { HPL_pabort( __LINE__, "HPLAI_papanel_init", "Memory allocation failed" ); }
-                       /* Initialize the first entry of the workarray */
-   *(PANEL->IWORK) = -1;
-/*
+        if (PANEL->IWORK == NULL)
+        {
+            HPL_pabort(__LINE__, "HPLAI_papanel_init", "Memory allocation failed");
+        }
+        /* Initialize the first entry of the workarray */
+        *(PANEL->IWORK) = -1;
+        /*
  * End of HPLAI_papanel_init
  */
-}
+    }
 
 #ifdef __cplusplus
 }

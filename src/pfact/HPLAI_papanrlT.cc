@@ -1,49 +1,26 @@
-/* 
- * -- High Performance Computing Linpack Benchmark (HPL)                
- *    HPL - 2.3 - December 2, 2018                          
- *    Antoine P. Petitet                                                
- *    University of Tennessee, Knoxville                                
- *    Innovative Computing Laboratory                                 
- *    (C) Copyright 2000-2008 All Rights Reserved                       
- *                                                                      
- * -- Copyright notice and Licensing terms:                             
- *                                                                      
- * Redistribution  and  use in  source and binary forms, with or without
- * modification, are  permitted provided  that the following  conditions
- * are met:                                                             
- *                                                                      
- * 1. Redistributions  of  source  code  must retain the above copyright
- * notice, this list of conditions and the following disclaimer.        
- *                                                                      
- * 2. Redistributions in binary form must reproduce  the above copyright
- * notice, this list of conditions,  and the following disclaimer in the
- * documentation and/or other materials provided with the distribution. 
- *                                                                      
- * 3. All  advertising  materials  mentioning  features  or  use of this
- * software must display the following acknowledgement:                 
- * This  product  includes  software  developed  at  the  University  of
- * Tennessee, Knoxville, Innovative Computing Laboratory.             
- *                                                                      
- * 4. The name of the  University,  the name of the  Laboratory,  or the
- * names  of  its  contributors  may  not  be used to endorse or promote
- * products  derived   from   this  software  without  specific  written
- * permission.                                                          
- *                                                                      
- * -- Disclaimer:                                                       
- *                                                                      
- * THIS  SOFTWARE  IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,  INCLUDING,  BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE UNIVERSITY
- * OR  CONTRIBUTORS  BE  LIABLE FOR ANY  DIRECT,  INDIRECT,  INCIDENTAL,
- * SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES  (INCLUDING,  BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY,  OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- * ---------------------------------------------------------------------
- */ 
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 /*
  * Include files
  */
@@ -55,25 +32,22 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_papanrlT
-(
-   HPLAI_T_panel *                    PANEL,
-   const int                        M,
-   const int                        N,
-   const int                        ICOFF,
-   HPLAI_T_AFLOAT *                         WORK
-)
+    void HPLAI_papanrlT(
+        HPLAI_T_panel *PANEL,
+        const int M,
+        const int N,
+        const int ICOFF,
+        HPLAI_T_AFLOAT *WORK)
 #else
-void HPLAI_papanrlT
-( PANEL, M, N, ICOFF, WORK )
-   HPLAI_T_panel *                    PANEL;
-   const int                        M;
-   const int                        N;
-   const int                        ICOFF;
-   HPLAI_T_AFLOAT *                         WORK;
+void HPLAI_papanrlT(PANEL, M, N, ICOFF, WORK)
+    HPLAI_T_panel *PANEL;
+const int M;
+const int N;
+const int ICOFF;
+HPLAI_T_AFLOAT *WORK;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -131,122 +105,143 @@ void HPLAI_papanrlT
  *         On entry, WORK  is a workarray of size at least 2*(4+2*N0).
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   HPLAI_T_AFLOAT                     * A, * Acur, * Anxt, * L1;
+        HPLAI_T_AFLOAT *A, *Acur, *Anxt, *L1;
 #ifdef HPL_CALL_VSIPL
-   vsip_mview_d               * Av0, * Av1, * Xv1, * Yv0, * Yv1;
+        vsip_mview_d *Av0, *Av1, *Xv1, *Yv0, *Yv1;
 #endif
-   int                        Mm1, Nm1, curr, ii, iip1, jj, lda, m=M,
-                              n0;
+        int Mm1, Nm1, curr, ii, iip1, jj, lda, m = M,
+                                               n0;
 /* ..
  * .. Executable Statements ..
  */
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_PFACT );
+        HPL_ptimer(HPL_TIMING_PFACT);
 #endif
-   A    = PANEL->A;   lda = PANEL->lda;
-   L1   = PANEL->L1;  n0  = PANEL->jb;
-   curr = (int)( PANEL->grid->myrow == PANEL->prow );
+        A = PANEL->A;
+        lda = PANEL->lda;
+        L1 = PANEL->L1;
+        n0 = PANEL->jb;
+        curr = (int)(PANEL->grid->myrow == PANEL->prow);
 
-   Nm1  = N - 1; jj = ICOFF;
-   if( curr != 0 ) { ii = ICOFF; iip1 = ii+1; Mm1 = m-1; }
-   else            { ii = 0;     iip1 = ii;   Mm1 = m;   }
+        Nm1 = N - 1;
+        jj = ICOFF;
+        if (curr != 0)
+        {
+            ii = ICOFF;
+            iip1 = ii + 1;
+            Mm1 = m - 1;
+        }
+        else
+        {
+            ii = 0;
+            iip1 = ii;
+            Mm1 = m;
+        }
 #ifdef HPL_CALL_VSIPL
-/*
+        /*
  * Admit the blocks
  */
-   (void) vsip_blockadmit_d(  PANEL->Ablock,  VSIP_TRUE );
-   (void) vsip_blockadmit_d(  PANEL->L1block, VSIP_TRUE );
-/*
+        (void)vsip_blockadmit_d(PANEL->Ablock, VSIP_TRUE);
+        (void)vsip_blockadmit_d(PANEL->L1block, VSIP_TRUE);
+        /*
  * Create the matrix views
  */
-   Av0 = vsip_mbind_d( PANEL->Ablock,  0, 1, lda,       lda, PANEL->pmat->nq );
-   Yv0 = vsip_mbind_d( PANEL->L1block, 0, 1, PANEL->jb, PANEL->jb, PANEL->jb );
+        Av0 = vsip_mbind_d(PANEL->Ablock, 0, 1, lda, lda, PANEL->pmat->nq);
+        Yv0 = vsip_mbind_d(PANEL->L1block, 0, 1, PANEL->jb, PANEL->jb, PANEL->jb);
 #endif
-/*
+        /*
  * Find local absolute value max in first column - initialize WORK[0:3]
  */
-   HPLAI_alocmax( PANEL, m, ii, jj, WORK );
+        HPLAI_alocmax(PANEL, m, ii, jj, WORK);
 
-   while( Nm1 >= 1 )
-   {
-      Acur = Mptr( A, iip1, jj, lda ); Anxt = Mptr( Acur, 0, 1, lda );
-/*
+        while (Nm1 >= 1)
+        {
+            Acur = Mptr(A, iip1, jj, lda);
+            Anxt = Mptr(Acur, 0, 1, lda);
+            /*
  * Swap and broadcast the current row
  */
-      HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
-      HPLAI_alocswpT( PANEL,    ii, jj, WORK );
-/*
+            HPLAI_pamxswp(PANEL, m, ii, jj, WORK);
+            HPLAI_alocswpT(PANEL, ii, jj, WORK);
+            /*
  * Scale current column by its absolute value max entry  -  Update trai-
  * ling sub-matrix and find local absolute value max in next column (On-
  * ly one pass through cache for each current column).  This sequence of
  * operations could benefit from a specialized blocked implementation.
  */
-      if( WORK[0] != HPLAI_rzero )
-         blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Acur, 1 );
-      blas::axpy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( Mm1, -(*(Mptr( L1, jj+1, jj, n0 ))), Acur, 1, Anxt, 1 );
-      HPLAI_alocmax( PANEL, Mm1, iip1, jj+1, WORK );
+            if (WORK[0] != HPLAI_rzero)
+                blas::scal<HPLAI_T_AFLOAT>(Mm1, HPLAI_rone / WORK[0], Acur, 1);
+            blas::axpy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(Mm1, -(*(Mptr(L1, jj + 1, jj, n0))), Acur, 1, Anxt, 1);
+            HPLAI_alocmax(PANEL, Mm1, iip1, jj + 1, WORK);
 
-      if( Nm1 > 1 )
-      {
+            if (Nm1 > 1)
+            {
 #ifdef HPL_CALL_VSIPL
-/*
+                /*
  * Create the matrix subviews
  */
-         Av1 = vsip_msubview_d( Av0, PANEL->ii+iip1, PANEL->jj+jj+2,
-                                Mm1, Nm1-1 );
-         Xv1 = vsip_msubview_d( Av0, PANEL->ii+iip1, PANEL->jj+jj,
-                                Mm1, 1   );
-         Yv1 = vsip_msubview_d( Yv0, jj+2, jj, Nm1-1, 1 ); 
+                Av1 = vsip_msubview_d(Av0, PANEL->ii + iip1, PANEL->jj + jj + 2,
+                                      Mm1, Nm1 - 1);
+                Xv1 = vsip_msubview_d(Av0, PANEL->ii + iip1, PANEL->jj + jj,
+                                      Mm1, 1);
+                Yv1 = vsip_msubview_d(Yv0, jj + 2, jj, Nm1 - 1, 1);
 
-         vsip_gemp_d( -HPLAI_rone, Xv1, VSIP_MAT_NTRANS, Yv1, VSIP_MAT_TRANS,
-                      HPLAI_rone, Av1 );
-/*
+                vsip_gemp_d(-HPLAI_rone, Xv1, VSIP_MAT_NTRANS, Yv1, VSIP_MAT_TRANS,
+                            HPLAI_rone, Av1);
+                /*
  * Destroy the matrix subviews
  */
-         (void) vsip_mdestroy_d( Yv1 );
-         (void) vsip_mdestroy_d( Xv1 );
-         (void) vsip_mdestroy_d( Av1 );
+                (void)vsip_mdestroy_d(Yv1);
+                (void)vsip_mdestroy_d(Xv1);
+                (void)vsip_mdestroy_d(Av1);
 #else
-         blas::ger<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>( blas::Layout::ColMajor, Mm1, Nm1-1, -HPLAI_rone, Acur, 1,
-                   Mptr( L1, jj+2, jj, n0 ), 1, Mptr( Anxt, 0, 1, lda ),
-                   lda );
+            blas::ger<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(blas::Layout::ColMajor, Mm1, Nm1 - 1, -HPLAI_rone, Acur, 1,
+                                                                      Mptr(L1, jj + 2, jj, n0), 1, Mptr(Anxt, 0, 1, lda),
+                                                                      lda);
 #endif
-      }
-      if( curr != 0 ) { ii = iip1; iip1++; m = Mm1; Mm1--; }
+            }
+            if (curr != 0)
+            {
+                ii = iip1;
+                iip1++;
+                m = Mm1;
+                Mm1--;
+            }
 
-      Nm1--; jj++;
-   }
-/*
+            Nm1--;
+            jj++;
+        }
+        /*
  * Swap and broadcast last row - Scale last column by its absolute value
  * max entry
- */ 
-   HPLAI_pamxswp(  PANEL, m, ii, jj, WORK );
-   HPLAI_alocswpT( PANEL,    ii, jj, WORK );
-   if( WORK[0] != HPLAI_rzero )
-      blas::scal<HPLAI_T_AFLOAT>( Mm1, HPLAI_rone / WORK[0], Mptr( A, iip1, jj, lda ), 1 );
+ */
+        HPLAI_pamxswp(PANEL, m, ii, jj, WORK);
+        HPLAI_alocswpT(PANEL, ii, jj, WORK);
+        if (WORK[0] != HPLAI_rzero)
+            blas::scal<HPLAI_T_AFLOAT>(Mm1, HPLAI_rone / WORK[0], Mptr(A, iip1, jj, lda), 1);
 #ifdef HPL_CALL_VSIPL
-/*
+        /*
  * Release the blocks
  */
-   (void) vsip_blockrelease_d( vsip_mgetblock_d( Yv0 ), VSIP_TRUE );
-   (void) vsip_blockrelease_d( vsip_mgetblock_d( Av0 ), VSIP_TRUE );
-/*
+        (void)vsip_blockrelease_d(vsip_mgetblock_d(Yv0), VSIP_TRUE);
+        (void)vsip_blockrelease_d(vsip_mgetblock_d(Av0), VSIP_TRUE);
+        /*
  * Destroy the matrix views
  */
-   (void) vsip_mdestroy_d( Yv0 );
-   (void) vsip_mdestroy_d( Av0 );
+        (void)vsip_mdestroy_d(Yv0);
+        (void)vsip_mdestroy_d(Av0);
 #endif
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_PFACT );
+        HPL_ptimer(HPL_TIMING_PFACT);
 #endif
-/*
+        /*
  * End of HPLAI_papanrlT
  */
-}
+    }
 
 #ifdef __cplusplus
 }

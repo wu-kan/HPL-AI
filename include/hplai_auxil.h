@@ -1,3 +1,26 @@
+/*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 #ifndef HPLAI_AUXIL_H
 #define HPLAI_AUXIL_H
 /*
@@ -29,30 +52,27 @@
 #define HPLAI_warn HPL_warn
 #define HPLAI_abort HPL_abort
 
-void                             HPLAI_alacpy
-STDC_ARGS( (
-   const int,
-   const int,
-   const HPLAI_T_AFLOAT *,
-   const int,
-   HPLAI_T_AFLOAT *,
-   const int
-) );
-void                             HPLAI_alatcpy
-STDC_ARGS( (
-   const int,
-   const int,
-   const HPLAI_T_AFLOAT *,
-   const int,
-   HPLAI_T_AFLOAT *,
-   const int
-) );
-HPLAI_T_AFLOAT                           HPLAI_alamch
-STDC_ARGS( (
-   const HPL_T_MACH
-) );
+void HPLAI_alacpy
+    STDC_ARGS((
+        const int,
+        const int,
+        const HPLAI_T_AFLOAT *,
+        const int,
+        HPLAI_T_AFLOAT *,
+        const int));
+void HPLAI_alatcpy
+    STDC_ARGS((
+        const int,
+        const int,
+        const HPLAI_T_AFLOAT *,
+        const int,
+        HPLAI_T_AFLOAT *,
+        const int));
+HPLAI_T_AFLOAT HPLAI_alamch
+    STDC_ARGS((
+        const HPL_T_MACH));
 
 #endif
 /*
- * End of hpl_auxil.h
+ * End of hplai_auxil.h
  */

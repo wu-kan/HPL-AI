@@ -1,4 +1,27 @@
 /*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/*
  * Include files
  */
 #include "hplai.hh"
@@ -8,41 +31,41 @@ extern "C"
 {
 #endif
 
-   /*
+    /*
  * ---------------------------------------------------------------------
  * Static function prototypes
  * ---------------------------------------------------------------------
  */
-   static void HPLAI_alamc1
-       STDC_ARGS(
-           (int *, int *, int *, int *));
-   static void HPLAI_alamc2
-       STDC_ARGS(
-           (int *, int *, int *, HPLAI_T_AFLOAT *,
-            int *, HPLAI_T_AFLOAT *, int *, HPLAI_T_AFLOAT *));
-   static HPLAI_T_AFLOAT HPLAI_alamc3
-       STDC_ARGS(
-           (const HPLAI_T_AFLOAT, const HPLAI_T_AFLOAT));
-   static void HPLAI_alamc4
-       STDC_ARGS(
-           (int *, const HPLAI_T_AFLOAT, const int));
-   static void HPLAI_alamc5
-       STDC_ARGS(
-           (const int, const int, const int, const int,
-            int *, HPLAI_T_AFLOAT *));
-   static HPLAI_T_AFLOAT HPLAI_aipow
-       STDC_ARGS(
-           (const HPLAI_T_AFLOAT, const int));
+    static void HPLAI_alamc1
+        STDC_ARGS(
+            (int *, int *, int *, int *));
+    static void HPLAI_alamc2
+        STDC_ARGS(
+            (int *, int *, int *, HPLAI_T_AFLOAT *,
+             int *, HPLAI_T_AFLOAT *, int *, HPLAI_T_AFLOAT *));
+    static HPLAI_T_AFLOAT HPLAI_alamc3
+        STDC_ARGS(
+            (const HPLAI_T_AFLOAT, const HPLAI_T_AFLOAT));
+    static void HPLAI_alamc4
+        STDC_ARGS(
+            (int *, const HPLAI_T_AFLOAT, const int));
+    static void HPLAI_alamc5
+        STDC_ARGS(
+            (const int, const int, const int, const int,
+             int *, HPLAI_T_AFLOAT *));
+    static HPLAI_T_AFLOAT HPLAI_aipow
+        STDC_ARGS(
+            (const HPLAI_T_AFLOAT, const int));
 
 #ifdef STDC_HEADERS
-   HPLAI_T_AFLOAT HPLAI_alamch(
-       const HPL_T_MACH CMACH)
+    HPLAI_T_AFLOAT HPLAI_alamch(
+        const HPL_T_MACH CMACH)
 #else
 HPLAI_T_AFLOAT HPLAI_alamch(CMACH)
     const HPL_T_MACH CMACH;
 #endif
-   {
-      /* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -101,79 +124,79 @@ HPLAI_T_AFLOAT HPLAI_alamch(CMACH)
  *
  * ---------------------------------------------------------------------
  */
-      /*
+        /*
  * .. Local Variables ..
  */
-      static HPLAI_T_AFLOAT eps, sfmin, base, t, rnd, emin, rmin, emax,
-          rmax, prec;
-      HPLAI_T_AFLOAT small;
-      static int first = 1;
-      int beta = 0, imax = 0, imin = 0, it = 0, lrnd = 0;
-      /* ..
+        static HPLAI_T_AFLOAT eps, sfmin, base, t, rnd, emin, rmin, emax,
+            rmax, prec;
+        HPLAI_T_AFLOAT small;
+        static int first = 1;
+        int beta = 0, imax = 0, imin = 0, it = 0, lrnd = 0;
+        /* ..
  * .. Executable Statements ..
  */
-      if (first != 0)
-      {
-         first = 0;
-         HPLAI_alamc2(&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
-         base = (HPLAI_T_AFLOAT)(beta);
-         t = (HPLAI_T_AFLOAT)(it);
-         if (lrnd != 0)
-         {
-            rnd = HPL_rone;
-            eps = HPLAI_aipow(base, 1 - it) / HPL_rtwo;
-         }
-         else
-         {
-            rnd = HPL_rzero;
-            eps = HPLAI_aipow(base, 1 - it);
-         }
-         prec = eps * base;
-         emin = (HPLAI_T_AFLOAT)(imin);
-         emax = (HPLAI_T_AFLOAT)(imax);
-         sfmin = rmin;
-         small = HPL_rone / rmax;
-         /*
+        if (first != 0)
+        {
+            first = 0;
+            HPLAI_alamc2(&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
+            base = (HPLAI_T_AFLOAT)(beta);
+            t = (HPLAI_T_AFLOAT)(it);
+            if (lrnd != 0)
+            {
+                rnd = HPL_rone;
+                eps = HPLAI_aipow(base, 1 - it) / HPL_rtwo;
+            }
+            else
+            {
+                rnd = HPL_rzero;
+                eps = HPLAI_aipow(base, 1 - it);
+            }
+            prec = eps * base;
+            emin = (HPLAI_T_AFLOAT)(imin);
+            emax = (HPLAI_T_AFLOAT)(imax);
+            sfmin = rmin;
+            small = HPL_rone / rmax;
+            /*
  * Use  SMALL  plus a bit,  to avoid the possibility of rounding causing
  * overflow when computing  1/sfmin.
  */
-         if (small >= sfmin)
-            sfmin = small * (HPL_rone + eps);
-      }
+            if (small >= sfmin)
+                sfmin = small * (HPL_rone + eps);
+        }
 
-      if (CMACH == HPL_MACH_EPS)
-         return (eps);
-      if (CMACH == HPL_MACH_SFMIN)
-         return (sfmin);
-      if (CMACH == HPL_MACH_BASE)
-         return (base);
-      if (CMACH == HPL_MACH_PREC)
-         return (prec);
-      if (CMACH == HPL_MACH_MLEN)
-         return (t);
-      if (CMACH == HPL_MACH_RND)
-         return (rnd);
-      if (CMACH == HPL_MACH_EMIN)
-         return (emin);
-      if (CMACH == HPL_MACH_RMIN)
-         return (rmin);
-      if (CMACH == HPL_MACH_EMAX)
-         return (emax);
-      if (CMACH == HPL_MACH_RMAX)
-         return (rmax);
+        if (CMACH == HPL_MACH_EPS)
+            return (eps);
+        if (CMACH == HPL_MACH_SFMIN)
+            return (sfmin);
+        if (CMACH == HPL_MACH_BASE)
+            return (base);
+        if (CMACH == HPL_MACH_PREC)
+            return (prec);
+        if (CMACH == HPL_MACH_MLEN)
+            return (t);
+        if (CMACH == HPL_MACH_RND)
+            return (rnd);
+        if (CMACH == HPL_MACH_EMIN)
+            return (emin);
+        if (CMACH == HPL_MACH_RMIN)
+            return (rmin);
+        if (CMACH == HPL_MACH_EMAX)
+            return (emax);
+        if (CMACH == HPL_MACH_RMAX)
+            return (rmax);
 
-      return (eps);
-      /*
+        return (eps);
+        /*
  * End of HPLAI_alamch
  */
-   }
+    }
 
 #ifdef STDC_HEADERS
-   static void HPLAI_alamc1(
-       int *BETA,
-       int *T,
-       int *RND,
-       int *IEEE1)
+    static void HPLAI_alamc1(
+        int *BETA,
+        int *T,
+        int *RND,
+        int *IEEE1)
 #else
 static void HPLAI_alamc1(BETA, T, RND, IEEE1)
     /*
@@ -182,8 +205,8 @@ static void HPLAI_alamc1(BETA, T, RND, IEEE1)
     int *BETA,
     *IEEE1, *RND, *T;
 #endif
-   {
-      /*
+    {
+        /*
  * Purpose
  * =======
  *
@@ -225,19 +248,19 @@ static void HPLAI_alamc1(BETA, T, RND, IEEE1)
  *
  * ---------------------------------------------------------------------
  */
-      /*
+        /*
  * .. Local Variables ..
  */
-      HPLAI_T_AFLOAT a, b, c, f, one, qtr, savec, t1, t2;
-      static int first = 1, lbeta, lieee1, lrnd, lt;
-      /* ..
+        HPLAI_T_AFLOAT a, b, c, f, one, qtr, savec, t1, t2;
+        static int first = 1, lbeta, lieee1, lrnd, lt;
+        /* ..
  * .. Executable Statements ..
  */
-      if (first != 0)
-      {
-         first = 0;
-         one = HPL_rone;
-         /*
+        if (first != 0)
+        {
+            first = 0;
+            one = HPL_rone;
+            /*
  * lbeta, lieee1, lt and lrnd are the local values of BETA, IEEE1, T and
  * RND. Throughout this routine we use the function HPLAI_alamc3 to ensure
  * that relevant values are stored and not held in registers, or are not
@@ -246,102 +269,102 @@ static void HPLAI_alamc1(BETA, T, RND, IEEE1)
  * Compute  a = 2.0**m  with the  smallest  positive integer m such that
  * fl( a + 1.0 ) == a.
  */
-         a = HPL_rone;
-         c = HPL_rone;
-         do
-         {
-            a *= HPL_rtwo;
-            c = HPLAI_alamc3(a, one);
-            c = HPLAI_alamc3(c, -a);
-         } while (c == HPL_rone);
-         /*
+            a = HPL_rone;
+            c = HPL_rone;
+            do
+            {
+                a *= HPL_rtwo;
+                c = HPLAI_alamc3(a, one);
+                c = HPLAI_alamc3(c, -a);
+            } while (c == HPL_rone);
+            /*
  * Now compute b = 2.0**m with the smallest positive integer m such that
  * fl( a + b ) > a.
  */
-         b = HPL_rone;
-         c = HPLAI_alamc3(a, b);
-         while (c == a)
-         {
-            b *= HPL_rtwo;
+            b = HPL_rone;
             c = HPLAI_alamc3(a, b);
-         }
-         /*
+            while (c == a)
+            {
+                b *= HPL_rtwo;
+                c = HPLAI_alamc3(a, b);
+            }
+            /*
  * Now compute the base.  a and c  are  neighbouring floating point num-
  * bers in the interval ( BETA**T, BETA**( T + 1 ) ) and so their diffe-
  * rence is BETA.  Adding 0.25 to c is to ensure that it is truncated to
  * BETA and not (BETA-1).
  */
-         qtr = one / 4.0;
-         savec = c;
-         c = HPLAI_alamc3(c, -a);
-         lbeta = (int)(c + qtr);
-         /*
+            qtr = one / 4.0;
+            savec = c;
+            c = HPLAI_alamc3(c, -a);
+            lbeta = (int)(c + qtr);
+            /*
  * Now  determine  whether  rounding or chopping occurs, by adding a bit
  * less than BETA/2 and a bit more than BETA/2 to a.
  */
-         b = (HPLAI_T_AFLOAT)(lbeta);
-         f = HPLAI_alamc3(b / HPL_rtwo, -b / 100.0);
-         c = HPLAI_alamc3(f, a);
-         if (c == a)
-         {
-            lrnd = 1;
-         }
-         else
-         {
-            lrnd = 0;
-         }
-         f = HPLAI_alamc3(b / HPL_rtwo, b / 100.0);
-         c = HPLAI_alamc3(f, a);
-         if ((lrnd != 0) && (c == a))
-            lrnd = 0;
-         /*
+            b = (HPLAI_T_AFLOAT)(lbeta);
+            f = HPLAI_alamc3(b / HPL_rtwo, -b / 100.0);
+            c = HPLAI_alamc3(f, a);
+            if (c == a)
+            {
+                lrnd = 1;
+            }
+            else
+            {
+                lrnd = 0;
+            }
+            f = HPLAI_alamc3(b / HPL_rtwo, b / 100.0);
+            c = HPLAI_alamc3(f, a);
+            if ((lrnd != 0) && (c == a))
+                lrnd = 0;
+            /*
  * Try  and decide whether rounding is done in the  IEEE  round to nea-
  * rest style.  b/2 is half a unit in the last place of the two numbers
  * a  and savec. Furthermore, a is even, i.e. has last bit zero, and sa-
  * vec is odd.  Thus adding b/2 to a should not change a, but adding b/2
  * to savec should change savec.
  */
-         t1 = HPLAI_alamc3(b / HPL_rtwo, a);
-         t2 = HPLAI_alamc3(b / HPL_rtwo, savec);
-         if ((t1 == a) && (t2 > savec) && (lrnd != 0))
-            lieee1 = 1;
-         else
-            lieee1 = 0;
-         /*
+            t1 = HPLAI_alamc3(b / HPL_rtwo, a);
+            t2 = HPLAI_alamc3(b / HPL_rtwo, savec);
+            if ((t1 == a) && (t2 > savec) && (lrnd != 0))
+                lieee1 = 1;
+            else
+                lieee1 = 0;
+            /*
  * Now find the mantissa, T. It should be the integer part of log to the
  * base BETA of a, however it is safer to determine T by powering. So we
  * find T as the smallest positive integer for which fl( beta**t + 1.0 )
  * is equal to 1.0.
  */
-         lt = 0;
-         a = HPL_rone;
-         c = HPL_rone;
+            lt = 0;
+            a = HPL_rone;
+            c = HPL_rone;
 
-         do
-         {
-            lt++;
-            a *= (HPLAI_T_AFLOAT)(lbeta);
-            c = HPLAI_alamc3(a, one);
-            c = HPLAI_alamc3(c, -a);
-         } while (c == HPL_rone);
-      }
+            do
+            {
+                lt++;
+                a *= (HPLAI_T_AFLOAT)(lbeta);
+                c = HPLAI_alamc3(a, one);
+                c = HPLAI_alamc3(c, -a);
+            } while (c == HPL_rone);
+        }
 
-      *BETA = lbeta;
-      *T = lt;
-      *RND = lrnd;
-      *IEEE1 = lieee1;
-   }
+        *BETA = lbeta;
+        *T = lt;
+        *RND = lrnd;
+        *IEEE1 = lieee1;
+    }
 
 #ifdef STDC_HEADERS
-   static void HPLAI_alamc2(
-       int *BETA,
-       int *T,
-       int *RND,
-       HPLAI_T_AFLOAT *EPS,
-       int *EMIN,
-       HPLAI_T_AFLOAT *RMIN,
-       int *EMAX,
-       HPLAI_T_AFLOAT *RMAX)
+    static void HPLAI_alamc2(
+        int *BETA,
+        int *T,
+        int *RND,
+        HPLAI_T_AFLOAT *EPS,
+        int *EMIN,
+        HPLAI_T_AFLOAT *RMIN,
+        int *EMAX,
+        HPLAI_T_AFLOAT *RMAX)
 #else
 static void HPLAI_alamc2(BETA, T, RND, EPS, EMIN, RMIN, EMAX, RMAX)
     /*
@@ -351,8 +374,8 @@ static void HPLAI_alamc2(BETA, T, RND, EPS, EMIN, RMIN, EMAX, RMAX)
     *EMAX, *EMIN, *RND, *T;
 HPLAI_T_AFLOAT *EPS, *RMAX, *RMIN;
 #endif
-   {
-      /*
+    {
+        /*
  * Purpose
  * =======
  *
@@ -404,26 +427,26 @@ HPLAI_T_AFLOAT *EPS, *RMAX, *RMIN;
  *
  * ---------------------------------------------------------------------
  */
-      /*
+        /*
  * .. Local Variables ..
  */
-      static HPLAI_T_AFLOAT leps, lrmax, lrmin;
-      HPLAI_T_AFLOAT a, b, c, half, one, rbase, sixth, small,
-          third, two, zero;
-      static int first = 1, iwarn = 0, lbeta = 0, lemax, lemin,
-                 lt = 0;
-      int gnmin = 0, gpmin = 0, i, ieee, lieee1 = 0,
-          lrnd = 0, ngnmin = 0, ngpmin = 0;
-      /* ..
+        static HPLAI_T_AFLOAT leps, lrmax, lrmin;
+        HPLAI_T_AFLOAT a, b, c, half, one, rbase, sixth, small,
+            third, two, zero;
+        static int first = 1, iwarn = 0, lbeta = 0, lemax, lemin,
+                   lt = 0;
+        int gnmin = 0, gpmin = 0, i, ieee, lieee1 = 0,
+            lrnd = 0, ngnmin = 0, ngpmin = 0;
+        /* ..
  * .. Executable Statements ..
  */
-      if (first != 0)
-      {
-         first = 0;
-         zero = HPL_rzero;
-         one = HPL_rone;
-         two = HPL_rtwo;
-         /*
+        if (first != 0)
+        {
+            first = 0;
+            zero = HPL_rzero;
+            one = HPL_rone;
+            two = HPL_rtwo;
+            /*
  * lbeta, lt, lrnd, leps, lemin and lrmin are the local values of  BETA,
  * T, RND, EPS, EMIN and RMIN.
  *
@@ -433,179 +456,179 @@ HPLAI_T_AFLOAT *EPS, *RMAX, *RMIN;
  *
  * HPLAI_alamc1 returns the parameters  lbeta, lt, lrnd and lieee1.
  */
-         HPLAI_alamc1(&lbeta, &lt, &lrnd, &lieee1);
-         /*
+            HPLAI_alamc1(&lbeta, &lt, &lrnd, &lieee1);
+            /*
  * Start to find eps.
  */
-         b = (HPLAI_T_AFLOAT)(lbeta);
-         a = HPLAI_aipow(b, -lt);
-         leps = a;
-         /*
+            b = (HPLAI_T_AFLOAT)(lbeta);
+            a = HPLAI_aipow(b, -lt);
+            leps = a;
+            /*
  * Try some tricks to see whether or not this is the correct  EPS.
  */
-         b = two / 3.0;
-         half = one / HPL_rtwo;
-         sixth = HPLAI_alamc3(b, -half);
-         third = HPLAI_alamc3(sixth, sixth);
-         b = HPLAI_alamc3(third, -half);
-         b = HPLAI_alamc3(b, sixth);
-         b = Mabs(b);
-         if (b < leps)
-            b = leps;
+            b = two / 3.0;
+            half = one / HPL_rtwo;
+            sixth = HPLAI_alamc3(b, -half);
+            third = HPLAI_alamc3(sixth, sixth);
+            b = HPLAI_alamc3(third, -half);
+            b = HPLAI_alamc3(b, sixth);
+            b = Mabs(b);
+            if (b < leps)
+                b = leps;
 
-         leps = HPL_rone;
+            leps = HPL_rone;
 
-         while ((leps > b) && (b > zero))
-         {
-            leps = b;
-            c = HPLAI_alamc3(half * leps,
-                             HPLAI_aipow(two, 5) * HPLAI_aipow(leps, 2));
-            c = HPLAI_alamc3(half, -c);
-            b = HPLAI_alamc3(half, c);
-            c = HPLAI_alamc3(half, -b);
-            b = HPLAI_alamc3(half, c);
-         }
-         if (a < leps)
-            leps = a;
-         /*
+            while ((leps > b) && (b > zero))
+            {
+                leps = b;
+                c = HPLAI_alamc3(half * leps,
+                                 HPLAI_aipow(two, 5) * HPLAI_aipow(leps, 2));
+                c = HPLAI_alamc3(half, -c);
+                b = HPLAI_alamc3(half, c);
+                c = HPLAI_alamc3(half, -b);
+                b = HPLAI_alamc3(half, c);
+            }
+            if (a < leps)
+                leps = a;
+            /*
  * Computation of EPS complete.
  *
  * Now find  EMIN.  Let a = + or - 1, and + or - (1 + BASE**(-3)).  Keep
  * dividing a by BETA until (gradual) underflow occurs. This is detected
  * when we cannot recover the previous a.
  */
-         rbase = one / (HPLAI_T_AFLOAT)(lbeta);
-         small = one;
-         for (i = 0; i < 3; i++)
-            small = HPLAI_alamc3(small * rbase, zero);
-         a = HPLAI_alamc3(one, small);
-         HPLAI_alamc4(&ngpmin, one, lbeta);
-         HPLAI_alamc4(&ngnmin, -one, lbeta);
-         HPLAI_alamc4(&gpmin, a, lbeta);
-         HPLAI_alamc4(&gnmin, -a, lbeta);
+            rbase = one / (HPLAI_T_AFLOAT)(lbeta);
+            small = one;
+            for (i = 0; i < 3; i++)
+                small = HPLAI_alamc3(small * rbase, zero);
+            a = HPLAI_alamc3(one, small);
+            HPLAI_alamc4(&ngpmin, one, lbeta);
+            HPLAI_alamc4(&ngnmin, -one, lbeta);
+            HPLAI_alamc4(&gpmin, a, lbeta);
+            HPLAI_alamc4(&gnmin, -a, lbeta);
 
-         ieee = 0;
+            ieee = 0;
 
-         if ((ngpmin == ngnmin) && (gpmin == gnmin))
-         {
-            if (ngpmin == gpmin)
+            if ((ngpmin == ngnmin) && (gpmin == gnmin))
             {
-               /*
+                if (ngpmin == gpmin)
+                {
+                    /*
  * Non twos-complement machines, no gradual underflow; e.g.,  VAX )
  */
-               lemin = ngpmin;
-            }
-            else if ((gpmin - ngpmin) == 3)
-            {
-               /*
+                    lemin = ngpmin;
+                }
+                else if ((gpmin - ngpmin) == 3)
+                {
+                    /*
  * Non twos-complement machines with gradual underflow; e.g., IEEE stan-
  * dard followers
  */
-               lemin = ngpmin - 1 + lt;
-               ieee = 1;
-            }
-            else
-            {
-               /*
+                    lemin = ngpmin - 1 + lt;
+                    ieee = 1;
+                }
+                else
+                {
+                    /*
  * A guess; no known machine
  */
-               lemin = Mmin(ngpmin, gpmin);
-               iwarn = 1;
+                    lemin = Mmin(ngpmin, gpmin);
+                    iwarn = 1;
+                }
             }
-         }
-         else if ((ngpmin == gpmin) && (ngnmin == gnmin))
-         {
-            if (Mabs(ngpmin - ngnmin) == 1)
+            else if ((ngpmin == gpmin) && (ngnmin == gnmin))
             {
-               /*
+                if (Mabs(ngpmin - ngnmin) == 1)
+                {
+                    /*
  * Twos-complement machines, no gradual underflow; e.g., CYBER 205
  */
-               lemin = Mmax(ngpmin, ngnmin);
-            }
-            else
-            {
-               /*
+                    lemin = Mmax(ngpmin, ngnmin);
+                }
+                else
+                {
+                    /*
  * A guess; no known machine
  */
-               lemin = Mmin(ngpmin, ngnmin);
-               iwarn = 1;
+                    lemin = Mmin(ngpmin, ngnmin);
+                    iwarn = 1;
+                }
             }
-         }
-         else if ((Mabs(ngpmin - ngnmin) == 1) && (gpmin == gnmin))
-         {
-            if ((gpmin - Mmin(ngpmin, ngnmin)) == 3)
+            else if ((Mabs(ngpmin - ngnmin) == 1) && (gpmin == gnmin))
             {
-               /*
+                if ((gpmin - Mmin(ngpmin, ngnmin)) == 3)
+                {
+                    /*
  * Twos-complement machines with gradual underflow; no known machine
  */
-               lemin = Mmax(ngpmin, ngnmin) - 1 + lt;
+                    lemin = Mmax(ngpmin, ngnmin) - 1 + lt;
+                }
+                else
+                {
+                    /*
+ * A guess; no known machine
+ */
+                    lemin = Mmin(ngpmin, ngnmin);
+                    iwarn = 1;
+                }
             }
             else
             {
-               /*
+                /*
  * A guess; no known machine
  */
-               lemin = Mmin(ngpmin, ngnmin);
-               iwarn = 1;
+                lemin = Mmin(ngpmin, ngnmin);
+                lemin = Mmin(lemin, gpmin);
+                lemin = Mmin(lemin, gnmin);
+                iwarn = 1;
             }
-         }
-         else
-         {
             /*
- * A guess; no known machine
- */
-            lemin = Mmin(ngpmin, ngnmin);
-            lemin = Mmin(lemin, gpmin);
-            lemin = Mmin(lemin, gnmin);
-            iwarn = 1;
-         }
-         /*
  * Comment out this if block if EMIN is ok
  */
-         if (iwarn != 0)
-         {
-            first = 1;
-            HPL_fprintf(stderr, "\n %s %8d\n%s\n%s\n%s\n",
-                        "WARNING. The value EMIN may be incorrect:- EMIN =", lemin,
-                        "If, after inspection, the value EMIN looks acceptable, please comment ",
-                        "out the  if  block  as marked within the code of routine  HPLAI_alamc2, ",
-                        "otherwise supply EMIN explicitly.");
-         }
-         /*
+            if (iwarn != 0)
+            {
+                first = 1;
+                HPL_fprintf(stderr, "\n %s %8d\n%s\n%s\n%s\n",
+                            "WARNING. The value EMIN may be incorrect:- EMIN =", lemin,
+                            "If, after inspection, the value EMIN looks acceptable, please comment ",
+                            "out the  if  block  as marked within the code of routine  HPLAI_alamc2, ",
+                            "otherwise supply EMIN explicitly.");
+            }
+            /*
  * Assume IEEE arithmetic if we found denormalised  numbers above, or if
  * arithmetic seems to round in the  IEEE style,  determined  in routine
  * HPLAI_alamc1.  A true  IEEE  machine should have both things true; how-
  * ever, faulty machines may have one or the other.
  */
-         if ((ieee != 0) || (lieee1 != 0))
-            ieee = 1;
-         else
-            ieee = 0;
-         /*
+            if ((ieee != 0) || (lieee1 != 0))
+                ieee = 1;
+            else
+                ieee = 0;
+            /*
  * Compute  RMIN by successive division by  BETA. We could compute  RMIN
  * as BASE**( EMIN - 1 ), but some machines underflow during this compu-
  * tation.
  */
-         lrmin = HPL_rone;
-         for (i = 0; i < 1 - lemin; i++)
-            lrmin = HPLAI_alamc3(lrmin * rbase, zero);
-         /*
+            lrmin = HPL_rone;
+            for (i = 0; i < 1 - lemin; i++)
+                lrmin = HPLAI_alamc3(lrmin * rbase, zero);
+            /*
  * Finally, call HPLAI_alamc5 to compute emax and rmax.
  */
-         HPLAI_alamc5(lbeta, lt, lemin, ieee, &lemax, &lrmax);
-      }
-      *BETA = lbeta;
-      *T = lt;
-      *RND = lrnd;
-      *EPS = leps;
-      *EMIN = lemin;
-      *RMIN = lrmin;
-      *EMAX = lemax;
-      *RMAX = lrmax;
-   }
+            HPLAI_alamc5(lbeta, lt, lemin, ieee, &lemax, &lrmax);
+        }
+        *BETA = lbeta;
+        *T = lt;
+        *RND = lrnd;
+        *EPS = leps;
+        *EMIN = lemin;
+        *RMIN = lrmin;
+        *EMAX = lemax;
+        *RMAX = lrmax;
+    }
 
 #ifdef STDC_HEADERS
-   static HPLAI_T_AFLOAT HPLAI_alamc3(const HPLAI_T_AFLOAT A, const HPLAI_T_AFLOAT B)
+    static HPLAI_T_AFLOAT HPLAI_alamc3(const HPLAI_T_AFLOAT A, const HPLAI_T_AFLOAT B)
 #else
 static HPLAI_T_AFLOAT HPLAI_alamc3(A, B)
     /*
@@ -614,8 +637,8 @@ static HPLAI_T_AFLOAT HPLAI_alamc3(A, B)
     const HPLAI_T_AFLOAT A,
     B;
 #endif
-   {
-      /*
+    {
+        /*
  * Purpose
  * =======
  *
@@ -637,17 +660,17 @@ static HPLAI_T_AFLOAT HPLAI_alamc3(A, B)
  *
  * ---------------------------------------------------------------------
  */
-      /* ..
+        /* ..
  * .. Executable Statements ..
  */
-      return (A + B);
-   }
+        return (A + B);
+    }
 
 #ifdef STDC_HEADERS
-   static void HPLAI_alamc4(
-       int *EMIN,
-       const HPLAI_T_AFLOAT START,
-       const int BASE)
+    static void HPLAI_alamc4(
+        int *EMIN,
+        const HPLAI_T_AFLOAT START,
+        const int BASE)
 #else
 static void HPLAI_alamc4(EMIN, START, BASE)
     /*
@@ -657,8 +680,8 @@ static void HPLAI_alamc4(EMIN, START, BASE)
 const int BASE;
 const HPLAI_T_AFLOAT START;
 #endif
-   {
-      /*
+    {
+        /*
  * Purpose
  * =======
  *
@@ -686,47 +709,47 @@ const HPLAI_T_AFLOAT START;
  *
  * ---------------------------------------------------------------------
  */
-      /*
+        /*
  * .. Local Variables ..
  */
-      HPLAI_T_AFLOAT a, b1, b2, c1, c2, d1, d2, one, rbase, zero;
-      int i;
-      /* ..
+        HPLAI_T_AFLOAT a, b1, b2, c1, c2, d1, d2, one, rbase, zero;
+        int i;
+        /* ..
  * .. Executable Statements ..
  */
-      a = START;
-      one = HPL_rone;
-      rbase = one / (HPLAI_T_AFLOAT)(BASE);
-      zero = HPL_rzero;
-      *EMIN = 1;
-      b1 = HPLAI_alamc3(a * rbase, zero);
-      c1 = c2 = d1 = d2 = a;
+        a = START;
+        one = HPL_rone;
+        rbase = one / (HPLAI_T_AFLOAT)(BASE);
+        zero = HPL_rzero;
+        *EMIN = 1;
+        b1 = HPLAI_alamc3(a * rbase, zero);
+        c1 = c2 = d1 = d2 = a;
 
-      do
-      {
-         (*EMIN)--;
-         a = b1;
-         b1 = HPLAI_alamc3(a / BASE, zero);
-         c1 = HPLAI_alamc3(b1 * BASE, zero);
-         d1 = zero;
-         for (i = 0; i < BASE; i++)
-            d1 = d1 + b1;
-         b2 = HPLAI_alamc3(a * rbase, zero);
-         c2 = HPLAI_alamc3(b2 / rbase, zero);
-         d2 = zero;
-         for (i = 0; i < BASE; i++)
-            d2 = d2 + b2;
-      } while ((c1 == a) && (c2 == a) && (d1 == a) && (d2 == a));
-   }
+        do
+        {
+            (*EMIN)--;
+            a = b1;
+            b1 = HPLAI_alamc3(a / BASE, zero);
+            c1 = HPLAI_alamc3(b1 * BASE, zero);
+            d1 = zero;
+            for (i = 0; i < BASE; i++)
+                d1 = d1 + b1;
+            b2 = HPLAI_alamc3(a * rbase, zero);
+            c2 = HPLAI_alamc3(b2 / rbase, zero);
+            d2 = zero;
+            for (i = 0; i < BASE; i++)
+                d2 = d2 + b2;
+        } while ((c1 == a) && (c2 == a) && (d1 == a) && (d2 == a));
+    }
 
 #ifdef STDC_HEADERS
-   static void HPLAI_alamc5(
-       const int BETA,
-       const int P,
-       const int EMIN,
-       const int IEEE,
-       int *EMAX,
-       HPLAI_T_AFLOAT *RMAX)
+    static void HPLAI_alamc5(
+        const int BETA,
+        const int P,
+        const int EMIN,
+        const int IEEE,
+        int *EMAX,
+        HPLAI_T_AFLOAT *RMAX)
 #else
 static void HPLAI_alamc5(BETA, P, EMIN, IEEE, EMAX, RMAX)
     /*
@@ -737,8 +760,8 @@ static void HPLAI_alamc5(BETA, P, EMIN, IEEE, EMAX, RMAX)
 int *EMAX;
 HPLAI_T_AFLOAT *RMAX;
 #endif
-   {
-      /*
+    {
+        /*
  * Purpose
  * =======
  *
@@ -780,65 +803,65 @@ HPLAI_T_AFLOAT *RMAX;
  *
  * ---------------------------------------------------------------------
  */
-      /*
+        /*
  * .. Local Variables ..
  */
-      HPLAI_T_AFLOAT oldy = HPL_rzero, recbas, y, z;
-      int exbits = 1, expsum, i, lexp = 1, nbits, mytry,
-          uexp;
-   /* ..
+        HPLAI_T_AFLOAT oldy = HPL_rzero, recbas, y, z;
+        int exbits = 1, expsum, i, lexp = 1, nbits, mytry,
+            uexp;
+    /* ..
  * .. Executable Statements ..
  */
-   /*
+    /*
  * First compute  lexp  and  uexp, two powers of 2 that bound abs(EMIN).
  * We then assume that  EMAX + abs( EMIN ) will sum approximately to the
  * bound that  is closest to abs( EMIN ). (EMAX  is the  exponent of the
  * required number RMAX).
  */
-   l_10:
-      mytry = (int)((unsigned int)(lexp) << 1);
-      if (mytry <= (-EMIN))
-      {
-         lexp = mytry;
-         exbits++;
-         goto l_10;
-      }
+    l_10:
+        mytry = (int)((unsigned int)(lexp) << 1);
+        if (mytry <= (-EMIN))
+        {
+            lexp = mytry;
+            exbits++;
+            goto l_10;
+        }
 
-      if (lexp == -EMIN)
-      {
-         uexp = lexp;
-      }
-      else
-      {
-         uexp = mytry;
-         exbits++;
-      }
-      /*
+        if (lexp == -EMIN)
+        {
+            uexp = lexp;
+        }
+        else
+        {
+            uexp = mytry;
+            exbits++;
+        }
+        /*
  * Now -lexp is less than or equal to EMIN, and -uexp is greater than or
  * equal to EMIN. exbits is the number of bits needed to store the expo-
  * nent.
  */
-      if ((uexp + EMIN) > (-lexp - EMIN))
-      {
-         expsum = (int)((unsigned int)(lexp) << 1);
-      }
-      else
-      {
-         expsum = (int)((unsigned int)(uexp) << 1);
-      }
-      /*
+        if ((uexp + EMIN) > (-lexp - EMIN))
+        {
+            expsum = (int)((unsigned int)(lexp) << 1);
+        }
+        else
+        {
+            expsum = (int)((unsigned int)(uexp) << 1);
+        }
+        /*
  * expsum is the exponent range, approximately equal to EMAX - EMIN + 1.
  */
-      *EMAX = expsum + EMIN - 1;
-      /*
+        *EMAX = expsum + EMIN - 1;
+        /*
  * nbits  is  the total number of bits needed to store a  floating-point
  * number.
  */
-      nbits = 1 + exbits + P;
+        nbits = 1 + exbits + P;
 
-      if ((nbits % 2 == 1) && (BETA == 2))
-      {
-         /*
+        if ((nbits % 2 == 1) && (BETA == 2))
+        {
+            /*
  * Either there are an odd number of bits used to store a floating-point
  * number, which is unlikely, or some bits are not used in the represen-
  * tation of numbers,  which is possible,  (e.g. Cray machines)  or  the
@@ -848,52 +871,52 @@ HPLAI_T_AFLOAT *RMAX;
  * there must be some way of representing zero  in an  implicit-bit sys-
  * tem. On machines like Cray we are reducing EMAX by one unnecessarily.
  */
-         (*EMAX)--;
-      }
+            (*EMAX)--;
+        }
 
-      if (IEEE != 0)
-      {
-         /*
+        if (IEEE != 0)
+        {
+            /*
  * Assume we are on an IEEE  machine which reserves one exponent for in-
  * finity and NaN.
  */
-         (*EMAX)--;
-      }
-      /*
+            (*EMAX)--;
+        }
+        /*
  * Now create RMAX, the largest machine number, which should be equal to
  * (1.0 - BETA**(-P)) * BETA**EMAX . First compute 1.0-BETA**(-P), being
  * careful that the result is less than 1.0.
  */
-      recbas = HPL_rone / (HPLAI_T_AFLOAT)(BETA);
-      z = (HPLAI_T_AFLOAT)(BETA)-HPL_rone;
-      y = HPL_rzero;
+        recbas = HPL_rone / (HPLAI_T_AFLOAT)(BETA);
+        z = (HPLAI_T_AFLOAT)(BETA)-HPL_rone;
+        y = HPL_rzero;
 
-      for (i = 0; i < P; i++)
-      {
-         z *= recbas;
-         if (y < HPL_rone)
-            oldy = y;
-         y = HPLAI_alamc3(y, z);
-      }
+        for (i = 0; i < P; i++)
+        {
+            z *= recbas;
+            if (y < HPL_rone)
+                oldy = y;
+            y = HPLAI_alamc3(y, z);
+        }
 
-      if (y >= HPL_rone)
-         y = oldy;
-      /*
+        if (y >= HPL_rone)
+            y = oldy;
+        /*
  * Now multiply by BETA**EMAX to get RMAX.
  */
-      for (i = 0; i < *EMAX; i++)
-         y = HPLAI_alamc3(y * BETA, HPL_rzero);
+        for (i = 0; i < *EMAX; i++)
+            y = HPLAI_alamc3(y * BETA, HPL_rzero);
 
-      *RMAX = y;
-      /*
+        *RMAX = y;
+        /*
  * End of HPLAI_alamch
  */
-   }
+    }
 
 #ifdef STDC_HEADERS
-   static HPLAI_T_AFLOAT HPLAI_aipow(
-       const HPLAI_T_AFLOAT X,
-       const int N)
+    static HPLAI_T_AFLOAT HPLAI_aipow(
+        const HPLAI_T_AFLOAT X,
+        const int N)
 #else
 static HPLAI_T_AFLOAT HPLAI_aipow(X, N)
     /*
@@ -902,8 +925,8 @@ static HPLAI_T_AFLOAT HPLAI_aipow(X, N)
     const int N;
 const HPLAI_T_AFLOAT X;
 #endif
-   {
-      /*
+    {
+        /*
  * Purpose
  * =======
  *
@@ -920,36 +943,36 @@ const HPLAI_T_AFLOAT X;
  *
  * ---------------------------------------------------------------------
  */
-      /*
+        /*
  * .. Local Variables ..
  */
-      HPLAI_T_AFLOAT r, y = HPL_rone;
-      int k, n;
-      /* ..
+        HPLAI_T_AFLOAT r, y = HPL_rone;
+        int k, n;
+        /* ..
  * .. Executable Statements ..
  */
-      if (X == HPL_rzero)
-         return (HPL_rzero);
-      if (N < 0)
-      {
-         n = -N;
-         r = HPL_rone / X;
-      }
-      else
-      {
-         n = N;
-         r = X;
-      }
-      /*
+        if (X == HPL_rzero)
+            return (HPL_rzero);
+        if (N < 0)
+        {
+            n = -N;
+            r = HPL_rone / X;
+        }
+        else
+        {
+            n = N;
+            r = X;
+        }
+        /*
       for (k = 0; k < n; k++)
          y *= r;
       */
-      for (k = n; k; k >>= 1, r *= r)
-         if (k & 1)
-            y *= r;
+        for (k = n; k; k >>= 1, r *= r)
+            if (k & 1)
+                y *= r;
 
-      return (y);
-   }
+        return (y);
+    }
 
 #ifdef __cplusplus
 }

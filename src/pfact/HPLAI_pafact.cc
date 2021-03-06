@@ -1,4 +1,27 @@
 /*
+ * MIT License
+ * 
+ * Copyright (c) 2021 WuK
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+/*
  * Include files
  */
 #include "hplai.hh"
@@ -9,17 +32,14 @@ extern "C"
 #endif
 
 #ifdef STDC_HEADERS
-void HPLAI_pafact
-(
-   HPLAI_T_panel *                    PANEL
-)
+    void HPLAI_pafact(
+        HPLAI_T_panel *PANEL)
 #else
-void HPLAI_pafact
-( PANEL )
-   HPLAI_T_panel *                    PANEL;
+void HPLAI_pafact(PANEL)
+    HPLAI_T_panel *PANEL;
 #endif
-{
-/* 
+    {
+        /* 
  * Purpose
  * =======
  *
@@ -61,43 +81,49 @@ void HPLAI_pafact
  *         panel information.
  *
  * ---------------------------------------------------------------------
- */ 
-/*
+ */
+        /*
  * .. Local Variables ..
  */
-   void                       * vptr = NULL;
-   int                        align, jb;
-/* ..
+        void *vptr = NULL;
+        int align, jb;
+        /* ..
  * .. Executable Statements ..
  */
-   jb = PANEL->jb; PANEL->n -= jb; PANEL->ja += jb;
+        jb = PANEL->jb;
+        PANEL->n -= jb;
+        PANEL->ja += jb;
 
-   if( ( PANEL->grid->mycol != PANEL->pcol ) || ( jb <= 0 ) ) return;
+        if ((PANEL->grid->mycol != PANEL->pcol) || (jb <= 0))
+            return;
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_RPFACT );
+        HPL_ptimer(HPL_TIMING_RPFACT);
 #endif
-   align = PANEL->algo->align;
-   vptr  = (void *)malloc( ( (size_t)(align) + 
-              (size_t)(((4+((unsigned int)(jb) << 1)) << 1) )) *
-              sizeof(HPLAI_T_AFLOAT) );
-   if( vptr == NULL )
-   { HPL_pabort( __LINE__, "HPLAI_pafact", "Memory allocation failed" ); }
-/*
+        align = PANEL->algo->align;
+        vptr = (void *)malloc(((size_t)(align) +
+                               (size_t)(((4 + ((unsigned int)(jb) << 1)) << 1))) *
+                              sizeof(HPLAI_T_AFLOAT));
+        if (vptr == NULL)
+        {
+            HPL_pabort(__LINE__, "HPLAI_pafact", "Memory allocation failed");
+        }
+        /*
  * Factor the panel - Update the panel pointers
  */
-   PANEL->algo->rffun( PANEL, PANEL->mp, jb, 0, (HPLAI_T_AFLOAT *)HPL_PTR( vptr,
-                       ((size_t)(align) * sizeof(HPLAI_T_AFLOAT) ) ) );
-   if( vptr ) free( vptr );
+        PANEL->algo->rffun(PANEL, PANEL->mp, jb, 0, (HPLAI_T_AFLOAT *)HPL_PTR(vptr, ((size_t)(align) * sizeof(HPLAI_T_AFLOAT))));
+        if (vptr)
+            free(vptr);
 
-   PANEL->A   = Mptr( PANEL->A, 0, jb, PANEL->lda );
-   PANEL->nq -= jb; PANEL->jj += jb;
+        PANEL->A = Mptr(PANEL->A, 0, jb, PANEL->lda);
+        PANEL->nq -= jb;
+        PANEL->jj += jb;
 #ifdef HPL_DETAILED_TIMING
-   HPL_ptimer( HPL_TIMING_RPFACT );
+        HPL_ptimer(HPL_TIMING_RPFACT);
 #endif
-/*
+        /*
  * End of HPLAI_pafact
  */
-}
+    }
 
 #ifdef __cplusplus
 }
