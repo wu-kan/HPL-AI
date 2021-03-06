@@ -101,7 +101,7 @@
  -- [A] src/Makefile.am
  -- [A] testing/Makefile.am
 
- - 02/18/2021 HPL-AI Version 2.3.0.beta
+ - 02/18/2021 HPL-AI Version 2.3a
 
  Junkang Huang added the parallel GMRES and matrix construction
  part (<https://github.com/schuangs/hpl-ai-with-IR>) for HPL-AI.

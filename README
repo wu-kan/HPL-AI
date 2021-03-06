@@ -1,3 +1,137 @@
-# HPL-AI
+#!/bin/bash
+# ============================================================
+#
+#  HPL-AI Mixed-Precision Benchmark  --   February 18, 2021
+#
+# ============================================================
+#
+#  Check out <https://wu-kan.cn/_posts/2021-02-18-HPL-AI/> for
+#  the full document and the latest information.
+#
+# ============================================================
+#
+#  A Quick start to build and run a few tests: ./README
 
-Check out [this page](https://wu-kan.cn/_posts/2021-02-18-HPL-AI/) for the full document.
+#  First the following softwares are required in your system:
+#  C&C++ compiler, autoconf, autoconf-archive, automake, mpi,
+#  blas, blaspp
+#
+#  You can easily install and load the requirements via spack
+#  <https://github.com/spack/spack/releases/tag/v0.16.1>.
+#
+#  I just tested with the followings, while other versions or
+#  libraries might work as well:
+
+spack unload -a
+spack load gcc@7.5.0
+spack load autoconf@2.69%gcc@7.5.0
+spack load autoconf-archive@2019.01.06%gcc@7.5.0
+spack load automake@1.16.2%gcc@7.5.0
+spack load openmpi@3.1.6%gcc@7.5.0
+spack load blaspp@2020.10.02%gcc@7.5.0+openmp~cuda \
+    ^openblas@0.3.5%gcc@7.5.0 threads=openmp
+
+# Then boostrap the configuration files by typing:
+
+autoreconf -ivf
+
+# The user is given the opportunity to compile the software
+# with some specific compile options:
+#
+# CPPFLAGS+=" -DHPLAI_T_AFLOAT=double"
+#
+# CPPFLAGS+=" -DHPLAI_REGEN"
+#
+# CPPFLAGS+=" -DHPLAI_GEN_BLASPP_GEMM"
+#
+# CPPFLAGS+=" -DHPLAI_GEN_BLASPP_TRSM"
+#
+# CPPFLAGS+=" -DHPLAI_GEN_BLASPP_TRSV"
+#
+# CPPFLAGS+=" -DHPL_COPY_L"
+#
+# CPPFLAGS+=" -DHPL_CALL_CBLAS"
+#
+# CPPFLAGS+=" -DHPL_CALL_VSIPL"
+# (deperated)
+#
+# CPPFLAGS+=" -DHPL_DETAILED_TIMING"
+# (deperated)
+#
+# To configure the build and prepare for compilation run:
+
+./configure
+
+# Then compile:
+
+make -j
+
+# The configuration file must be called HPL.dat.
+#
+# Most of the performance parameters can be tuned.
+#
+# You can copy the configuration file from the original HPL,
+# or create a configuration file anew.
+
+if true; then
+    cp testing/ptest/HPL.dat HPL.dat
+else
+    echo 'HPLinpack benchmark input file
+Innovative Computing Laboratory, University of Tennessee
+HPL.out      output file name (if any)
+6            device out (6=stdout,7=stderr,file)
+1            # of problems sizes (N)
+25000 30000 40000 50000 60000 39007 39000  20960 364160 Ns
+1             # of NBs
+384 768 1024 512 384 640 768 896 960 1024 1152 1280 640 NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of process grids (P x Q)
+2 1 4        Ps
+2 4 1        Qs
+16.0         threshold
+1            # of panel fact
+0 1 2        PFACTs (0=left, 1=Crout, 2=Right)
+1            # of recursive stopping criterium
+2 8          NBMINs (>= 1)
+1            # of panels in recursion
+2            NDIVs
+1            # of recursive panel fact.
+0 1 2        RFACTs (0=left, 1=Crout, 2=Right)
+1            # of broadcast
+0 2          BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+1            # of lookahead depth
+1 0          DEPTHs (>=0)
+1            SWAP (0=bin-exch,1=long,2=mix)
+192          swapping threshold
+1            L1 in (0=transposed,1=no-transposed) form
+1            U  in (0=transposed,1=no-transposed) form
+1            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)' >HPL.dat
+fi
+
+# Finally run and compare with the original hpl-2.3:
+
+mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhpl
+mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhplai
+
+# If you download HPL-AI via git, you can clean the builds by:
+
+git clean -d -f -q -x
+
+# ============================================================
+#
+# The newest version of HPL-AI is available at
+# <https://github.com/wu-kan/HPL-AI/releases>
+#
+# ============================================================
+#
+# Bugs are tracked at
+# <https://github.com/wu-kan/HPL-AI/issues>
+#
+# ============================================================
+#
+# The souce code of HPL-AI is licensed under `LICENSE`.
+#
+# The souce code of hpl-2.3 is licensed under `COPYING`.
+#
+# ============================================================
