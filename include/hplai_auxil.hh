@@ -21,15 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_AUXIL_H
-#define HPLAI_AUXIL_H
+#ifndef HPLAI_AUXIL_HH
+#define HPLAI_AUXIL_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "hpl_auxil.h"
-#include "hplai_misc.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define HPLAI_NORM_A HPL_NORM_A
 #define HPLAI_NORM_1 HPL_NORM_1
@@ -72,7 +87,11 @@ HPLAI_T_AFLOAT HPLAI_alamch
     STDC_ARGS((
         const HPL_T_MACH));
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
- * End of hplai_auxil.h
+ * End of hplai_auxil.hh
  */

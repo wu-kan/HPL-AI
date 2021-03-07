@@ -28,11 +28,6 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-
-#ifdef __cplusplus
-#include "hplai_blas.hh"
-#endif
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -40,13 +35,23 @@ extern "C"
 
 #include "hpl_pgesv.h"
 
-#include "hplai_misc.h"
-#include "hplai_auxil.h"
+#ifdef __cplusplus
+}
+#endif
 
-#include "hplai_grid.h"
-#include "hplai_comm.h"
-#include "hplai_panel.h"
-#include "hplai_pfact.h"
+#include "hplai_blas.hh"
+#include "hplai_misc.hh"
+#include "hplai_auxil.hh"
+
+#include "hplai_grid.hh"
+#include "hplai_comm.hh"
+#include "hplai_panel.hh"
+#include "hplai_pfact.hh"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
     void HPLAI_pipid
         STDC_ARGS((

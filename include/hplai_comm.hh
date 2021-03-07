@@ -21,21 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_COMM_H
-#define HPLAI_COMM_H
+#ifndef HPLAI_COMM_HH
+#define HPLAI_COMM_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "hpl_comm.h"
-#include "hplai_misc.h"
-#include "hplai_panel.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+#include "hplai_panel.hh"
 /*
  * ---------------------------------------------------------------------
  * #define macro constants
  * ---------------------------------------------------------------------
  */
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define HPLAI_FAILURE HPL_FAILURE
 #define HPLAI_SUCCESS HPL_SUCCESS
 #define HPLAI_KEEP_TESTING HPL_KEEP_TESTING
@@ -112,7 +128,11 @@ int HPLAI_binit_blonM STDC_ARGS((HPLAI_T_panel *));
 int HPLAI_bcast_blonM STDC_ARGS((HPLAI_T_panel *, int *));
 int HPLAI_bwait_blonM STDC_ARGS((HPLAI_T_panel *));
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
- * End of hplai_comm.h
+ * End of hplai_comm.hh
  */

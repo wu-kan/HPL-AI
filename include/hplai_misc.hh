@@ -21,30 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_PMATGEN_H
-#define HPLAI_PMATGEN_H
+#ifndef HPLAI_MISC_HH
+#define HPLAI_MISC_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hpl_pmatgen.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include <math.h>
+#include <float.h>
+
+#ifdef __cplusplus
+}
+#endif
+
+//use blaspp https://bitbucket.org/icl/blaspp/src/master/
+#include <blas.hh>
+
 /*
  * ---------------------------------------------------------------------
- * Function prototypes
+ * #define macros definitions
  * ---------------------------------------------------------------------
  */
-void HPLAI_pdmatgen
-    STDC_ARGS((
-        const HPL_T_grid *,
-        const int,
-        const int,
-        const int,
-        double *,
-        const int,
-        const int));
+#ifndef HPLAI_T_AFLOAT
+#define HPLAI_T_AFLOAT float
+#endif
+
+#define HPLAI_rone ((HPLAI_T_AFLOAT)HPL_rone)
+#define HPLAI_rtwo ((HPLAI_T_AFLOAT)HPL_rtwo)
+#define HPLAI_rzero ((HPLAI_T_AFLOAT)HPL_rzero)
+
+#define HPLAI_PTR HPL_PTR
 
 #endif
 /*
- * End of hplai_pmatgen.h
+ * End of hplai_misc.hh
  */

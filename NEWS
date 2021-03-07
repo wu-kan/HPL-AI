@@ -108,10 +108,11 @@
  Note that the GMRES did not check the backward-error, which may
  cause the result to be invalid.
 
- Kan Wu fixed some bugs and reimplemented HPL-AI so that the C
- souce code of hpl-2.3 remained the same, while took advantages
- of modern C++ features such as templates, overloading, etc:
- -- [A] include/hplai*
+ Kan Wu reimplemented HPL-AI with some bug fixes and some minor
+ optimizations so that the C souce code of hpl-2.3 remained the
+ same, while took advantages of modern C++ features such as
+ templates, overloading, etc:
+ -- [A] include/hplai*.hh
  -- [A] src/*/HPLAI_*.cc
  -- [A] testing/*/HPLAI_*.cc
  -- [M] configure.ac

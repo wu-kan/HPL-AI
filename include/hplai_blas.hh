@@ -44,10 +44,9 @@ extern "C"
 }
 #endif
 
-#ifdef __cplusplus
+#include "hplai_misc.hh"
 
-//use blaspp https://bitbucket.org/icl/blaspp/src/master/
-#include <blas.hh>
+#ifdef __cplusplus
 
 template <>
 int64_t blas::iamax<double>(
@@ -317,3 +316,6 @@ void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
 
 #endif
 #endif
+/*
+ * End of hplai_blas.hh
+ */

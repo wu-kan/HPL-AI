@@ -21,22 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_PFACT_H
-#define HPLAI_PFACT_H
+#ifndef HPLAI_PFACT_HH
+#define HPLAI_PFACT_HH
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
 #include "hpl_pfact.h"
-#include "hplai_misc.h"
 
-#include "hplai_panel.h"
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+
+#include "hplai_panel.hh"
 /*
  * ---------------------------------------------------------------------
  * #typedefs and data structures
  * ---------------------------------------------------------------------
  */
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define HPLAI_LEFT_LOOKING HPL_LEFT_LOOKING
 #define HPLAI_CROUT HPL_CROUT
@@ -265,7 +280,11 @@ void HPLAI_pafact
     STDC_ARGS((
         HPLAI_T_panel *));
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
- * End of hplai_pfact.h
+ * End of hplai_pfact.hh
  */

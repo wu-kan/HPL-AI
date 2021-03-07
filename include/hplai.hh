@@ -21,8 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_H
-#define HPLAI_H
+#ifndef HPLAI_HH
+#define HPLAI_HH
 
 #ifdef __cplusplus
 extern "C"
@@ -35,30 +35,26 @@ extern "C"
  */
 #include "hpl.h"
 
-#include "hplai_misc.h"
-
-#include "hplai_auxil.h"
-#include "hplai_gesv.h"
-
-#include "hplai_pauxil.h"
-#include "hplai_panel.h"
-#include "hplai_pfact.h"
-
-#include "hplai_pmatgen.h"
-#include "hplai_ptest.h"
-
 #ifdef __cplusplus
 }
 #endif
 
-#ifdef __cplusplus
+#include "hplai_misc.hh"
+
+#include "hplai_auxil.hh"
+#include "hplai_gesv.hh"
+
+#include "hplai_pauxil.hh"
+#include "hplai_panel.hh"
+#include "hplai_pfact.hh"
+
+#include "hplai_pmatgen.hh"
+#include "hplai_ptest.hh"
 
 #include "hplai_blas.hh"
 #include "hplai_pgesv.hh"
 
 #endif
-
-#endif
 /*
- * End of hplai.h
+ * End of hplai.hh
  */

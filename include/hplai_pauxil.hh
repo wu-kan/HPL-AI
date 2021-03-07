@@ -21,8 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_PAUXIL_H
-#define HPLAI_PAUXIL_H
+#ifndef HPLAI_PAUXIL_HH
+#define HPLAI_PAUXIL_HH
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*
  * ---------------------------------------------------------------------
  * Include files
@@ -30,10 +35,19 @@
  */
 #include "hpl_pauxil.h"
 
-#include "hplai_misc.h"
-#include "hplai_auxil.h"
+#ifdef __cplusplus
+}
+#endif
 
-#include "hplai_grid.h"
+#include "hplai_misc.hh"
+#include "hplai_auxil.hh"
+
+#include "hplai_grid.hh"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #define HPLAI_indxg2lp HPL_indxg2lp
 #define HPLAI_indxg2l HPL_indxg2l
@@ -200,7 +214,11 @@ HPLAI_T_AFLOAT HPLAI_palange
         const HPLAI_T_AFLOAT *,
         const int));
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
- * End of hplai_pauxil.h
+ * End of hplai_pauxil.hh
  */

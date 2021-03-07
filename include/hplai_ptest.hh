@@ -21,14 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_PTEST_H
-#define HPLAI_PTEST_H
+#ifndef HPLAI_PTEST_HH
+#define HPLAI_PTEST_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "hpl_ptest.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*
  * ---------------------------------------------------------------------
  * Data Structures
@@ -103,7 +117,11 @@ void HPLAI_pdtest
         const int,
         const int));
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
- * End of hplai_ptest.h
+ * End of hplai_ptest.hh
  */

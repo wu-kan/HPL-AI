@@ -21,55 +21,96 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_PANEL_H
-#define HPLAI_PANEL_H
+#ifndef HPLAI_GRID_HH
+#define HPLAI_GRID_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hpl_panel.h"
-#include "hplai_misc.h"
-#include "hplai_grid.h"
-#include "hplai_pfact.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "hpl_grid.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /*
  * ---------------------------------------------------------------------
- * panel function prototypes
+ * #typedefs and data structures
  * ---------------------------------------------------------------------
  */
+#define HPLAI_ROW_MAJOR HPL_ROW_MAJOR
+#define HPLAI_COLUMN_MAJOR HPL_COLUMN_MAJOR
+#define HPLAI_T_ORDER HPL_T_ORDER
+#define HPLAI_S_grid HPL_S_grid
+#define HPLAI_T_grid HPL_T_grid
 
-void HPLAI_papanel_new
+/*
+ * ---------------------------------------------------------------------
+ * Data Structures
+ * ---------------------------------------------------------------------
+ */
+typedef void (*HPLAI_T_OP_AFLOAT)(const int, const void *, void *);
+
+#define HPLAI_grid_init HPL_grid_init
+#define HPLAI_grid_exit HPL_grid_exit
+#define HPLAI_grid_info HPL_grid_info
+#define HPLAI_pnum HPL_pnum
+#define HPLAI_barrier HPL_barrier
+int HPLAI_broadcast_AFLOAT
     STDC_ARGS((
-        HPL_T_grid *,
-        HPLAI_T_palg *,
+        void *,
         const int,
         const int,
-        const int,
-        HPLAI_T_pmat *,
-        const int,
-        const int,
-        const int,
-        HPLAI_T_panel **));
-void HPLAI_papanel_init
+        MPI_Comm));
+int HPLAI_reduce_AFLOAT
     STDC_ARGS((
-        HPL_T_grid *,
-        HPLAI_T_palg *,
+        void *,
         const int,
+        const HPLAI_T_OP_AFLOAT,
         const int,
-        const int,
-        HPLAI_T_pmat *,
-        const int,
-        const int,
-        const int,
-        HPLAI_T_panel *));
-int HPLAI_papanel_disp
+        MPI_Comm));
+int HPLAI_all_reduce_AFLOAT
     STDC_ARGS((
-        HPLAI_T_panel **));
-int HPLAI_papanel_free
+        void *,
+        const int,
+        const HPLAI_T_OP_AFLOAT,
+        MPI_Comm));
+
+void HPLAI_max_AFLOAT
     STDC_ARGS((
-        HPLAI_T_panel *));
+        const int,
+        const void *,
+        void *));
+void HPLAI_min_AFLOAT
+    STDC_ARGS((
+        const int,
+        const void *,
+        void *));
+void HPLAI_sum_AFLOAT
+    STDC_ARGS((
+        const int,
+        const void *,
+        void *));
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 /*
- * End of hplai_panel.h
+ * End of hplai_grid.hh
  */

@@ -10,7 +10,7 @@
 #
 ##############################################################
 #
-# A Quick start to build and run a few tests: ./README
+# A quick start to build and run a few tests: ./README
 
 # First the following softwares are required on your system:
 # C&C++ compiler, autoconf, autoconf-archive, automake, mpi,

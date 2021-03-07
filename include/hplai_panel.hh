@@ -21,18 +21,76 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_GESV_H
-#define HPLAI_GESV_H
+#ifndef HPLAI_PANEL_HH
+#define HPLAI_PANEL_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hpl_gesv.h"
-#include "hplai_misc.h"
-#include "hplai_auxil.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#include "hpl_panel.h"
+
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+#include "hplai_grid.hh"
+#include "hplai_pfact.hh"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+/*
+ * ---------------------------------------------------------------------
+ * panel function prototypes
+ * ---------------------------------------------------------------------
+ */
+
+void HPLAI_papanel_new
+    STDC_ARGS((
+        HPL_T_grid *,
+        HPLAI_T_palg *,
+        const int,
+        const int,
+        const int,
+        HPLAI_T_pmat *,
+        const int,
+        const int,
+        const int,
+        HPLAI_T_panel **));
+void HPLAI_papanel_init
+    STDC_ARGS((
+        HPL_T_grid *,
+        HPLAI_T_palg *,
+        const int,
+        const int,
+        const int,
+        HPLAI_T_pmat *,
+        const int,
+        const int,
+        const int,
+        HPLAI_T_panel *));
+int HPLAI_papanel_disp
+    STDC_ARGS((
+        HPLAI_T_panel **));
+int HPLAI_papanel_free
+    STDC_ARGS((
+        HPLAI_T_panel *));
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 /*
- * End of hplai_gesv.h
+ * End of hplai_panel.hh
  */

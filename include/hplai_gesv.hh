@@ -21,33 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifndef HPLAI_MISC_H
-#define HPLAI_MISC_H
+#ifndef HPLAI_GESV_HH
+#define HPLAI_GESV_HH
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
 
-#include <math.h>
-#include <float.h>
-
-/*
- * ---------------------------------------------------------------------
- * #define macros definitions
- * ---------------------------------------------------------------------
- */
-#ifndef HPLAI_T_AFLOAT
-#define HPLAI_T_AFLOAT float
+#ifdef __cplusplus
+extern "C"
+{
 #endif
 
-#define HPLAI_rone ((HPLAI_T_AFLOAT)HPL_rone)
-#define HPLAI_rtwo ((HPLAI_T_AFLOAT)HPL_rtwo)
-#define HPLAI_rzero ((HPLAI_T_AFLOAT)HPL_rzero)
+#include "hpl_gesv.h"
 
-#define HPLAI_PTR HPL_PTR
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+#include "hplai_auxil.hh"
 
 #endif
 /*
- * End of hplai_misc.h
+ * End of hplai_gesv.hh
  */
