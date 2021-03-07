@@ -31,6 +31,17 @@ extern "C"
 
 #include "hpl_blas.h"
 
+#ifdef __cplusplus
+}
+#endif
+
+#include "hplai_misc.hh"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
     extern MPI_Datatype HPLAI_MPI_AFLOAT;
 
     void HPLAI_blas_init
@@ -43,8 +54,6 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-#include "hplai_misc.hh"
 
 #ifdef __cplusplus
 

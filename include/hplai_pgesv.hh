@@ -52,7 +52,6 @@ extern "C"
 extern "C"
 {
 #endif
-
     void HPLAI_pipid
         STDC_ARGS((
             HPLAI_T_panel *,

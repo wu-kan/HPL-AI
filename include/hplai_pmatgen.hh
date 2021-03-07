@@ -49,15 +49,15 @@ extern "C"
 {
 #endif
 
-void HPLAI_pdmatgen
-    STDC_ARGS((
-        const HPL_T_grid *,
-        const int,
-        const int,
-        const int,
-        double *,
-        const int,
-        const int));
+    void HPLAI_pdmatgen
+        STDC_ARGS((
+            const HPL_T_grid *,
+            const int,
+            const int,
+            const int,
+            double *,
+            const int,
+            const int));
 
 #ifdef __cplusplus
 }

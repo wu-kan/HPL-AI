@@ -67,25 +67,25 @@ extern "C"
 #define HPLAI_warn HPL_warn
 #define HPLAI_abort HPL_abort
 
-void HPLAI_alacpy
-    STDC_ARGS((
-        const int,
-        const int,
-        const HPLAI_T_AFLOAT *,
-        const int,
-        HPLAI_T_AFLOAT *,
-        const int));
-void HPLAI_alatcpy
-    STDC_ARGS((
-        const int,
-        const int,
-        const HPLAI_T_AFLOAT *,
-        const int,
-        HPLAI_T_AFLOAT *,
-        const int));
-HPLAI_T_AFLOAT HPLAI_alamch
-    STDC_ARGS((
-        const HPL_T_MACH));
+    void HPLAI_alacpy
+        STDC_ARGS((
+            const int,
+            const int,
+            const HPLAI_T_AFLOAT *,
+            const int,
+            HPLAI_T_AFLOAT *,
+            const int));
+    void HPLAI_alatcpy
+        STDC_ARGS((
+            const int,
+            const int,
+            const HPLAI_T_AFLOAT *,
+            const int,
+            HPLAI_T_AFLOAT *,
+            const int));
+    HPLAI_T_AFLOAT HPLAI_alamch
+        STDC_ARGS((
+            const HPL_T_MACH));
 
 #ifdef __cplusplus
 }

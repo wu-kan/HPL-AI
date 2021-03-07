@@ -75,47 +75,47 @@ extern "C"
 #define HPLAI_TIMING_LASWP HPL_TIMING_LASWP
 #define HPLAI_TIMING_PTRSV HPL_TIMING_PTRSV
 #endif
-/*
+    /*
  * ---------------------------------------------------------------------
  * Function prototypes
  * ---------------------------------------------------------------------
  */
-void HPLAI_pdinfo
-    STDC_ARGS((
-        HPLAI_T_test *,
-        int *,
-        int *,
-        int *,
-        int *,
-        HPLAI_T_ORDER *,
-        int *,
-        int *,
-        int *,
-        int *,
-        HPLAI_T_FACT *,
-        int *,
-        int *,
-        int *,
-        int *,
-        int *,
-        HPLAI_T_FACT *,
-        int *,
-        HPLAI_T_TOP *,
-        int *,
-        int *,
-        HPLAI_T_SWAP *,
-        int *,
-        int *,
-        int *,
-        int *,
-        int *));
-void HPLAI_pdtest
-    STDC_ARGS((
-        HPLAI_T_test *,
-        HPLAI_T_grid *,
-        HPLAI_T_palg *,
-        const int,
-        const int));
+    void HPLAI_pdinfo
+        STDC_ARGS((
+            HPLAI_T_test *,
+            int *,
+            int *,
+            int *,
+            int *,
+            HPLAI_T_ORDER *,
+            int *,
+            int *,
+            int *,
+            int *,
+            HPLAI_T_FACT *,
+            int *,
+            int *,
+            int *,
+            int *,
+            int *,
+            HPLAI_T_FACT *,
+            int *,
+            HPLAI_T_TOP *,
+            int *,
+            int *,
+            HPLAI_T_SWAP *,
+            int *,
+            int *,
+            int *,
+            int *,
+            int *));
+    void HPLAI_pdtest
+        STDC_ARGS((
+            HPLAI_T_test *,
+            HPLAI_T_grid *,
+            HPLAI_T_palg *,
+            const int,
+            const int));
 
 #ifdef __cplusplus
 }

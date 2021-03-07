@@ -24,15 +24,16 @@
 #ifndef HPLAI_HH
 #define HPLAI_HH
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include "hpl.h"
 
 #ifdef __cplusplus
