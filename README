@@ -1,11 +1,11 @@
 #!/bin/bash
 ##############################################################
 #
-#  HPL-AI Mixed-Precision Benchmark  --   February 18, 2021
+#  HPL-AI Mixed-Precision Benchmark  --   March 9, 2021
 #
 ##############################################################
 #
-# Check out <https://wu-kan.cn/_posts/2021-02-18-HPL-AI/> for
+# Check out <https://wu-kan.cn/_posts/2021-03-09-HPL-AI/> for
 # the full document and the latest information.
 #
 ##############################################################
@@ -40,13 +40,13 @@ autoreconf -ivf
 #
 # CPPFLAGS+=" -DHPLAI_T_AFLOAT=double"
 #
-# CPPFLAGS+=" -DHPLAI_REGEN"
-#
 # CPPFLAGS+=" -DHPLAI_GEN_BLASPP_GEMM"
 #
 # CPPFLAGS+=" -DHPLAI_GEN_BLASPP_TRSM"
 #
 # CPPFLAGS+=" -DHPLAI_GEN_BLASPP_TRSV"
+#
+# CPPFLAGS+=" -DHPLAI_REGEN"
 #
 # CPPFLAGS+=" -DHPL_COPY_L"
 #
@@ -81,7 +81,7 @@ Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-25000 30000 40000 50000 60000 39007 39000  20960 364160 Ns
+25000 30000 40000 50000 60000 39007 39000 20960 364160 Ns
 1             # of NBs
 384 768 1024 512 384 640 768 896 960 1024 1152 1280 640 NBs
 0            PMAP process mapping (0=Row-,1=Column-major)
@@ -111,8 +111,8 @@ fi
 
 # Finally run and compare with the original hpl-2.3:
 
-mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhpl
-mpiexec -n 4 -x OMP_NUM_THREADS=7 testing/xhplai
+mpiexec -n 4 -x OMP_NUM_THREADS=2 testing/xhpl
+mpiexec -n 4 -x OMP_NUM_THREADS=2 testing/xhplai
 
 # If you download HPL-AI via git, you can clean the builds by:
 

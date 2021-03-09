@@ -1,5 +1,5 @@
 ==============================================================
-   HPL-AI Mixed-Precision Benchmark  --   February 18, 2021
+   HPL-AI Mixed-Precision Benchmark  --   March 9, 2021
 ==============================================================
 
  History
@@ -101,7 +101,7 @@
  -- [A] src/Makefile.am
  -- [A] testing/Makefile.am
 
- - 02/18/2021 HPL-AI Version 2.3a
+ - 03/09/2021 HPL-AI Version 2.3a
 
  Junkang Huang added the parallel GMRES and matrix construction
  part (<https://github.com/schuangs/hpl-ai-with-IR>) for HPL-AI.
