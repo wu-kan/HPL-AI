@@ -932,7 +932,7 @@ int *ALIGN;
                           "========================================");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
                           "HPL-AI Mixed-Precision Benchmark  --  ",
-                          " March 9, 2021");
+                          " March 12, 2021");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
                           "Written by A. Petitet and R. Clint Whaley,  ",
                           "Innovative Computing Laboratory, UTK");

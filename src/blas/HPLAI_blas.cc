@@ -23,6 +23,12 @@
  */
 #include "hplai.hh"
 
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+
+static blas::Queue *HPLAI_BLASPP_QUEUE = NULL;
+
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -45,10 +51,35 @@ void HPLAI_blas_init(RANK, SIZE)
 #ifdef HPL_CALL_VSIPL
         vsip_init((void *)0);
 #endif
+
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+        {
+            MPI_Comm local_comm;
+            MPI_Comm_split_type(
+                MPI_COMM_WORLD,
+                MPI_COMM_TYPE_SHARED,
+                RANK,
+                MPI_INFO_NULL,
+                &local_comm);
+            int local_rank = -1;
+            MPI_Comm_rank(local_comm, &local_rank);
+            MPI_Comm_free(&local_comm);
+            HPLAI_BLASPP_QUEUE = new blas::Queue(
+                local_rank,
+                blas::DEV_QUEUE_DEFAULT_BATCH_LIMIT);
+        }
+#endif
     }
 
     void HPLAI_blas_finalize()
     {
+
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+
+        delete HPLAI_BLASPP_QUEUE;
+
+#endif
+
 #ifdef HPL_CALL_VSIPL
         vsip_finalize((void *)0);
 #endif
@@ -183,43 +214,98 @@ void blas::gemm<double, double, double>(
         ldc);
 }
 
-#ifndef HPLAI_GEN_BLASPP_GEMM
+#if defined(HPLAI_DEVICE_BLASPP_GEMM)
 
 template <>
-void blas::gemm<float, float, float>(
+void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
-    blas::Op transA,
-    blas::Op transB,
-    int64_t m,
-    int64_t n,
-    int64_t k,
-    blas::scalar_type<float, float, float> alpha,
-    float const *A,
-    int64_t lda,
-    float const *B,
-    int64_t ldb,
-    blas::scalar_type<float, float, float> beta,
-    float *C,
-    int64_t ldc)
+    blas::Op TRANSA,
+    blas::Op TRANSB,
+    int64_t M,
+    int64_t N,
+    int64_t K,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> ALPHA,
+    HPLAI_T_AFLOAT const *A,
+    int64_t LDA,
+    HPLAI_T_AFLOAT const *B,
+    int64_t LDB,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> BETA,
+    HPLAI_T_AFLOAT *C,
+    int64_t LDC)
 {
+    //HPLAI_pabort( __LINE__, "blas::gemm", "Use HPLAI_GEN_BLASPP_GEMM" );
+    if (layout != blas::Layout::ColMajor)
+    {
+        blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
+            blas::Layout::ColMajor,
+            TRANSB, TRANSA, N, M, K, ALPHA, B, LDB, A, LDA, BETA, C, LDC);
+        return;
+    }
+    int64_t i, j;
+
+    if ((M == 0) || (N == 0) ||
+        (((ALPHA == HPLAI_rzero) || (K == 0)) &&
+         (BETA == HPLAI_rone)))
+        return;
+
+    if (ALPHA == HPLAI_rzero)
+    {
+        for (j = 0; j < N; j++)
+        {
+            for (i = 0; i < M; i++)
+                *(C + i + j * LDC) = HPLAI_rzero;
+        }
+        return;
+    }
+
+    int64_t rA = TRANSA == blas::Op::NoTrans ? M : K;
+    int64_t cA = TRANSA == blas::Op::NoTrans ? K : M;
+    int64_t sA = TRANSA == blas::Op::NoTrans ? K * LDA : M * LDA;
+    HPLAI_T_AFLOAT *dA = blas::device_malloc<HPLAI_T_AFLOAT>(sA);
+    int64_t rB = TRANSB == blas::Op::NoTrans ? K : N;
+    int64_t cB = TRANSB == blas::Op::NoTrans ? N : K;
+    int64_t sB = TRANSB == blas::Op::NoTrans ? N * LDB : K * LDB;
+    HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
+    blas::Op TRANSC = blas::Op::NoTrans;
+    int64_t rC = TRANSC == blas::Op::NoTrans ? M : N;
+    int64_t cC = TRANSC == blas::Op::NoTrans ? N : M;
+    int64_t sC = TRANSC == blas::Op::NoTrans ? N * LDC : M * LDC;
+    HPLAI_T_AFLOAT *dC = blas::device_malloc<HPLAI_T_AFLOAT>(sC);
+
+    //if (ALPHA != HPLAI_rzero) // always true
+    {
+        blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
+        blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
+    }
+    if (BETA != HPLAI_rzero)
+    {
+        blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, LDC, *HPLAI_BLASPP_QUEUE);
+    }
+
     blas::gemm(
         layout,
-        transA,
-        transB,
-        m,
-        n,
-        k,
-        alpha,
-        A,
-        lda,
-        B,
-        ldb,
-        beta,
-        C,
-        ldc);
+        TRANSA,
+        TRANSB,
+        M,
+        N,
+        K,
+        ALPHA,
+        dA,
+        LDA,
+        dB,
+        LDB,
+        BETA,
+        dC,
+        LDC,
+        *HPLAI_BLASPP_QUEUE);
+    blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, LDC, C, LDC, *HPLAI_BLASPP_QUEUE);
+    HPLAI_BLASPP_QUEUE->sync();
+    blas::device_free(dA);
+    blas::device_free(dB);
+    blas::device_free(dC);
 }
 
-#else
+#elif defined(HPLAI_GEN_BLASPP_GEMM)
 
 template <typename T>
 static void HPLAI_gemmNN(
@@ -418,6 +504,42 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     }
 }
 
+#else
+
+template <>
+void blas::gemm<float, float, float>(
+    blas::Layout layout,
+    blas::Op transA,
+    blas::Op transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    blas::scalar_type<float, float, float> alpha,
+    float const *A,
+    int64_t lda,
+    float const *B,
+    int64_t ldb,
+    blas::scalar_type<float, float, float> beta,
+    float *C,
+    int64_t ldc)
+{
+    blas::gemm(
+        layout,
+        transA,
+        transB,
+        m,
+        n,
+        k,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb,
+        beta,
+        C,
+        ldc);
+}
+
 #endif
 
 template <>
@@ -582,39 +704,81 @@ void blas::trsm<double, double>(
         ldb);
 }
 
-#ifndef HPLAI_GEN_BLASPP_TRSM
+#if defined(HPLAI_DEVICE_BLASPP_TRSM)
 
 template <>
-void blas::trsm<float, float>(
+void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
-    blas::Side side,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<float, float> alpha,
-    float const *A,
-    int64_t lda,
-    float *B,
-    int64_t ldb)
+    blas::Side SIDE,
+    blas::Uplo UPLO,
+    blas::Op TRANS,
+    blas::Diag DIAG,
+    int64_t M,
+    int64_t N,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> ALPHA,
+    HPLAI_T_AFLOAT const *A,
+    int64_t LDA,
+    HPLAI_T_AFLOAT *B,
+    int64_t LDB)
 {
+    //HPLAI_pabort( __LINE__, "blas::trsm", "Use HPLAI_GEN_BLASPP_TRSM" );
+    if (layout != blas::Layout::ColMajor)
+    {
+        blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
+            blas::Layout::ColMajor,
+            (SIDE == blas::Side::Right ? blas::Side::Left : blas::Side::Right),
+            (UPLO == blas::Uplo::Lower ? blas::Uplo::Upper : blas::Uplo::Lower),
+            TRANS, DIAG, N, M, ALPHA, A, LDA, B, LDB);
+        return;
+    }
+    int64_t i, j;
+
+    if ((M == 0) || (N == 0))
+        return;
+
+    if (ALPHA == HPLAI_rzero)
+    {
+        for (j = 0; j < N; j++)
+        {
+            for (i = 0; i < M; i++)
+                *(B + i + j * LDB) = HPLAI_rzero;
+        }
+        return;
+    }
+
+    int64_t rA = SIDE == blas::Side::Left ? M : N;
+    int64_t cA = SIDE == blas::Side::Left ? M : N;
+    int64_t sA = cA * LDA;
+    int64_t sB = N * LDB;
+
+    HPLAI_T_AFLOAT *dA = blas::device_malloc<HPLAI_T_AFLOAT>(sA);
+    HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
+
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(M, N, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
+
     blas::trsm(
         layout,
-        side,
-        uplo,
-        trans,
-        diag,
-        m,
-        n,
-        alpha,
-        A,
-        lda,
-        B,
-        ldb);
+        SIDE,
+        UPLO,
+        TRANS,
+        DIAG,
+        M,
+        N,
+        ALPHA,
+        dA,
+        LDA,
+        dB,
+        LDB,
+        *HPLAI_BLASPP_QUEUE);
+
+    blas::device_getmatrix<HPLAI_T_AFLOAT>(M, N, dB, LDB, B, LDB, *HPLAI_BLASPP_QUEUE);
+    HPLAI_BLASPP_QUEUE->sync();
+    blas::device_free(dA);
+    blas::device_free(dB);
 }
 
-#else
+#elif defined(HPLAI_GEN_BLASPP_TRSM)
 
 template <typename T>
 static void HPLAI_trsmLLNN(
@@ -1254,6 +1418,38 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     }
 }
 
+#else
+
+template <>
+void blas::trsm<float, float>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    blas::scalar_type<float, float> alpha,
+    float const *A,
+    int64_t lda,
+    float *B,
+    int64_t ldb)
+{
+    blas::trsm(
+        layout,
+        side,
+        uplo,
+        trans,
+        diag,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb);
+}
+
 #endif
 
 template <>
@@ -1280,33 +1476,7 @@ void blas::trsv<double, double>(
         incx);
 }
 
-#ifndef HPLAI_GEN_BLASPP_TRSV
-
-template <>
-void blas::trsv<float, float>(
-    blas::Layout layout,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t n,
-    float const *A,
-    int64_t lda,
-    float *x,
-    int64_t incx)
-{
-    blas::trsv(
-        layout,
-        uplo,
-        trans,
-        diag,
-        n,
-        A,
-        lda,
-        x,
-        incx);
-}
-
-#else
+#ifdef HPLAI_GEN_BLASPP_TRSV
 
 template <typename T>
 static void HPLAI_trsvLNN(
@@ -1568,4 +1738,31 @@ void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         }
     }
 }
+
+#else
+
+template <>
+void blas::trsv<float, float>(
+    blas::Layout layout,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t n,
+    float const *A,
+    int64_t lda,
+    float *x,
+    int64_t incx)
+{
+    blas::trsv(
+        layout,
+        uplo,
+        trans,
+        diag,
+        n,
+        A,
+        lda,
+        x,
+        incx);
+}
+
 #endif

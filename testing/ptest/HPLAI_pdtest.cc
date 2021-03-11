@@ -378,12 +378,12 @@ const int NB;
  */
         if (mycol == HPL_indxg2p(N, NB, NB, 0, npcol))
         {
-            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mat.mp, nq, -HPL_rone,
+            blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, mat.mp, nq, -HPL_rone,
                        mat.A, mat.ld, mat.X, 1, HPL_rone, Bptr, 1);
         }
         else if (nq > 0)
         {
-            blas::gemv(blas::Layout::ColMajor, blas::Op::NoTrans, mat.mp, nq, -HPL_rone,
+            blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, mat.mp, nq, -HPL_rone,
                        mat.A, mat.ld, mat.X, 1, HPL_rzero, Bptr, 1);
         }
         else

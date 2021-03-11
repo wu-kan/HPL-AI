@@ -1,11 +1,11 @@
 #!/bin/bash
 ##############################################################
 #
-#    HPL-AI Mixed-Precision Benchmark  --   March 9, 2021
+#    HPL-AI Mixed-Precision Benchmark  --  March 12, 2021
 #
 ##############################################################
 #
-# Check out <https://wu-kan.cn/_posts/2021-03-09-HPL-AI/> for
+# Check out <https://wu-kan.cn/_posts/2021-03-12-HPL-AI/> for
 # the full document and the latest information.
 #
 ##############################################################
@@ -28,7 +28,7 @@ spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.2%gcc@7.5.0
 spack load openmpi@3.1.6%gcc@7.5.0
-spack load blaspp@2020.10.02%gcc@7.5.0+openmp~cuda \
+spack load blaspp@2020.10.02%gcc@7.5.0+openmp \
     ^openblas@0.3.5%gcc@7.5.0 threads=openmp
 
 # Then boostrap the configuration files by typing:
@@ -39,6 +39,10 @@ autoreconf -ivf
 # with some specific compile options:
 #
 # CPPFLAGS+=" -DHPLAI_T_AFLOAT=double"
+#
+# CPPFLAGS+=" -DHPLAI_DEVICE_BLASPP_GEMM"
+#
+# CPPFLAGS+=" -DHPLAI_DEVICE_BLASPP_TRSM"
 #
 # CPPFLAGS+=" -DHPLAI_GEN_BLASPP_GEMM"
 #
@@ -61,6 +65,16 @@ autoreconf -ivf
 # To configure the build and prepare for compilation run:
 
 ./configure
+
+# Note: to use device blas routines, specific blaspp is needed:
+#
+# spack install blaspp@2020.10.02%gcc@7.5.0+cuda
+#
+# also -lcudart, -lcublas, and -DBLASPP_WITH_CUBLAS:
+#
+# ./configure \
+#   LIBS=" -lcudart -lcublas " \
+#   CPPFLAGS=" -DBLASPP_WITH_CUBLAS -DHPLAI_DEVICE_BLASPP_GEMM -DHPLAI_DEVICE_BLASPP_TRSM "
 
 # Then compile:
 

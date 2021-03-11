@@ -120,26 +120,7 @@ void blas::gemm<double, double, double>(
     double *C,
     int64_t ldc);
 
-#ifndef HPLAI_GEN_BLASPP_GEMM
-
-template <>
-void blas::gemm<float, float, float>(
-    blas::Layout layout,
-    blas::Op transA,
-    blas::Op transB,
-    int64_t m,
-    int64_t n,
-    int64_t k,
-    blas::scalar_type<float, float, float> alpha,
-    float const *A,
-    int64_t lda,
-    float const *B,
-    int64_t ldb,
-    blas::scalar_type<float, float, float> beta,
-    float *C,
-    int64_t ldc);
-
-#else
+#ifdef HPLAI_GEN_BLASPP_GEMM
 
 template <>
 void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -156,6 +137,25 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     int64_t ldb,
     blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> beta,
     HPLAI_T_AFLOAT *C,
+    int64_t ldc);
+
+#else
+
+template <>
+void blas::gemm<float, float, float>(
+    blas::Layout layout,
+    blas::Op transA,
+    blas::Op transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    blas::scalar_type<float, float, float> alpha,
+    float const *A,
+    int64_t lda,
+    float const *B,
+    int64_t ldb,
+    blas::scalar_type<float, float, float> beta,
+    float *C,
     int64_t ldc);
 
 #endif
@@ -245,24 +245,7 @@ void blas::trsm<double, double>(
     double *B,
     int64_t ldb);
 
-#ifndef HPLAI_GEN_BLASPP_TRSM
-
-template <>
-void blas::trsm<float, float>(
-    blas::Layout layout,
-    blas::Side side,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<float, float> alpha,
-    float const *A,
-    int64_t lda,
-    float *B,
-    int64_t ldb);
-
-#else
+#ifdef HPLAI_GEN_BLASPP_TRSM
 
 template <>
 void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -279,6 +262,23 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *B,
     int64_t ldb);
 
+#else
+
+template <>
+void blas::trsm<float, float>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    blas::scalar_type<float, float> alpha,
+    float const *A,
+    int64_t lda,
+    float *B,
+    int64_t ldb);
+
 #endif
 
 template <>
@@ -293,21 +293,7 @@ void blas::trsv<double, double>(
     double *x,
     int64_t incx);
 
-#ifndef HPLAI_GEN_BLASPP_TRSV
-
-template <>
-void blas::trsv<float, float>(
-    blas::Layout layout,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t n,
-    float const *A,
-    int64_t lda,
-    float *x,
-    int64_t incx);
-
-#else
+#ifdef HPLAI_GEN_BLASPP_TRSV
 
 template <>
 void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -319,6 +305,20 @@ void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT const *A,
     int64_t lda,
     HPLAI_T_AFLOAT *x,
+    int64_t incx);
+
+#else
+
+template <>
+void blas::trsv<float, float>(
+    blas::Layout layout,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t n,
+    float const *A,
+    int64_t lda,
+    float *x,
     int64_t incx);
 
 #endif
