@@ -262,25 +262,23 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     int64_t cA = TRANSA == blas::Op::NoTrans ? K : M;
     int64_t sA = TRANSA == blas::Op::NoTrans ? K * LDA : M * LDA;
     HPLAI_T_AFLOAT *dA = blas::device_malloc<HPLAI_T_AFLOAT>(sA);
+    if (ALPHA != HPLAI_rzero)
+        blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
+
     int64_t rB = TRANSB == blas::Op::NoTrans ? K : N;
     int64_t cB = TRANSB == blas::Op::NoTrans ? N : K;
     int64_t sB = TRANSB == blas::Op::NoTrans ? N * LDB : K * LDB;
     HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
+    if (ALPHA != HPLAI_rzero)
+        blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
+
     blas::Op TRANSC = blas::Op::NoTrans;
     int64_t rC = TRANSC == blas::Op::NoTrans ? M : N;
     int64_t cC = TRANSC == blas::Op::NoTrans ? N : M;
     int64_t sC = TRANSC == blas::Op::NoTrans ? N * LDC : M * LDC;
     HPLAI_T_AFLOAT *dC = blas::device_malloc<HPLAI_T_AFLOAT>(sC);
-
-    //if (ALPHA != HPLAI_rzero) // always true
-    {
-        blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
-        blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
-    }
     if (BETA != HPLAI_rzero)
-    {
         blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, LDC, *HPLAI_BLASPP_QUEUE);
-    }
 
     blas::gemm(
         layout,
