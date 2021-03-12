@@ -248,7 +248,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
          (BETA == HPLAI_rone)))
         return;
 
-    if (ALPHA == HPLAI_rzero)
+    if (ALPHA == HPLAI_rzero && BETA == HPLAI_rzero)
     {
         for (j = 0; j < N; j++)
         {
@@ -470,7 +470,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
          (BETA == HPLAI_rone)))
         return;
 
-    if (ALPHA == HPLAI_rzero)
+    if (ALPHA == HPLAI_rzero && BETA == HPLAI_rzero)
     {
         for (j = 0; j < N; j++)
         {
