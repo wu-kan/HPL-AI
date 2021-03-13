@@ -1,11 +1,11 @@
 #!/bin/bash
 ##############################################################
 #
-#    HPL-AI Mixed-Precision Benchmark  --  March 12, 2021
+# HPL-AI Mixed-Precision Benchmark v2.3a  --  March 14, 2021
 #
 ##############################################################
 #
-# Check out <https://wu-kan.cn/_posts/2021-03-12-HPL-AI/> for
+# Check out <https://wu-kan.cn/_posts/2021-03-14-HPL-AI/> for
 # the full document and the latest information.
 #
 ##############################################################
@@ -28,7 +28,7 @@ spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.2%gcc@7.5.0
 spack load openmpi@3.1.6%gcc@7.5.0
-spack load blaspp@2020.10.02%gcc@7.5.0+openmp \
+spack load blaspp@2020.10.02%gcc@7.5.0+openmp~cuda \
     ^openblas@0.3.5%gcc@7.5.0 threads=openmp
 
 # Then boostrap the configuration files by typing:
@@ -38,43 +38,46 @@ autoreconf -ivf
 # The user is given the opportunity to compile the software
 # with some specific compile options:
 #
-# CPPFLAGS+=" -DHPLAI_T_AFLOAT=double"
+# CPPFLAGS=" -DHPLAI_T_AFLOAT=double "
 #
-# CPPFLAGS+=" -DHPLAI_DEVICE_BLASPP_GEMM"
+# CPPFLAGS=" -DHPLAI_DEVICE_BLASPP_GEMM "
 #
-# CPPFLAGS+=" -DHPLAI_DEVICE_BLASPP_TRSM"
+# CPPFLAGS=" -DHPLAI_DEVICE_BLASPP_TRSM "
 #
-# CPPFLAGS+=" -DHPLAI_GEN_BLASPP_GEMM"
+# CPPFLAGS=" -DHPLAI_GEN_BLASPP_GEMM "
 #
-# CPPFLAGS+=" -DHPLAI_GEN_BLASPP_TRSM"
+# CPPFLAGS=" -DHPLAI_GEN_BLASPP_TRSM "
 #
-# CPPFLAGS+=" -DHPLAI_GEN_BLASPP_TRSV"
+# CPPFLAGS=" -DHPLAI_GEN_BLASPP_TRSV "
 #
-# CPPFLAGS+=" -DHPLAI_REGEN"
+# CPPFLAGS=" -DHPLAI_PMAT_REGEN "
 #
-# CPPFLAGS+=" -DHPL_COPY_L"
+# CPPFLAGS=" -DHPL_COPY_L "
 #
-# CPPFLAGS+=" -DHPL_CALL_CBLAS"
+# CPPFLAGS=" -DHPL_CALL_CBLAS "
 #
-# CPPFLAGS+=" -DHPL_CALL_VSIPL"
+# CPPFLAGS=" -DHPL_CALL_VSIPL "
 # (deperated)
 #
-# CPPFLAGS+=" -DHPL_DETAILED_TIMING"
+# CPPFLAGS=" -DHPL_DETAILED_TIMING "
 # (deperated)
 #
 # To configure the build and prepare for compilation run:
 
 ./configure
 
-# Note: to use device blas routines, specific blaspp is needed:
+# Note: to use device blaspp routines, you may need to enable
+# CUDA support of blaspp:
 #
-# spack install blaspp@2020.10.02%gcc@7.5.0+cuda
+# spack load blaspp@2020.10.02+cuda
 #
-# also -lcudart, -lcublas, and -DBLASPP_WITH_CUBLAS:
+# and then:
 #
-# ./configure \
-#   LIBS=" -lcudart -lcublas " \
-#   CPPFLAGS=" -DBLASPP_WITH_CUBLAS -DHPLAI_DEVICE_BLASPP_GEMM -DHPLAI_DEVICE_BLASPP_TRSM "
+#./configure \
+#    LIBS=" -lcudart -lcublas " \
+#    CPPFLAGS=" -DBLASPP_WITH_CUBLAS \
+#        -DHPLAI_DEVICE_BLASPP_GEMM \
+#        -DHPLAI_DEVICE_BLASPP_TRSM "
 
 # Then compile:
 
@@ -90,37 +93,39 @@ make -j
 if true; then
     cp testing/ptest/HPL.dat HPL.dat
 else
-    echo 'HPLinpack benchmark input file
+    cat >HPL.dat <<EOF
+HPLinpack benchmark input file
 Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
-1            # of problems sizes (N)
-25000 30000 40000 50000 60000 39007 39000 20960 364160 Ns
-1             # of NBs
-384 768 1024 512 384 640 768 896 960 1024 1152 1280 640 NBs
-0            PMAP process mapping (0=Row-,1=Column-major)
+1            # of problems sizes (N) 
+16384 143360 Ns  
+1            # of NBs 
+384 192 256  NBs 
+1            PMAP process mapping (0=Row-,1=Column-major)
 1            # of process grids (P x Q)
-2 1 4        Ps
-2 4 1        Qs
+1 2          Ps  
+1 2          Qs  
 16.0         threshold
 1            # of panel fact
-0 1 2        PFACTs (0=left, 1=Crout, 2=Right)
+2 1 0        PFACTs (0=left, 1=Crout, 2=Right)
 1            # of recursive stopping criterium
-2 8          NBMINs (>= 1)
+2            NBMINs (>= 1)
 1            # of panels in recursion
 2            NDIVs
 1            # of recursive panel fact.
-0 1 2        RFACTs (0=left, 1=Crout, 2=Right)
+2 1 0        RFACTs (0=left, 1=Crout, 2=Right)
 1            # of broadcast
-0 2          BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+0            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
 1            # of lookahead depth
-1 0          DEPTHs (>=0)
-1            SWAP (0=bin-exch,1=long,2=mix)
-192          swapping threshold
+0            DEPTHs (>=0)
+0            SWAP (0=bin-exch,1=long,2=mix)
+1            swapping threshold
 1            L1 in (0=transposed,1=no-transposed) form
 1            U  in (0=transposed,1=no-transposed) form
-1            Equilibration (0=no,1=yes)
-8            memory alignment in double (> 0)' >HPL.dat
+0            Equilibration (0=no,1=yes)
+8            memory alignment in double (> 0)
+EOF
 fi
 
 # Finally run and compare with the original hpl-2.3:

@@ -931,22 +931,10 @@ int *ALIGN;
                           "========================================",
                           "========================================");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "HPL-AI Mixed-Precision Benchmark  --  ",
-                          " March 12, 2021");
+                          "HPL-AI Mixed-Precision Benchmark v2.3a  -- ",
+                          " March 14, 2021");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "Written by A. Petitet and R. Clint Whaley,  ",
-                          "Innovative Computing Laboratory, UTK");
-            HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "Modified by Piotr Luszczek, ",
-                          "Innovative Computing Laboratory, UTK");
-            HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "Modified by Julien Langou, ",
-                          "University of Colorado Denver");
-            HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "Modified by Junkang Huang, ",
-                          "Sun Yat-sen University");
-            HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "Modified by Kan Wu, ",
+                          "Written by Junkang Huang and Kan Wu,  ",
                           "Sun Yat-sen University");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
                           "========================================",

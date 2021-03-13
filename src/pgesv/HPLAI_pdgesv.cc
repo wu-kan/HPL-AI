@@ -236,8 +236,8 @@ static void HPL_pLdtrsv(
             if (n1pprev > 0)
             {
                 blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, n1pprev, kbprev,
-                           -HPL_rone, Aprev + Anp, lda, Xdprev, 1, HPL_rone,
-                           XC + Anp, 1);
+                                                   -HPL_rone, Aprev + Anp, lda, Xdprev, 1, HPL_rone,
+                                                   XC + Anp, 1);
                 if (GridIsNotPx1)
                     (void)HPL_send(XC + Anp, n1pprev, Alcol, Rmsgid, Rcomm);
             }
@@ -276,7 +276,7 @@ static void HPL_pLdtrsv(
  */
         if ((mycol == colprev) && ((tmp1 = Anp + n1pprev) < np))
             blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, np - tmp1, kbprev, -HPL_rone,
-                       Aprev + tmp1, lda, Xdprev, 1, HPL_rone, XC + tmp1, 1);
+                                               Aprev + tmp1, lda, Xdprev, 1, HPL_rone, XC + tmp1, 1);
 
         /*
  *  Save info of current step and update info for the next step
@@ -780,7 +780,7 @@ static int HPL_pgmres(
             /* there is initial guess stored in x here from last iteration */
             /* calculate v = Ax */
             blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
-                       A->A, A->ld, x, 1, 0, v, 1);
+                                               A->A, A->ld, x, 1, 0, v, 1);
             HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
             /* preconditioning A */
@@ -840,7 +840,7 @@ static int HPL_pgmres(
             /* calculate v = AP0P1..Pkv */
             redB2X(GRID, A, v, xt);
             blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, HPL_rone,
-                       A->A, A->ld, xt, 1, 0, v, 1);
+                                               A->A, A->ld, xt, 1, 0, v, 1);
             HPL_all_reduce(v, mp, HPL_DOUBLE, HPL_sum, GRID->row_comm);
 
             /* preconditioning A */
@@ -1158,13 +1158,13 @@ static void HPL_pir(
         {
             memcpy(res, Bptr, mp * sizeof(double));
             blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, -HPL_rone,
-                       A->A, A->ld, A->X, 1, HPL_rone, res, 1);
+                                               A->A, A->ld, A->X, 1, HPL_rone, res, 1);
         }
         else if (nq > 0)
         {
             memset(res, 0, mp * sizeof(double));
             blas::gemv<double, double, double>(blas::Layout::ColMajor, blas::Op::NoTrans, mp, nq, -HPL_rone,
-                       A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
+                                               A->A, A->ld, A->X, 1, HPL_rzero, res, 1);
         }
         else
         {
@@ -1274,7 +1274,7 @@ HPLAI_T_pmat *A;
 
         HPLAI_pagesv(GRID, ALGO, &FA);
 
-#ifdef HPLAI_REGEN
+#ifdef HPLAI_PMAT_REGEN
         HPLAI_pmat_cpy(A, &FA);
         if (vptr_FA)
             free(vptr_FA);
