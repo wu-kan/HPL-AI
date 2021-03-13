@@ -33,13 +33,14 @@ extern "C"
 {
 #endif
 
-#include <math.h>
-#include <float.h>
+#include "hpl.h"
 
 #ifdef __cplusplus
 }
 #endif
 
+#include <math.h>
+#include <float.h>
 //use blaspp https://bitbucket.org/icl/blaspp/src/master/
 #include <blas.hh>
 

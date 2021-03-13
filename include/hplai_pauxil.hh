@@ -23,22 +23,11 @@
  */
 #ifndef HPLAI_PAUXIL_HH
 #define HPLAI_PAUXIL_HH
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hpl_pauxil.h"
-
-#ifdef __cplusplus
-}
-#endif
-
 #include "hplai_misc.hh"
 #include "hplai_auxil.hh"
 

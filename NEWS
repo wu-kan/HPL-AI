@@ -14,7 +14,7 @@
  Kan Wu reimplemented HPL-AI with some bug fixes and some minor
  optimizations. The C souce code of hpl-2.3 remained the same,
  while took advantages of modern C++ features such as templates,
- overloading, and backends for GPU via blaspp:
+ overloading, and GPU backends via blaspp:
  -- [A] include/hplai*.hh
  -- [A] src/*/HPLAI_*.cc
  -- [A] testing/*/HPLAI_*.cc

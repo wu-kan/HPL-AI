@@ -27,7 +27,7 @@ spack load gcc@7.5.0
 spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.2%gcc@7.5.0
-spack load openmpi@3.1.6%gcc@7.5.0
+spack load openmpi@3.1.6%gcc@7.5.0~cxx~cxx_exceptions
 spack load blaspp@2020.10.02%gcc@7.5.0+openmp~cuda \
     ^openblas@0.3.5%gcc@7.5.0 threads=openmp
 
@@ -69,7 +69,7 @@ autoreconf -ivf
 # Note: to use device blaspp routines, you may need to enable
 # CUDA support of blaspp:
 #
-# spack load blaspp@2020.10.02+cuda
+# spack load blaspp@2020.10.02%gcc@7.5.0+openmp+cuda
 #
 # and then:
 #
@@ -149,8 +149,8 @@ git clean -d -f -q -x
 #
 ##############################################################
 #
-# The souce code of HPL-AI is licensed under `LICENSE`.
+# The souce code of HPL-AI is licensed under `COPYING`.
 #
-# The souce code of hpl-2.3 is licensed under `COPYING`.
+# The souce code of hpl-2.3 is licensed under `COPYRIGHT`.
 #
 ##############################################################

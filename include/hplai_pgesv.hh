@@ -28,19 +28,9 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include "hpl_pgesv.h"
-
-#ifdef __cplusplus
-}
-#endif
+#include "hplai_misc.hh"
 
 #include "hplai_blas.hh"
-#include "hplai_misc.hh"
 #include "hplai_auxil.hh"
 
 #include "hplai_grid.hh"

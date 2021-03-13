@@ -24,21 +24,11 @@
 #ifndef HPLAI_PFACT_HH
 #define HPLAI_PFACT_HH
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 /*
  * ---------------------------------------------------------------------
  * Include files
  * ---------------------------------------------------------------------
  */
-#include "hpl_pfact.h"
-
-#ifdef __cplusplus
-}
-#endif
-
 #include "hplai_misc.hh"
 
 #include "hplai_panel.hh"

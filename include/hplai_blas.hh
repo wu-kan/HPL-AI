@@ -24,17 +24,6 @@
 #ifndef HPLAI_BLAS_HH
 #define HPLAI_BLAS_HH
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include "hpl_blas.h"
-
-#ifdef __cplusplus
-}
-#endif
-
 #include "hplai_misc.hh"
 
 #ifdef __cplusplus

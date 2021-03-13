@@ -29,16 +29,7 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include "hpl_pmatgen.h"
-
-#ifdef __cplusplus
-}
-#endif
+#include "hplai_misc.hh"
 /*
  * ---------------------------------------------------------------------
  * Function prototypes

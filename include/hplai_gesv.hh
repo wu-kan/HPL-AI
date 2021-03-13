@@ -28,17 +28,6 @@
  * Include files
  * ---------------------------------------------------------------------
  */
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-#include "hpl_gesv.h"
-
-#ifdef __cplusplus
-}
-#endif
-
 #include "hplai_misc.hh"
 #include "hplai_auxil.hh"
 
