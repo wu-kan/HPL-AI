@@ -73,11 +73,11 @@ autoreconf -ivf
 #
 # and then:
 #
-#./configure \
-#    LIBS=" -lcudart -lcublas " \
-#    CPPFLAGS=" -DBLASPP_WITH_CUBLAS \
-#        -DHPLAI_DEVICE_BLASPP_GEMM \
-#        -DHPLAI_DEVICE_BLASPP_TRSM "
+# ./configure \
+#     LIBS=" -lcudart -lcublas " \
+#     CPPFLAGS=" -DBLASPP_WITH_CUBLAS \
+#         -DHPLAI_DEVICE_BLASPP_GEMM \
+#         -DHPLAI_DEVICE_BLASPP_TRSM "
 
 # Then compile:
 
