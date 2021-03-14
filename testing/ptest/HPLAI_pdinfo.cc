@@ -38,7 +38,7 @@ extern "C"
         int *N,
         int *NBS,
         int *NB,
-        HPLAI_T_ORDER *PMAPPIN,
+        HPL_T_ORDER *PMAPPIN,
         int *NPQS,
         int *P,
         int *Q,
@@ -67,7 +67,7 @@ int *NS;
 int *N;
 int *NBS;
 int *NB;
-HPLAI_T_ORDER *PMAPPIN;
+HPL_T_ORDER *PMAPPIN;
 int *NPQS;
 int *P;
 int *Q;
@@ -130,7 +130,7 @@ int *ALIGN;
  *         des of the  MPI machine configuration.  PMAPPIN  defaults  to
  *         row-major ordering.
  *
- * PMAPPIN (global output)               HPLAI_T_ORDER *
+ * PMAPPIN (global output)               HPL_T_ORDER *
  *         On entry, NB is an array of dimension HPLAI_MAX_PARAM. On exit,
  *         the first NBS entries of this array contain the values of the
  *         various distribution blocking factors, to run the code with.
@@ -239,7 +239,7 @@ int *ALIGN;
  *
  * ALIGN   (global output)               int *
  *         On exit,  ALIGN  specifies the alignment  of  the dynamically
- *         allocated buffers in double precision words. ALIGN is greater
+ *         allocated buffers in HPLAI_T_AFLOAT precision words. ALIGN is greater
  *         than zero.
  *
  * ---------------------------------------------------------------------
@@ -369,7 +369,7 @@ int *ALIGN;
  */
             (void)fgets(line, HPLAI_LINE_MAX - 2, infp);
             (void)sscanf(line, "%s", num);
-            *PMAPPIN = (atoi(num) == 1 ? HPLAI_COLUMN_MAJOR : HPLAI_ROW_MAJOR);
+            *PMAPPIN = (atoi(num) == 1 ? HPL_COLUMN_MAJOR : HPL_ROW_MAJOR);
 
             (void)fgets(line, HPLAI_LINE_MAX - 2, infp);
             (void)sscanf(line, "%s", num);
@@ -710,7 +710,7 @@ int *ALIGN;
         {
             iwork[0] = *NS;
             iwork[1] = *NBS;
-            iwork[2] = (*PMAPPIN == HPLAI_ROW_MAJOR ? 0 : 1);
+            iwork[2] = (*PMAPPIN == HPL_ROW_MAJOR ? 0 : 1);
             iwork[3] = *NPQS;
             iwork[4] = *NPFS;
             iwork[5] = *NBMS;
@@ -729,7 +729,7 @@ int *ALIGN;
         {
             *NS = iwork[0];
             *NBS = iwork[1];
-            *PMAPPIN = (iwork[2] == 0 ? HPLAI_ROW_MAJOR : HPLAI_COLUMN_MAJOR);
+            *PMAPPIN = (iwork[2] == 0 ? HPL_ROW_MAJOR : HPL_COLUMN_MAJOR);
             *NPQS = iwork[3];
             *NPFS = iwork[4];
             *NBMS = iwork[5];
@@ -998,9 +998,9 @@ int *ALIGN;
  * Process mapping
  */
             HPLAI_fprintf(TEST->outfp, "\nPMAP   :");
-            if (*PMAPPIN == HPLAI_ROW_MAJOR)
+            if (*PMAPPIN == HPL_ROW_MAJOR)
                 HPLAI_fprintf(TEST->outfp, " Row-major process mapping");
-            else if (*PMAPPIN == HPLAI_COLUMN_MAJOR)
+            else if (*PMAPPIN == HPL_COLUMN_MAJOR)
                 HPLAI_fprintf(TEST->outfp, " Column-major process mapping");
             /*
  * Process grid
@@ -1261,7 +1261,7 @@ int *ALIGN;
             /*
  * Alignment
  */
-            HPLAI_fprintf(TEST->outfp, "\nALIGN  : %d double precision words",
+            HPLAI_fprintf(TEST->outfp, "\nALIGN  : %d HPLAI_T_AFLOAT precision words",
                           *ALIGN);
 
             HPLAI_fprintf(TEST->outfp, "\n\n");

@@ -33,7 +33,7 @@
 #include "hplai_blas.hh"
 #include "hplai_auxil.hh"
 
-#include "hplai_grid.hh"
+
 #include "hplai_comm.hh"
 #include "hplai_panel.hh"
 #include "hplai_pfact.hh"
@@ -192,34 +192,34 @@ extern "C"
 
     void HPLAI_pdgesv
         STDC_ARGS((
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_palg *,
             HPL_T_pmat *));
 
     void HPLAI_pagesv0
         STDC_ARGS((
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_palg *,
             HPLAI_T_pmat *));
     void HPLAI_pagesvK1
         STDC_ARGS((
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_palg *,
             HPLAI_T_pmat *));
     void HPLAI_pagesvK2
         STDC_ARGS((
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_palg *,
             HPLAI_T_pmat *));
     void HPLAI_pagesv
         STDC_ARGS((
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_palg *,
             HPLAI_T_pmat *));
 
     void HPLAI_patrsv
         STDC_ARGS((
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_pmat *));
 
 #ifdef __cplusplus

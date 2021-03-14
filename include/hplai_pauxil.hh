@@ -31,7 +31,7 @@
 #include "hplai_misc.hh"
 #include "hplai_auxil.hh"
 
-#include "hplai_grid.hh"
+
 
 #ifdef __cplusplus
 extern "C"
@@ -178,30 +178,6 @@ extern "C"
 
 #define HPLAI_pabort HPL_pabort
 #define HPLAI_pwarn HPL_pwarn
-    void HPLAI_palaprnt
-        STDC_ARGS((
-            const HPLAI_T_grid *,
-            const int,
-            const int,
-            const int,
-            HPLAI_T_AFLOAT *,
-            const int,
-            const int,
-            const int,
-            const char *));
-    HPLAI_T_AFLOAT HPLAI_palamch
-        STDC_ARGS((
-            MPI_Comm,
-            const HPLAI_T_MACH));
-    HPLAI_T_AFLOAT HPLAI_palange
-        STDC_ARGS((
-            const HPLAI_T_grid *,
-            const HPLAI_T_NORM,
-            const int,
-            const int,
-            const int,
-            const HPLAI_T_AFLOAT *,
-            const int));
 
 #ifdef __cplusplus
 }

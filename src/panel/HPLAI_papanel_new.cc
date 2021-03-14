@@ -33,7 +33,7 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_papanel_new(
-        HPLAI_T_grid *GRID,
+        HPL_T_grid *GRID,
         HPLAI_T_palg *ALGO,
         const int M,
         const int N,
@@ -45,7 +45,7 @@ extern "C"
         HPLAI_T_panel **PANEL)
 #else
 void HPLAI_papanel_new(GRID, ALGO, M, N, JB, A, IA, JA, TAG, PANEL)
-    HPLAI_T_grid *GRID;
+    HPL_T_grid *GRID;
 HPL_T_palg *ALGO;
 const int M;
 const int N;
@@ -69,7 +69,7 @@ HPLAI_T_panel **PANEL;
  */
         if (!(p = (HPLAI_T_panel *)malloc(sizeof(HPLAI_T_panel))))
         {
-            HPL_pabort(__LINE__, "HPLAI_papanel_new", "Memory allocation failed");
+            HPLAI_pabort(__LINE__, "HPLAI_papanel_new", "Memory allocation failed");
         }
 
         HPLAI_papanel_init(GRID, ALGO, M, N, JB, A, IA, JA, TAG, p);

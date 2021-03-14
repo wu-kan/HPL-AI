@@ -48,38 +48,35 @@ void HPLAI_blas_init(RANK, SIZE)
     {
         MPI_Type_contiguous(sizeof(HPLAI_T_AFLOAT), MPI_BYTE, &HPLAI_MPI_AFLOAT);
         MPI_Type_commit(&HPLAI_MPI_AFLOAT);
-#ifdef HPL_CALL_VSIPL
-        vsip_init((void *)0);
-#endif
 
 #if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-        {
-            MPI_Comm local_comm;
-            MPI_Comm_split_type(
-                MPI_COMM_WORLD,
-                MPI_COMM_TYPE_SHARED,
-                RANK,
-                MPI_INFO_NULL,
-                &local_comm);
-            int local_rank = -1;
-            MPI_Comm_rank(local_comm, &local_rank);
-            MPI_Comm_free(&local_comm);
-            HPLAI_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
-        }
+        // https://github.com/NVIDIA/multi-gpu-programming-models/blob/master/mpi/jacobi.cpp
+        MPI_Comm local_comm;
+        MPI_Comm_split_type(
+            MPI_COMM_WORLD,
+            MPI_COMM_TYPE_SHARED,
+            RANK,
+            MPI_INFO_NULL,
+            &local_comm);
+        int local_rank = -1;
+        MPI_Comm_rank(local_comm, &local_rank);
+        MPI_Comm_free(&local_comm);
+        HPLAI_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
+#endif
+
+#ifdef HPL_CALL_VSIPL
+        vsip_init((void *)0);
 #endif
     }
 
     void HPLAI_blas_finalize()
     {
-
-#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-
-        delete HPLAI_BLASPP_QUEUE;
-
-#endif
-
 #ifdef HPL_CALL_VSIPL
         vsip_finalize((void *)0);
+#endif
+
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+        delete HPLAI_BLASPP_QUEUE;
 #endif
         MPI_Type_free(&HPLAI_MPI_AFLOAT);
     }

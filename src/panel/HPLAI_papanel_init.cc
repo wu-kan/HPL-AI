@@ -39,7 +39,7 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_papanel_init(
-        HPLAI_T_grid *GRID,
+        HPL_T_grid *GRID,
         HPLAI_T_palg *ALGO,
         const int M,
         const int N,
@@ -51,7 +51,7 @@ extern "C"
         HPLAI_T_panel *PANEL)
 #else
 void HPLAI_papanel_init(GRID, ALGO, M, N, JB, A, IA, JA, TAG, PANEL)
-    HPLAI_T_grid *GRID;
+    HPL_T_grid *GRID;
 HPL_T_palg *ALGO;
 const int M;
 const int N;
@@ -73,7 +73,7 @@ HPLAI_T_panel *PANEL;
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPLAI_T_grid *
+ * GRID    (local input)                 HPL_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -201,7 +201,7 @@ HPLAI_T_panel *PANEL;
             if (!(PANEL->WORK = (HPLAI_T_AFLOAT *)malloc((size_t)(lwork) *
                                                          sizeof(HPLAI_T_AFLOAT))))
             {
-                HPL_pabort(__LINE__, "HPLAI_papanel_init",
+                HPLAI_pabort(__LINE__, "HPLAI_papanel_init",
                            "Memory allocation failed");
             }
             /*
@@ -235,7 +235,7 @@ HPLAI_T_panel *PANEL;
             if (!(PANEL->WORK = (HPLAI_T_AFLOAT *)malloc((size_t)(lwork) *
                                                          sizeof(HPLAI_T_AFLOAT))))
             {
-                HPL_pabort(__LINE__, "HPLAI_papanel_init",
+                HPLAI_pabort(__LINE__, "HPLAI_papanel_init",
                            "Memory allocation failed");
             }
 /*
@@ -340,7 +340,7 @@ HPLAI_T_panel *PANEL;
 
         if (PANEL->IWORK == NULL)
         {
-            HPL_pabort(__LINE__, "HPLAI_papanel_init", "Memory allocation failed");
+            HPLAI_pabort(__LINE__, "HPLAI_papanel_init", "Memory allocation failed");
         }
         /* Initialize the first entry of the workarray */
         *(PANEL->IWORK) = -1;

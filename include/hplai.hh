@@ -32,7 +32,6 @@
 #include "hplai_misc.hh"
 #include "hplai_blas.hh"
 #include "hplai_auxil.hh"
-#include "hplai_gesv.hh"
 
 #include "hplai_pauxil.hh"
 #include "hplai_panel.hh"

@@ -79,7 +79,7 @@ extern "C"
             int *,
             int *,
             int *,
-            HPLAI_T_ORDER *,
+            HPL_T_ORDER *,
             int *,
             int *,
             int *,
@@ -104,7 +104,7 @@ extern "C"
     void HPLAI_pdtest
         STDC_ARGS((
             HPLAI_T_test *,
-            HPLAI_T_grid *,
+            HPL_T_grid *,
             HPLAI_T_palg *,
             const int,
             const int));

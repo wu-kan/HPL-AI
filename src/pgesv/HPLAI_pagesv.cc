@@ -33,12 +33,12 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_pagesv(
-        HPLAI_T_grid *GRID,
+        HPL_T_grid *GRID,
         HPLAI_T_palg *ALGO,
         HPLAI_T_pmat *A)
 #else
 void HPLAI_pagesv(GRID, ALGO, A)
-    HPLAI_T_grid *GRID;
+    HPL_T_grid *GRID;
 HPLAI_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif

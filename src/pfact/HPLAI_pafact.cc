@@ -105,7 +105,7 @@ void HPLAI_pafact(PANEL)
                               sizeof(HPLAI_T_AFLOAT));
         if (vptr == NULL)
         {
-            HPL_pabort(__LINE__, "HPLAI_pafact", "Memory allocation failed");
+            HPLAI_pabort(__LINE__, "HPLAI_pafact", "Memory allocation failed");
         }
         /*
  * Factor the panel - Update the panel pointers

@@ -72,9 +72,6 @@ extern "C"
             const int,
             HPLAI_T_AFLOAT *,
             const int));
-    HPLAI_T_AFLOAT HPLAI_alamch
-        STDC_ARGS((
-            const HPL_T_MACH));
 
 #ifdef __cplusplus
 }

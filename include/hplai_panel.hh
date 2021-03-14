@@ -29,7 +29,7 @@
  * ---------------------------------------------------------------------
  */
 #include "hplai_misc.hh"
-#include "hplai_grid.hh"
+
 #include "hplai_pfact.hh"
 
 #ifdef __cplusplus

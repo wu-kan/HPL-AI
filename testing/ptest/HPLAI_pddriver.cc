@@ -72,7 +72,7 @@ char **ARGV;
 
         HPLAI_T_TOP topval[HPLAI_MAX_PARAM];
 
-        HPLAI_T_grid grid;
+        HPL_T_grid grid;
         HPLAI_T_palg algo;
         HPLAI_T_test test;
         int L1notran, Unotran, align, equil, in, inb,
@@ -80,7 +80,7 @@ char **ARGV;
             mycol, myrow, ns, nbs, nbms, ndhs, ndvs,
             npcol, npfs, npqs, nprow, nrfs, ntps,
             rank, size, tswap;
-        HPLAI_T_ORDER pmapping;
+        HPL_T_ORDER pmapping;
         HPLAI_T_FACT rpfa;
         HPLAI_T_SWAP fswap;
         /* ..
@@ -135,9 +135,9 @@ char **ARGV;
  */
         for (ipq = 0; ipq < npqs; ipq++)
         {
-            (void)HPLAI_grid_init(MPI_COMM_WORLD, pmapping, pval[ipq], qval[ipq],
+            (void)HPL_grid_init(MPI_COMM_WORLD, pmapping, pval[ipq], qval[ipq],
                                   &grid);
-            (void)HPLAI_grid_info(&grid, &nprow, &npcol, &myrow, &mycol);
+            (void)HPL_grid_info(&grid, &nprow, &npcol, &myrow, &mycol);
 
             if ((myrow < 0) || (myrow >= nprow) ||
                 (mycol < 0) || (mycol >= npcol))
@@ -228,7 +228,7 @@ char **ARGV;
                     }
                 }
             }
-            (void)HPLAI_grid_exit(&grid);
+            (void)HPL_grid_exit(&grid);
         label_end_of_npqs:;
         }
         /*

@@ -3,18 +3,14 @@ AM_CPPFLAGS = -I$(top_srcdir)/../include
 lib_LIBRARIES = libhpl.a libhplai.a
 
 libhplai_a_SOURCES = \
-auxil/HPLAI_alatcpy.cc auxil/HPLAI_alacpy.cc auxil/HPLAI_alamch.cc \
+auxil/HPLAI_alatcpy.cc auxil/HPLAI_alacpy.cc \
 blas/HPLAI_blas.cc \
 comm/HPLAI_sdrv.cc comm/HPLAI_send.cc comm/HPLAI_recv.cc comm/HPLAI_bcast.cc \
 comm/HPLAI_binit.cc comm/HPLAI_bwait.cc comm/HPLAI_blong.cc comm/HPLAI_1ring.cc \
 comm/HPLAI_1rinM.cc comm/HPLAI_2rinM.cc comm/HPLAI_2ring.cc comm/HPLAI_blonM.cc comm/HPLAI_packL.cc \
 comm/HPLAI_copyL.cc \
-grid/HPLAI_reduce_AFLOAT.cc grid/HPLAI_sum_AFLOAT.cc \
-grid/HPLAI_all_reduce_AFLOAT.cc grid/HPLAI_broadcast_AFLOAT.cc grid/HPLAI_max_AFLOAT.cc \
-grid/HPLAI_min_AFLOAT.cc \
 panel/HPLAI_papanel_disp.cc panel/HPLAI_papanel_free.cc panel/HPLAI_papanel_init.cc panel/HPLAI_papanel_new.cc \
 pauxil/HPL_indxl2g.c pauxil/HPL_indxg2lp.c \
-pauxil/HPLAI_palamch.cc pauxil/HPLAI_palange.cc \
 pauxil/HPLAI_alaswp00N.cc pauxil/HPLAI_alaswp01N.cc pauxil/HPLAI_alaswp01T.cc \
 pauxil/HPLAI_alaswp02N.cc pauxil/HPLAI_alaswp03N.cc pauxil/HPLAI_alaswp03T.cc \
 pauxil/HPLAI_alaswp04N.cc pauxil/HPLAI_alaswp04T.cc pauxil/HPLAI_alaswp05N.cc \

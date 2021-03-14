@@ -101,7 +101,7 @@ HPLAI_T_AFLOAT *WORK;
  */
         HPLAI_T_AFLOAT gmax, tmp1;
         HPLAI_T_AFLOAT *A0, *Wmx, *Wwork;
-        HPLAI_T_grid *grid;
+        HPL_T_grid *grid;
         MPI_Comm comm;
         unsigned int hdim, ip2, ip2_, ipow, k, mask;
         int Np2, cnt_, cnt0, i, icurrow, lda, mydist,

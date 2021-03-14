@@ -33,12 +33,12 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_pagesv0(
-        HPLAI_T_grid *GRID,
+        HPL_T_grid *GRID,
         HPLAI_T_palg *ALGO,
         HPLAI_T_pmat *A)
 #else
 void HPLAI_pagesv0(GRID, ALGO, A)
-    HPLAI_T_grid *GRID;
+    HPL_T_grid *GRID;
 HPLAI_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif
@@ -56,7 +56,7 @@ HPLAI_T_pmat *A;
  * Arguments
  * =========
  *
- * GRID    (local input)                 HPLAI_T_grid *
+ * GRID    (local input)                 HPL_T_grid *
  *         On entry,  GRID  points  to the data structure containing the
  *         process grid information.
  *
@@ -98,7 +98,7 @@ HPLAI_T_pmat *A;
         panel = (HPLAI_T_panel **)malloc(sizeof(HPLAI_T_panel *));
         if (panel == NULL)
         {
-            HPL_pabort(__LINE__, "HPLAI_pagesv0", "Memory allocation failed");
+            HPLAI_pabort(__LINE__, "HPLAI_pagesv0", "Memory allocation failed");
         }
 
         HPLAI_papanel_new(GRID, ALGO, N, N + 1, Mmin(N, nb), A, 0, 0, tag,

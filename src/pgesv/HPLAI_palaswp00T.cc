@@ -87,7 +87,7 @@ const int NN;
  * .. Local Variables ..
  */
     MPI_Comm comm;
-    HPLAI_T_grid *grid;
+    HPL_T_grid *grid;
     HPLAI_T_AFLOAT *A, *U, *W;
     void *vptr = NULL;
     int *ipID, *lindxA, *lindxAU, *llen,

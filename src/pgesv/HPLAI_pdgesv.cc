@@ -160,7 +160,7 @@ static void HPL_pLdtrsv(
         W = (double *)malloc((size_t)(Mmin(n1, np)) * sizeof(double));
         if (W == NULL)
         {
-            HPL_pabort(__LINE__, "HPL_pLdtrsv", "Memory allocation failed");
+            HPLAI_pabort(__LINE__, "HPL_pLdtrsv", "Memory allocation failed");
         }
         Wfr = 1;
     }
@@ -1052,7 +1052,7 @@ static int HPL_pgmres(
  */
 
 static void HPL_pir(
-    HPLAI_T_grid *GRID,
+    HPL_T_grid *GRID,
     HPLAI_T_palg *ALGO,
     HPL_T_pmat *A,
     HPL_T_pmat *factors,
@@ -1257,12 +1257,12 @@ extern "C"
 
 #ifdef STDC_HEADERS
     void HPLAI_pdgesv(
-        HPLAI_T_grid *GRID,
+        HPL_T_grid *GRID,
         HPLAI_T_palg *ALGO,
         HPL_T_pmat *A)
 #else
 void HPLAI_pdgesv(GRID, ALGO, A)
-    HPLAI_T_grid *GRID;
+    HPL_T_grid *GRID;
 HPL_T_palg *ALGO;
 HPLAI_T_pmat *A;
 #endif
