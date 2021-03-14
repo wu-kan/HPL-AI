@@ -231,7 +231,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *C,
     int64_t LDC)
 {
-    //HPLAI_pabort( __LINE__, "blas::gemm", "Use HPLAI_GEN_BLASPP_GEMM" );
+    //HPLAI_pabort( __LINE__, "blas::gemm", "Use HPLAI_DEVICE_BLASPP_GEMM" );
     if (layout != blas::Layout::ColMajor)
     {
         blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -720,7 +720,7 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *B,
     int64_t LDB)
 {
-    //HPLAI_pabort( __LINE__, "blas::trsm", "Use HPLAI_GEN_BLASPP_TRSM" );
+    //HPLAI_pabort( __LINE__, "blas::trsm", "Use HPLAI_DEVICE_BLASPP_TRSM" );
     if (layout != blas::Layout::ColMajor)
     {
         blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
