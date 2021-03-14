@@ -109,7 +109,7 @@ void blas::gemm<double, double, double>(
     double *C,
     int64_t ldc);
 
-#ifdef HPLAI_GEN_BLASPP_GEMM
+#if defined(HPLAI_GEN_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_GEMM)
 
 template <>
 void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -234,7 +234,7 @@ void blas::trsm<double, double>(
     double *B,
     int64_t ldb);
 
-#ifdef HPLAI_GEN_BLASPP_TRSM
+#if defined(HPLAI_GEN_BLASPP_TRSM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
 
 template <>
 void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
