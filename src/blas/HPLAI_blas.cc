@@ -294,11 +294,14 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         dC,
         LDC,
         *HPLAI_BLASPP_QUEUE);
+
     blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, LDC, C, LDC, *HPLAI_BLASPP_QUEUE);
+
     HPLAI_BLASPP_QUEUE->sync();
-    blas::device_free(dA);
-    blas::device_free(dB);
+
     blas::device_free(dC);
+    blas::device_free(dB);
+    blas::device_free(dA);
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
@@ -742,16 +745,16 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
     }
 
+    int64_t sB = N * LDB;
+    HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(M, N, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
+    
     int64_t rA = SIDE == blas::Side::Left ? M : N;
     int64_t cA = SIDE == blas::Side::Left ? M : N;
     int64_t sA = cA * LDA;
-    int64_t sB = N * LDB;
-
     HPLAI_T_AFLOAT *dA = blas::device_malloc<HPLAI_T_AFLOAT>(sA);
-    HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
-
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
-    blas::device_setmatrix<HPLAI_T_AFLOAT>(M, N, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
+
 
     blas::trsm(
         layout,
@@ -769,7 +772,9 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         *HPLAI_BLASPP_QUEUE);
 
     blas::device_getmatrix<HPLAI_T_AFLOAT>(M, N, dB, LDB, B, LDB, *HPLAI_BLASPP_QUEUE);
+
     HPLAI_BLASPP_QUEUE->sync();
+
     blas::device_free(dA);
     blas::device_free(dB);
 }
