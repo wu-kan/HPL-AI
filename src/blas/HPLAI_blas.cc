@@ -64,9 +64,7 @@ void HPLAI_blas_init(RANK, SIZE)
             int local_rank = -1;
             MPI_Comm_rank(local_comm, &local_rank);
             MPI_Comm_free(&local_comm);
-            HPLAI_BLASPP_QUEUE = new blas::Queue(
-                local_rank,
-                blas::DEV_QUEUE_DEFAULT_BATCH_LIMIT);
+            HPLAI_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
         }
 #endif
     }
