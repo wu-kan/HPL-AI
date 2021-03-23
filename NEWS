@@ -1,5 +1,5 @@
 ==============================================================
-  HPL-AI Mixed-Precision Benchmark v2.3a  --  March 14, 2021
+  HPL-AI Mixed-Precision Benchmark v2.3b  --  March 14, 2021
 ==============================================================
 
  History
@@ -21,3 +21,14 @@
  -- [M] configure.ac
  -- [M] src/Makefile.am
  -- [M] testing/Makefile.am
+
+ - 03/24/2021 HPL-AI Public release of Version 2.3b
+
+ Kan Wu optimized the device blaspp routines through the
+ strategy of buffering memory: the program will check whether
+ the buffer size is sufficient at runtime, free and reallocate
+ the buffer when necessary. Therefore, it is recommended to
+ run the benchmark twice with the same parameters to obtain
+ higher computation rate:
+ -- [M] src/blas/HPLAI_blas.cc
+ -- [M] testing/ptest/HPLAI_pdinfo.cc

@@ -931,7 +931,7 @@ int *ALIGN;
                           "========================================",
                           "========================================");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
-                          "HPL-AI Mixed-Precision Benchmark v2.3a  -- ",
+                          "HPL-AI Mixed-Precision Benchmark v2.3b  -- ",
                           " March 14, 2021");
             HPLAI_fprintf(TEST->outfp, "%s%s\n",
                           "Written by Junkang Huang and Kan Wu,  ",

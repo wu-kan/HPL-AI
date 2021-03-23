@@ -25,64 +25,23 @@
 
 #if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
 
-static blas::Queue *HPLAI_BLASPP_QUEUE = NULL;
+static blas::Queue *HPLAI_DEVICE_BLASPP_QUEUE = NULL;
+static int64_t HPLAI_DEVICE_BLASPP_BUFFER_SIZE = 0;
+static HPLAI_T_AFLOAT *HPLAI_DEVICE_BLASPP_BUFFER = NULL;
 
-#endif
-
-#ifdef __cplusplus
-extern "C"
+static void HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(int64_t NEW_SIZE)
 {
-#endif
-
-    MPI_Datatype HPLAI_MPI_AFLOAT;
-
-#ifdef STDC_HEADERS
-    void HPLAI_blas_init(
-        const int RANK,
-        const int SIZE)
-#else
-void HPLAI_blas_init(RANK, SIZE)
-    const int RANK,
-    SIZE;
-#endif
-    {
-        MPI_Type_contiguous(sizeof(HPLAI_T_AFLOAT), MPI_BYTE, &HPLAI_MPI_AFLOAT);
-        MPI_Type_commit(&HPLAI_MPI_AFLOAT);
-
-#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-        // https://github.com/NVIDIA/multi-gpu-programming-models/blob/master/mpi/jacobi.cpp
-        MPI_Comm local_comm;
-        MPI_Comm_split_type(
-            MPI_COMM_WORLD,
-            MPI_COMM_TYPE_SHARED,
-            RANK,
-            MPI_INFO_NULL,
-            &local_comm);
-        int local_rank = -1;
-        MPI_Comm_rank(local_comm, &local_rank);
-        MPI_Comm_free(&local_comm);
-        HPLAI_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
-#endif
-
-#ifdef HPL_CALL_VSIPL
-        vsip_init((void *)0);
-#endif
-    }
-
-    void HPLAI_blas_finalize()
-    {
-#ifdef HPL_CALL_VSIPL
-        vsip_finalize((void *)0);
-#endif
-
-#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-        delete HPLAI_BLASPP_QUEUE;
-#endif
-        MPI_Type_free(&HPLAI_MPI_AFLOAT);
-    }
-
-#ifdef __cplusplus
+    if (HPLAI_DEVICE_BLASPP_BUFFER != NULL)
+        blas::device_free(HPLAI_DEVICE_BLASPP_BUFFER);
+    HPLAI_DEVICE_BLASPP_BUFFER = blas::device_malloc<HPLAI_T_AFLOAT>(
+        HPLAI_DEVICE_BLASPP_BUFFER_SIZE = NEW_SIZE);
+    if (HPLAI_DEVICE_BLASPP_BUFFER == NULL)
+        HPLAI_pabort(
+            __LINE__,
+            "HPLAI_DEVICE_BLASPP_BUFFER_RESIZE",
+            "Memory allocation failed for HPLAI_DEVICE_BLASPP_BUFFER");
 }
+
 #endif
 
 static enum HPL_ORDER blaspp2Hpl(blas::Layout layout)
@@ -102,8 +61,9 @@ static enum HPL_UPLO blaspp2Hpl(blas::Uplo uplo)
 
 static enum HPL_TRANS blaspp2Hpl(blas::Op trans)
 {
-    return trans == blas::Op::NoTrans ? HplNoTrans : trans == blas::Op::Trans ? HplTrans
-                                                                              : HplConjTrans;
+    return trans == blas::Op::NoTrans ? HplNoTrans
+           : trans == blas::Op::Trans ? HplTrans
+                                      : HplConjTrans;
 }
 
 static enum HPL_DIAG blaspp2Hpl(blas::Diag diag)
@@ -253,27 +213,30 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
     }
 
-    int64_t rA = TRANSA == blas::Op::NoTrans ? M : K;
-    int64_t cA = TRANSA == blas::Op::NoTrans ? K : M;
-    int64_t sA = TRANSA == blas::Op::NoTrans ? K * LDA : M * LDA;
-    HPLAI_T_AFLOAT *dA = blas::device_malloc<HPLAI_T_AFLOAT>(sA);
-    if (ALPHA != HPLAI_rzero)
-        blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
-
-    int64_t rB = TRANSB == blas::Op::NoTrans ? K : N;
-    int64_t cB = TRANSB == blas::Op::NoTrans ? N : K;
-    int64_t sB = TRANSB == blas::Op::NoTrans ? N * LDB : K * LDB;
-    HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
-    if (ALPHA != HPLAI_rzero)
-        blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
-
     blas::Op TRANSC = blas::Op::NoTrans;
     int64_t rC = TRANSC == blas::Op::NoTrans ? M : N;
     int64_t cC = TRANSC == blas::Op::NoTrans ? N : M;
-    int64_t sC = TRANSC == blas::Op::NoTrans ? N * LDC : M * LDC;
-    HPLAI_T_AFLOAT *dC = blas::device_malloc<HPLAI_T_AFLOAT>(sC);
-    if (BETA != HPLAI_rzero)
-        blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, LDC, *HPLAI_BLASPP_QUEUE);
+    int64_t dLDC = rC + 127 >> 7 << 7;
+    int64_t dsC = cC * dLDC;
+    int64_t rB = TRANSB == blas::Op::NoTrans ? K : N;
+    int64_t cB = TRANSB == blas::Op::NoTrans ? N : K;
+    int64_t dLDB = rB + 127 >> 7 << 7;
+    int64_t dsB = cB * dLDB;
+    int64_t rA = TRANSA == blas::Op::NoTrans ? M : K;
+    int64_t cA = TRANSA == blas::Op::NoTrans ? K : M;
+    int64_t dLDA = rA + 127 >> 7 << 7;
+    int64_t dsA = cA * dLDA;
+
+    if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE < dsC + dsB + dsA)
+        HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(dsC + dsB + dsA);
+
+    HPLAI_T_AFLOAT *dC = HPLAI_DEVICE_BLASPP_BUFFER;
+    HPLAI_T_AFLOAT *dB = dC + dsC;
+    HPLAI_T_AFLOAT *dA = dB + dsB;
+
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, dLDC, *HPLAI_DEVICE_BLASPP_QUEUE);
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, dLDB, *HPLAI_DEVICE_BLASPP_QUEUE);
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
 
     blas::gemm(
         layout,
@@ -290,15 +253,11 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         BETA,
         dC,
         LDC,
-        *HPLAI_BLASPP_QUEUE);
+        *HPLAI_DEVICE_BLASPP_QUEUE);
 
-    blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, LDC, C, LDC, *HPLAI_BLASPP_QUEUE);
+    blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, dLDC, C, LDC, *HPLAI_DEVICE_BLASPP_QUEUE);
 
-    HPLAI_BLASPP_QUEUE->sync();
-
-    blas::device_free(dC);
-    blas::device_free(dB);
-    blas::device_free(dA);
+    HPLAI_DEVICE_BLASPP_QUEUE->sync();
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
@@ -742,16 +701,24 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
     }
 
-    int64_t sB = N * LDB;
-    HPLAI_T_AFLOAT *dB = blas::device_malloc<HPLAI_T_AFLOAT>(sB);
-    blas::device_setmatrix<HPLAI_T_AFLOAT>(M, N, B, LDB, dB, LDB, *HPLAI_BLASPP_QUEUE);
-    
+    int64_t rB = M;
+    int64_t cB = N;
+    int64_t dLDB = rB + 127 >> 7 << 7;
+    int64_t dsB = cB * dLDB;
+
     int64_t rA = SIDE == blas::Side::Left ? M : N;
     int64_t cA = SIDE == blas::Side::Left ? M : N;
-    int64_t sA = cA * LDA;
-    HPLAI_T_AFLOAT *dA = blas::device_malloc<HPLAI_T_AFLOAT>(sA);
-    blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, LDA, *HPLAI_BLASPP_QUEUE);
+    int64_t dLDA = rA + 127 >> 7 << 7;
+    int64_t dsA = cA * dLDA;
 
+    if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE < dsB + dsA)
+        HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(dsB + dsA);
+
+    HPLAI_T_AFLOAT *dB = HPLAI_DEVICE_BLASPP_BUFFER;
+    HPLAI_T_AFLOAT *dA = dB + dsB;
+
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, dLDB, *HPLAI_DEVICE_BLASPP_QUEUE);
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
 
     blas::trsm(
         layout,
@@ -763,17 +730,14 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         N,
         ALPHA,
         dA,
-        LDA,
+        dLDA,
         dB,
-        LDB,
-        *HPLAI_BLASPP_QUEUE);
+        dLDB,
+        *HPLAI_DEVICE_BLASPP_QUEUE);
 
-    blas::device_getmatrix<HPLAI_T_AFLOAT>(M, N, dB, LDB, B, LDB, *HPLAI_BLASPP_QUEUE);
+    blas::device_getmatrix<HPLAI_T_AFLOAT>(rB, cB, dB, dLDB, B, LDB, *HPLAI_DEVICE_BLASPP_QUEUE);
 
-    HPLAI_BLASPP_QUEUE->sync();
-
-    blas::device_free(dA);
-    blas::device_free(dB);
+    HPLAI_DEVICE_BLASPP_QUEUE->sync();
 }
 
 #elif defined(HPLAI_GEN_BLASPP_TRSM)
@@ -1763,4 +1727,62 @@ void blas::trsv<float, float>(
         incx);
 }
 
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    MPI_Datatype HPLAI_MPI_AFLOAT;
+
+#ifdef STDC_HEADERS
+    void HPLAI_blas_init(
+        const int RANK,
+        const int SIZE)
+#else
+void HPLAI_blas_init(RANK, SIZE)
+    const int RANK,
+    SIZE;
+#endif
+    {
+        MPI_Type_contiguous(sizeof(HPLAI_T_AFLOAT), MPI_BYTE, &HPLAI_MPI_AFLOAT);
+        MPI_Type_commit(&HPLAI_MPI_AFLOAT);
+
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+        // https://github.com/NVIDIA/multi-gpu-programming-models/blob/master/mpi/jacobi.cpp
+        MPI_Comm local_comm;
+        MPI_Comm_split_type(
+            MPI_COMM_WORLD,
+            MPI_COMM_TYPE_SHARED,
+            RANK,
+            MPI_INFO_NULL,
+            &local_comm);
+        int local_rank = -1;
+        MPI_Comm_rank(local_comm, &local_rank);
+        MPI_Comm_free(&local_comm);
+        HPLAI_DEVICE_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
+#endif
+
+#ifdef HPL_CALL_VSIPL
+        vsip_init((void *)0);
+#endif
+    }
+
+    void HPLAI_blas_finalize()
+    {
+#ifdef HPL_CALL_VSIPL
+        vsip_finalize((void *)0);
+#endif
+
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+        if (HPLAI_DEVICE_BLASPP_BUFFER != NULL)
+            blas::device_free(HPLAI_DEVICE_BLASPP_BUFFER);
+        delete HPLAI_DEVICE_BLASPP_QUEUE;
+#endif
+        MPI_Type_free(&HPLAI_MPI_AFLOAT);
+    }
+
+#ifdef __cplusplus
+}
 #endif
