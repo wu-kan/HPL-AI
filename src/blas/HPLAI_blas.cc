@@ -32,14 +32,21 @@ static HPLAI_T_AFLOAT *HPLAI_DEVICE_BLASPP_BUFFER = NULL;
 static void HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(int64_t NEW_SIZE)
 {
     if (HPLAI_DEVICE_BLASPP_BUFFER != NULL)
+    {
         blas::device_free(HPLAI_DEVICE_BLASPP_BUFFER);
-    HPLAI_DEVICE_BLASPP_BUFFER = blas::device_malloc<HPLAI_T_AFLOAT>(
-        HPLAI_DEVICE_BLASPP_BUFFER_SIZE = NEW_SIZE);
-    if (HPLAI_DEVICE_BLASPP_BUFFER == NULL)
-        HPLAI_pabort(
-            __LINE__,
-            "HPLAI_DEVICE_BLASPP_BUFFER_RESIZE",
-            "Memory allocation failed for HPLAI_DEVICE_BLASPP_BUFFER");
+        HPLAI_DEVICE_BLASPP_BUFFER = NULL;
+    }
+    HPLAI_DEVICE_BLASPP_BUFFER_SIZE = NEW_SIZE;
+    if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE > 0)
+    {
+        HPLAI_DEVICE_BLASPP_BUFFER = blas::device_malloc<HPLAI_T_AFLOAT>(
+            HPLAI_DEVICE_BLASPP_BUFFER_SIZE);
+        if (HPLAI_DEVICE_BLASPP_BUFFER == NULL)
+            HPLAI_pabort(
+                __LINE__,
+                "HPLAI_DEVICE_BLASPP_BUFFER_RESIZE",
+                "Memory allocation failed for HPLAI_DEVICE_BLASPP_BUFFER");
+    }
 }
 
 #endif
@@ -1776,8 +1783,7 @@ void HPLAI_blas_init(RANK, SIZE)
 #endif
 
 #if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-        if (HPLAI_DEVICE_BLASPP_BUFFER != NULL)
-            blas::device_free(HPLAI_DEVICE_BLASPP_BUFFER);
+        HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(0);
         delete HPLAI_DEVICE_BLASPP_QUEUE;
 #endif
         MPI_Type_free(&HPLAI_MPI_AFLOAT);
