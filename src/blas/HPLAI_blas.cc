@@ -220,18 +220,25 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
     }
 
+    int64_t padding_size = 128 / sizeof(HPLAI_T_AFLOAT);
+    if (padding_size < 1)
+        padding_size = 1;
+    
     blas::Op TRANSC = blas::Op::NoTrans;
+    
     int64_t rC = TRANSC == blas::Op::NoTrans ? M : N;
     int64_t cC = TRANSC == blas::Op::NoTrans ? N : M;
-    int64_t dLDC = rC + 127 >> 7 << 7;
+    int64_t dLDC = (rC + padding_size - 1) / padding_size * padding_size;
     int64_t dsC = cC * dLDC;
+    
     int64_t rB = TRANSB == blas::Op::NoTrans ? K : N;
     int64_t cB = TRANSB == blas::Op::NoTrans ? N : K;
-    int64_t dLDB = rB + 127 >> 7 << 7;
+    int64_t dLDB = (rB + padding_size - 1) / padding_size * padding_size;
     int64_t dsB = cB * dLDB;
+    
     int64_t rA = TRANSA == blas::Op::NoTrans ? M : K;
     int64_t cA = TRANSA == blas::Op::NoTrans ? K : M;
-    int64_t dLDA = rA + 127 >> 7 << 7;
+    int64_t dLDA = (rA + padding_size - 1) / padding_size * padding_size;
     int64_t dsA = cA * dLDA;
 
     if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE < dsC + dsB + dsA)
@@ -254,12 +261,12 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         K,
         ALPHA,
         dA,
-        LDA,
+        dLDA,
         dB,
-        LDB,
+        dLDB,
         BETA,
         dC,
-        LDC,
+        dLDC,
         *HPLAI_DEVICE_BLASPP_QUEUE);
 
     blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, dLDC, C, LDC, *HPLAI_DEVICE_BLASPP_QUEUE);
@@ -708,14 +715,18 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
     }
 
+    int64_t padding_size = 128 / sizeof(HPLAI_T_AFLOAT);
+    if (padding_size < 1)
+        padding_size = 1;
+
     int64_t rB = M;
     int64_t cB = N;
-    int64_t dLDB = rB + 127 >> 7 << 7;
+    int64_t dLDB = (rB + padding_size - 1) / padding_size * padding_size;
     int64_t dsB = cB * dLDB;
 
     int64_t rA = SIDE == blas::Side::Left ? M : N;
     int64_t cA = SIDE == blas::Side::Left ? M : N;
-    int64_t dLDA = rA + 127 >> 7 << 7;
+    int64_t dLDA = (rA + padding_size - 1) / padding_size * padding_size;
     int64_t dsA = cA * dLDA;
 
     if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE < dsB + dsA)
