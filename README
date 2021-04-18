@@ -147,7 +147,7 @@ mpirun -n 4 -x OMP_NUM_THREADS=2 testing/xhpl_ai
 
 # If you download HPL-AI via git, you can clean the builds by:
 
-git clean -d -f -q -x
+git clean -d -f -q
 
 ##############################################################
 #

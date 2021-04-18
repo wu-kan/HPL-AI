@@ -27,24 +27,6 @@
 #include "hplai_misc.hh"
 
 #ifdef __cplusplus
-extern "C"
-{
-#endif
-
-    extern MPI_Datatype HPLAI_MPI_AFLOAT;
-
-    void HPLAI_blas_init
-        STDC_ARGS((
-            const int,
-            const int));
-
-    void HPLAI_blas_finalize();
-
-#ifdef __cplusplus
-}
-#endif
-
-#ifdef __cplusplus
 
 template <>
 int64_t blas::iamax<double>(
@@ -53,9 +35,9 @@ int64_t blas::iamax<double>(
     int64_t incx);
 
 template <>
-int64_t blas::iamax<float>(
+int64_t blas::iamax<HPLAI_T_AFLOAT>(
     int64_t n,
-    float const *x,
+    HPLAI_T_AFLOAT const *x,
     int64_t incx);
 
 template <>
@@ -68,12 +50,12 @@ void blas::axpy<double, double>(
     int64_t incy);
 
 template <>
-void blas::axpy<float, float>(
+void blas::axpy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     int64_t n,
-    blas::scalar_type<float, float> alpha,
-    float const *x,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> alpha,
+    HPLAI_T_AFLOAT const *x,
     int64_t incx,
-    float *y,
+    HPLAI_T_AFLOAT *y,
     int64_t incy);
 
 template <>
@@ -85,11 +67,11 @@ void blas::copy<double, double>(
     int64_t incy);
 
 template <>
-void blas::copy<float, float>(
+void blas::copy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     int64_t n,
-    float const *x,
+    HPLAI_T_AFLOAT const *x,
     int64_t incx,
-    float *y,
+    HPLAI_T_AFLOAT *y,
     int64_t incy);
 
 template <>
@@ -109,8 +91,6 @@ void blas::gemm<double, double, double>(
     double *C,
     int64_t ldc);
 
-#if defined(HPLAI_GEN_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_GEMM)
-
 template <>
 void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
@@ -128,27 +108,6 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *C,
     int64_t ldc);
 
-#else
-
-template <>
-void blas::gemm<float, float, float>(
-    blas::Layout layout,
-    blas::Op transA,
-    blas::Op transB,
-    int64_t m,
-    int64_t n,
-    int64_t k,
-    blas::scalar_type<float, float, float> alpha,
-    float const *A,
-    int64_t lda,
-    float const *B,
-    int64_t ldb,
-    blas::scalar_type<float, float, float> beta,
-    float *C,
-    int64_t ldc);
-
-#endif
-
 template <>
 void blas::gemv<double, double, double>(
     blas::Layout layout,
@@ -165,18 +124,18 @@ void blas::gemv<double, double, double>(
     int64_t incy);
 
 template <>
-void blas::gemv<float, float, float>(
+void blas::gemv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
     blas::Op trans,
     int64_t m,
     int64_t n,
-    blas::scalar_type<float, float, float> alpha,
-    float const *A,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> alpha,
+    HPLAI_T_AFLOAT const *A,
     int64_t lda,
-    float const *x,
+    HPLAI_T_AFLOAT const *x,
     int64_t incx,
-    blas::scalar_type<float, float, float> beta,
-    float *y,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> beta,
+    HPLAI_T_AFLOAT *y,
     int64_t incy);
 
 template <>
@@ -193,16 +152,16 @@ void blas::ger<double, double, double>(
     int64_t lda);
 
 template <>
-void blas::ger<float, float, float>(
+void blas::ger<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
     int64_t m,
     int64_t n,
-    blas::scalar_type<float, float, float> alpha,
-    float const *x,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> alpha,
+    HPLAI_T_AFLOAT const *x,
     int64_t incx,
-    float const *y,
+    HPLAI_T_AFLOAT const *y,
     int64_t incy,
-    float *A,
+    HPLAI_T_AFLOAT *A,
     int64_t lda);
 
 template <>
@@ -213,10 +172,10 @@ void blas::scal<double>(
     int64_t incx);
 
 template <>
-void blas::scal<float>(
+void blas::scal<HPLAI_T_AFLOAT>(
     int64_t n,
-    float alpha,
-    float *x,
+    HPLAI_T_AFLOAT alpha,
+    HPLAI_T_AFLOAT *x,
     int64_t incx);
 
 template <>
@@ -234,8 +193,6 @@ void blas::trsm<double, double>(
     double *B,
     int64_t ldb);
 
-#if defined(HPLAI_GEN_BLASPP_TRSM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-
 template <>
 void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
@@ -251,25 +208,6 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *B,
     int64_t ldb);
 
-#else
-
-template <>
-void blas::trsm<float, float>(
-    blas::Layout layout,
-    blas::Side side,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<float, float> alpha,
-    float const *A,
-    int64_t lda,
-    float *B,
-    int64_t ldb);
-
-#endif
-
 template <>
 void blas::trsv<double, double>(
     blas::Layout layout,
@@ -281,8 +219,6 @@ void blas::trsv<double, double>(
     int64_t lda,
     double *x,
     int64_t incx);
-
-#ifdef HPLAI_GEN_BLASPP_TRSV
 
 template <>
 void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -296,23 +232,26 @@ void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *x,
     int64_t incx);
 
-#else
-
-template <>
-void blas::trsv<float, float>(
-    blas::Layout layout,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t n,
-    float const *A,
-    int64_t lda,
-    float *x,
-    int64_t incx);
-
 #endif
 
+#ifdef __cplusplus
+extern "C"
+{
 #endif
+
+    extern MPI_Datatype HPLAI_MPI_AHPLAI_T_AFLOAT;
+
+    void HPLAI_blas_init
+        STDC_ARGS((
+            const int,
+            const int));
+
+    void HPLAI_blas_finalize();
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 /*
  * End of hplai_blas.hh

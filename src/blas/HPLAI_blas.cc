@@ -23,33 +23,7 @@
  */
 #include "hplai.hh"
 
-#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
-
-static blas::Queue *HPLAI_DEVICE_BLASPP_QUEUE = NULL;
-static int64_t HPLAI_DEVICE_BLASPP_BUFFER_SIZE = 0;
-static HPLAI_T_AFLOAT *HPLAI_DEVICE_BLASPP_BUFFER = NULL;
-
-static void HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(int64_t NEW_SIZE)
-{
-    if (HPLAI_DEVICE_BLASPP_BUFFER != NULL)
-    {
-        blas::device_free(HPLAI_DEVICE_BLASPP_BUFFER);
-        HPLAI_DEVICE_BLASPP_BUFFER = NULL;
-    }
-    HPLAI_DEVICE_BLASPP_BUFFER_SIZE = NEW_SIZE;
-    if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE > 0)
-    {
-        HPLAI_DEVICE_BLASPP_BUFFER = blas::device_malloc<HPLAI_T_AFLOAT>(
-            HPLAI_DEVICE_BLASPP_BUFFER_SIZE);
-        if (HPLAI_DEVICE_BLASPP_BUFFER == NULL)
-            HPLAI_pabort(
-                __LINE__,
-                "HPLAI_DEVICE_BLASPP_BUFFER_RESIZE",
-                "Memory allocation failed for HPLAI_DEVICE_BLASPP_BUFFER");
-    }
-}
-
-#endif
+#if !defined(HPLAI_NO_HPL_BLASPP)
 
 static enum HPL_ORDER blaspp2Hpl(blas::Layout layout)
 {
@@ -84,19 +58,6 @@ int64_t blas::iamax<double>(
     double const *x,
     int64_t incx)
 {
-#ifdef HPLAI_NO_HPL_BLASPP
-    return blas::iamax(n, x, incx);
-#else
-    return HPL_idamax(n, x, incx);
-#endif
-}
-
-template <>
-int64_t blas::iamax<float>(
-    int64_t n,
-    float const *x,
-    int64_t incx)
-{
     return blas::iamax(n, x, incx);
 }
 
@@ -109,23 +70,7 @@ void blas::axpy<double, double>(
     double *y,
     int64_t incy)
 {
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::axpy(n, alpha, x, incx, y, incy);
-#else
     HPL_daxpy(n, alpha, x, incx, y, incy);
-#endif
-}
-
-template <>
-void blas::axpy<float, float>(
-    int64_t n,
-    blas::scalar_type<float, float> alpha,
-    float const *x,
-    int64_t incx,
-    float *y,
-    int64_t incy)
-{
-    blas::axpy(n, alpha, x, incx, y, incy);
 }
 
 template <>
@@ -136,22 +81,7 @@ void blas::copy<double, double>(
     double *y,
     int64_t incy)
 {
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::copy(n, x, incx, y, incy);
-#else
     HPL_dcopy(n, x, incx, y, incy);
-#endif
-}
-
-template <>
-void blas::copy<float, float>(
-    int64_t n,
-    float const *x,
-    int64_t incx,
-    float *y,
-    int64_t incy)
-{
-    blas::copy(n, x, incx, y, incy);
 }
 
 template <>
@@ -171,23 +101,6 @@ void blas::gemm<double, double, double>(
     double *C,
     int64_t ldc)
 {
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::gemm(
-        layout,
-        transA,
-        transB,
-        m,
-        n,
-        k,
-        alpha,
-        A,
-        lda,
-        B,
-        ldb,
-        beta,
-        C,
-        ldc);
-#else
     HPL_dgemm(
         blaspp2Hpl(layout),
         blaspp2Hpl(transA),
@@ -203,7 +116,188 @@ void blas::gemm<double, double, double>(
         beta,
         C,
         ldc);
+}
+
+template <>
+void blas::gemv<double, double, double>(
+    blas::Layout layout,
+    blas::Op trans,
+    int64_t m,
+    int64_t n,
+    blas::scalar_type<double, double, double> alpha,
+    double const *A,
+    int64_t lda,
+    double const *x,
+    int64_t incx,
+    blas::scalar_type<double, double, double> beta,
+    double *y,
+    int64_t incy)
+{
+    HPL_dgemv(
+        blaspp2Hpl(layout),
+        blaspp2Hpl(trans),
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        x,
+        incx,
+        beta,
+        y,
+        incy);
+}
+
+template <>
+void blas::ger<double, double, double>(
+    blas::Layout layout,
+    int64_t m,
+    int64_t n,
+    blas::scalar_type<double, double, double> alpha,
+    double const *x,
+    int64_t incx,
+    double const *y,
+    int64_t incy,
+    double *A,
+    int64_t lda)
+{
+    HPL_dger(
+        blaspp2Hpl(layout),
+        m,
+        n,
+        alpha,
+        x,
+        incx,
+        const_cast<double *>(y),
+        incy,
+        A,
+        lda);
+}
+
+template <>
+void blas::scal<double>(
+    int64_t n,
+    double alpha,
+    double *x,
+    int64_t incx)
+{
+    HPL_dscal(n, alpha, x, incx);
+}
+
+template <>
+void blas::trsm<double, double>(
+    blas::Layout layout,
+    blas::Side side,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t m,
+    int64_t n,
+    blas::scalar_type<double, double> alpha,
+    double const *A,
+    int64_t lda,
+    double *B,
+    int64_t ldb)
+{
+    HPL_dtrsm(
+        blaspp2Hpl(layout),
+        blaspp2Hpl(side),
+        blaspp2Hpl(uplo),
+        blaspp2Hpl(trans),
+        blaspp2Hpl(diag),
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb);
+}
+
+template <>
+void blas::trsv<double, double>(
+    blas::Layout layout,
+    blas::Uplo uplo,
+    blas::Op trans,
+    blas::Diag diag,
+    int64_t n,
+    double const *A,
+    int64_t lda,
+    double *x,
+    int64_t incx)
+{
+    HPL_dtrsv(
+        blaspp2Hpl(layout),
+        blaspp2Hpl(uplo),
+        blaspp2Hpl(trans),
+        blaspp2Hpl(diag),
+        n,
+        A,
+        lda,
+        x,
+        incx);
+}
+
 #endif
+
+#if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
+
+static blas::Queue *HPLAI_DEVICE_BLASPP_QUEUE = NULL;
+static int64_t HPLAI_DEVICE_BLASPP_BUFFER_SIZE = 0;
+static HPLAI_T_AFLOAT *HPLAI_DEVICE_BLASPP_BUFFER = NULL;
+
+static void HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(int64_t NEW_SIZE)
+{
+    if (HPLAI_DEVICE_BLASPP_BUFFER != NULL)
+    {
+        blas::device_free(HPLAI_DEVICE_BLASPP_BUFFER);
+        HPLAI_DEVICE_BLASPP_BUFFER = NULL;
+    }
+    HPLAI_DEVICE_BLASPP_BUFFER_SIZE = NEW_SIZE;
+    if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE > 0)
+    {
+        HPLAI_DEVICE_BLASPP_BUFFER = blas::device_malloc<HPLAI_T_AFLOAT>(
+            HPLAI_DEVICE_BLASPP_BUFFER_SIZE);
+        if (HPLAI_DEVICE_BLASPP_BUFFER == NULL)
+            HPLAI_pabort(
+                __LINE__,
+                "HPLAI_DEVICE_BLASPP_BUFFER_RESIZE",
+                "Memory allocation failed for HPLAI_DEVICE_BLASPP_BUFFER");
+    }
+}
+
+#endif
+
+template <>
+int64_t blas::iamax<float>(
+    int64_t n,
+    float const *x,
+    int64_t incx)
+{
+    return blas::iamax(n, x, incx);
+}
+
+template <>
+void blas::axpy<float, float>(
+    int64_t n,
+    blas::scalar_type<float, float> alpha,
+    float const *x,
+    int64_t incx,
+    float *y,
+    int64_t incy)
+{
+    blas::axpy(n, alpha, x, incx, y, incy);
+}
+
+template <>
+void blas::copy<float, float>(
+    int64_t n,
+    float const *x,
+    int64_t incx,
+    float *y,
+    int64_t incy)
+{
+    blas::copy(n, x, incx, y, incy);
 }
 
 #if defined(HPLAI_DEVICE_BLASPP_GEMM)
@@ -583,52 +677,6 @@ void blas::gemm<float, float, float>(
 #endif
 
 template <>
-void blas::gemv<double, double, double>(
-    blas::Layout layout,
-    blas::Op trans,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<double, double, double> alpha,
-    double const *A,
-    int64_t lda,
-    double const *x,
-    int64_t incx,
-    blas::scalar_type<double, double, double> beta,
-    double *y,
-    int64_t incy)
-{
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::gemv(
-        layout,
-        trans,
-        m,
-        n,
-        alpha,
-        A,
-        lda,
-        x,
-        incx,
-        beta,
-        y,
-        incy);
-#else
-    HPL_dgemv(
-        blaspp2Hpl(layout),
-        blaspp2Hpl(trans),
-        m,
-        n,
-        alpha,
-        A,
-        lda,
-        x,
-        incx,
-        beta,
-        y,
-        incy);
-#endif
-}
-
-template <>
 void blas::gemv<float, float, float>(
     blas::Layout layout,
     blas::Op trans,
@@ -659,46 +707,6 @@ void blas::gemv<float, float, float>(
 }
 
 template <>
-void blas::ger<double, double, double>(
-    blas::Layout layout,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<double, double, double> alpha,
-    double const *x,
-    int64_t incx,
-    double const *y,
-    int64_t incy,
-    double *A,
-    int64_t lda)
-{
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::ger(
-        layout,
-        m,
-        n,
-        alpha,
-        x,
-        incx,
-        y,
-        incy,
-        A,
-        lda);
-#else
-    HPL_dger(
-        blaspp2Hpl(layout),
-        m,
-        n,
-        alpha,
-        x,
-        incx,
-        const_cast<double *>(y),
-        incy,
-        A,
-        lda);
-#endif
-}
-
-template <>
 void blas::ger<float, float, float>(
     blas::Layout layout,
     int64_t m,
@@ -725,20 +733,6 @@ void blas::ger<float, float, float>(
 }
 
 template <>
-void blas::scal<double>(
-    int64_t n,
-    double alpha,
-    double *x,
-    int64_t incx)
-{
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::scal(n, alpha, x, incx);
-#else
-    HPL_dscal(n, alpha, x, incx);
-#endif
-}
-
-template <>
 void blas::scal<float>(
     int64_t n,
     float alpha,
@@ -746,52 +740,6 @@ void blas::scal<float>(
     int64_t incx)
 {
     blas::scal(n, alpha, x, incx);
-}
-
-template <>
-void blas::trsm<double, double>(
-    blas::Layout layout,
-    blas::Side side,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t m,
-    int64_t n,
-    blas::scalar_type<double, double> alpha,
-    double const *A,
-    int64_t lda,
-    double *B,
-    int64_t ldb)
-{
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::trsm(
-        layout,
-        side,
-        uplo,
-        trans,
-        diag,
-        m,
-        n,
-        alpha,
-        A,
-        lda,
-        B,
-        ldb);
-#else
-    HPL_dtrsm(
-        blaspp2Hpl(layout),
-        blaspp2Hpl(side),
-        blaspp2Hpl(uplo),
-        blaspp2Hpl(trans),
-        blaspp2Hpl(diag),
-        m,
-        n,
-        alpha,
-        A,
-        lda,
-        B,
-        ldb);
-#endif
 }
 
 #if defined(HPLAI_DEVICE_BLASPP_TRSM)
@@ -1552,43 +1500,6 @@ void blas::trsm<float, float>(
 }
 
 #endif
-
-template <>
-void blas::trsv<double, double>(
-    blas::Layout layout,
-    blas::Uplo uplo,
-    blas::Op trans,
-    blas::Diag diag,
-    int64_t n,
-    double const *A,
-    int64_t lda,
-    double *x,
-    int64_t incx)
-{
-#ifdef HPLAI_NO_HPL_BLASPP
-    blas::trsv(
-        layout,
-        uplo,
-        trans,
-        diag,
-        n,
-        A,
-        lda,
-        x,
-        incx);
-#else
-    HPL_dtrsv(
-        blaspp2Hpl(layout),
-        blaspp2Hpl(uplo),
-        blaspp2Hpl(trans),
-        blaspp2Hpl(diag),
-        n,
-        A,
-        lda,
-        x,
-        incx);
-#endif
-}
 
 #ifdef HPLAI_GEN_BLASPP_TRSV
 
