@@ -1,7 +1,7 @@
 #!/bin/bash
 ##############################################################
 #
-# HPL-AI Mixed-Precision Benchmark v2.3b  --  March 24, 2021
+# HPL-AI Mixed-Precision Benchmark v2.3c  --  April 18, 2021
 #
 ##############################################################
 #
@@ -10,8 +10,19 @@
 #
 ##############################################################
 #
-# A quick start to build and run a few tests: ./README
-
+# A quick start to build and run a few tests via spack:
+#
+# git clone https://github.com/SYSU-SCC/sysu-scc-spack-repo
+# spack repo add --scope=site sysu-scc-spack-repo
+# spack install sysu-scc-spack-repo.hpl-ai
+# spack load hpl-ai
+# cp `spack location --install-dir hpl-ai`/bin/HPL.dat HPL.dat
+# mpirun -n 4 xhpl_ai
+#
+##############################################################
+#
+# build from source:
+#
 # First the following softwares are required on your system:
 # C&C++ compiler, autoconf, autoconf-archive, automake, mpi,
 # blas, blaspp
@@ -90,48 +101,48 @@ make -j
 #
 # Most of the performance parameters can be tuned.
 
-if true; then
+if false; then
     cp testing/ptest/HPL.dat HPL.dat
 else
     cat >HPL.dat <<EOF
-HPLinpack benchmark input file
-Innovative Computing Laboratory, University of Tennessee
+HPLinpack and HPL-AI benchmark input file
+National Supercomputer Center in Guangzhou, Sun Yat-sen University
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
-1            # of problems sizes (N) 
-16384 143360 Ns  
-1            # of NBs 
-384 192 256  NBs 
-1            PMAP process mapping (0=Row-,1=Column-major)
+1            # of problems sizes (N)
+16384 32768  Ns
+1            # of NBs
+384 192 768  NBs
+0            PMAP process mapping (0=Row-,1=Column-major)
 1            # of process grids (P x Q)
-2 1 4        Ps  
-2 4 1        Qs  
+2            Ps
+2            Qs
 16.0         threshold
 1            # of panel fact
 2 1 0        PFACTs (0=left, 1=Crout, 2=Right)
 1            # of recursive stopping criterium
-2            NBMINs (>= 1)
+2 8          NBMINs (>= 1)
 1            # of panels in recursion
 2            NDIVs
 1            # of recursive panel fact.
 2 1 0        RFACTs (0=left, 1=Crout, 2=Right)
 1            # of broadcast
-0            BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+3 2          BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
 1            # of lookahead depth
-0            DEPTHs (>=0)
-0            SWAP (0=bin-exch,1=long,2=mix)
-1            swapping threshold
+1 0          DEPTHs (>=0)
+1            SWAP (0=bin-exch,1=long,2=mix)
+192          swapping threshold
 1            L1 in (0=transposed,1=no-transposed) form
-1            U  in (0=transposed,1=no-transposed) form
+0            U  in (0=transposed,1=no-transposed) form
 0            Equilibration (0=no,1=yes)
-8            memory alignment in double (> 0)
+16           memory alignment in HPLAI_T_AFLOAT (> 0)
 EOF
 fi
 
 # Finally run and compare with the original hpl-2.3:
 
-mpiexec -n 4 -x OMP_NUM_THREADS=2 testing/xhpl
-mpiexec -n 4 -x OMP_NUM_THREADS=2 testing/xhplai
+mpirun -n 4 -x OMP_NUM_THREADS=2 testing/xhpl
+mpirun -n 4 -x OMP_NUM_THREADS=2 testing/xhpl_ai
 
 # If you download HPL-AI via git, you can clean the builds by:
 

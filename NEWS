@@ -32,3 +32,18 @@
  higher computation rate:
  -- [M] src/blas/HPLAI_blas.cc
  -- [M] testing/ptest/HPLAI_pdinfo.cc
+
+  - 04/18/2021 HPL-AI Public release of Version 2.3c
+
+ Kan Wu added an option to use the half-precision computeType
+ in cublasGemmEx (cuda@11: is required):
+ -- [M] src/blas/HPLAI_blas.cc
+
+ Kan Wu renamed the executable "xhplai" to "xhpl_ai", to be
+ synced to HPL-AI-NVIDIA v1.0.0 in nvidia:hpc-benchmarks:
+ -- [M] src/Makefile.am
+ -- [M] testing/Makefile.am
+
+ Kan Wu release the software at
+ <https://github.com/SYSU-SCC/sysu-scc-spack-repo>:
+ -- [M] testing/ptest/HPLAI_pdinfo.cc

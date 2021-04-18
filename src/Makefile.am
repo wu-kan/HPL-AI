@@ -1,8 +1,8 @@
 AM_CPPFLAGS = -I$(top_srcdir)/../include
 
-lib_LIBRARIES = libhpl.a libhplai.a
+lib_LIBRARIES = libhpl_ai.a libhpl.a
 
-libhplai_a_SOURCES = \
+libhpl_ai_a_SOURCES = \
 auxil/HPLAI_alatcpy.cc auxil/HPLAI_alacpy.cc \
 blas/HPLAI_blas.cc \
 comm/HPLAI_sdrv.cc comm/HPLAI_send.cc comm/HPLAI_recv.cc comm/HPLAI_bcast.cc \

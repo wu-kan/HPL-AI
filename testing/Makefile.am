@@ -3,11 +3,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/include
 
 xhpl_LDADD = ../src/libhpl.a
 
-xhplai_LDADD = ../src/libhplai.a ../src/libhpl.a
+xhpl_ai_LDADD = ../src/libhpl_ai.a ../src/libhpl.a
 
-bin_PROGRAMS = xhpl xhplai
+bin_PROGRAMS = xhpl_ai xhpl
 
-xhplai_SOURCES =  \
+xhpl_ai_SOURCES =  \
 matgen/HPL_jumpit.c matgen/HPL_rand.c matgen/HPL_setran.c matgen/HPL_xjumpm.c \
 matgen/HPL_lmul.c matgen/HPL_ladd.c \
 pmatgen/HPLAI_pdmatgen.cc \
