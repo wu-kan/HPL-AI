@@ -239,7 +239,7 @@ extern "C"
 {
 #endif
 
-    extern MPI_Datatype HPLAI_T_AFLOAT;
+    extern MPI_Datatype HPLAI_MPI_AFLOAT;
 
     void HPLAI_blas_init
         STDC_ARGS((
