@@ -1220,7 +1220,7 @@ static void HPLAI_pmat_cpy(
     DST->mp = SRC->mp;
     DST->nq = SRC->nq;
     DST->info = SRC->info;
-    blas::copy(SRC->nq * SRC->ld, SRC->A, 1, DST->A, 1);
+    blas::copy((int64_t)SRC->nq * SRC->ld, SRC->A, 1, DST->A, 1);
     blas::copy(SRC->nq, SRC->X, 1, DST->X, 1);
 }
 
