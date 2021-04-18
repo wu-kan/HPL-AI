@@ -84,7 +84,11 @@ int64_t blas::iamax<double>(
     double const *x,
     int64_t incx)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    return blas::iamax(n, x, incx);
+#else
     return HPL_idamax(n, x, incx);
+#endif
 }
 
 template <>
@@ -105,7 +109,11 @@ void blas::axpy<double, double>(
     double *y,
     int64_t incy)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::axpy(n, alpha, x, incx, y, incy);
+#else
     HPL_daxpy(n, alpha, x, incx, y, incy);
+#endif
 }
 
 template <>
@@ -128,7 +136,11 @@ void blas::copy<double, double>(
     double *y,
     int64_t incy)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::copy(n, x, incx, y, incy);
+#else
     HPL_dcopy(n, x, incx, y, incy);
+#endif
 }
 
 template <>
@@ -159,6 +171,23 @@ void blas::gemm<double, double, double>(
     double *C,
     int64_t ldc)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::gemm(
+        layout,
+        transA,
+        transB,
+        m,
+        n,
+        k,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb,
+        beta,
+        C,
+        ldc);
+#else
     HPL_dgemm(
         blaspp2Hpl(layout),
         blaspp2Hpl(transA),
@@ -174,9 +203,24 @@ void blas::gemm<double, double, double>(
         beta,
         C,
         ldc);
+#endif
 }
 
 #if defined(HPLAI_DEVICE_BLASPP_GEMM)
+
+#if defined(HPLAI_CUBLASGEMMEX_COMPUTETYPE)
+
+static cudaDataType_t HPLAI_GET_cudaDataType_t(float t)
+{
+    return CUDA_R_32F;
+}
+
+static cudaDataType_t HPLAI_GET_cudaDataType_t(double t)
+{
+    return CUDA_R_64F;
+}
+
+#endif
 
 template <>
 void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -248,10 +292,36 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *dB = dC + dsC;
     HPLAI_T_AFLOAT *dA = dB + dsB;
 
+    HPLAI_DEVICE_BLASPP_QUEUE->fork();
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, dLDC, *HPLAI_DEVICE_BLASPP_QUEUE);
+    HPLAI_DEVICE_BLASPP_QUEUE->revolve();
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, dLDB, *HPLAI_DEVICE_BLASPP_QUEUE);
+    HPLAI_DEVICE_BLASPP_QUEUE->revolve();
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
+    HPLAI_DEVICE_BLASPP_QUEUE->join();
 
+#if defined(HPLAI_CUBLASGEMMEX_COMPUTETYPE)
+    cublasGemmEx(
+        HPLAI_DEVICE_BLASPP_QUEUE->handle(),
+        blas::device_trans_const(TRANSA),
+        blas::device_trans_const(TRANSB),
+        M,
+        N,
+        K,
+        &ALPHA,
+        dA,
+        HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
+        dLDA,
+        dB,
+        HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
+        dLDB,
+        &BETA,
+        dC,
+        HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
+        dLDC,
+        HPLAI_CUBLASGEMMEX_COMPUTETYPE,
+        CUBLAS_GEMM_DEFAULT);
+#else
     blas::gemm(
         layout,
         TRANSA,
@@ -268,6 +338,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         dC,
         dLDC,
         *HPLAI_DEVICE_BLASPP_QUEUE);
+#endif
 
     blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, dLDC, C, LDC, *HPLAI_DEVICE_BLASPP_QUEUE);
 
@@ -526,6 +597,21 @@ void blas::gemv<double, double, double>(
     double *y,
     int64_t incy)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::gemv(
+        layout,
+        trans,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        x,
+        incx,
+        beta,
+        y,
+        incy);
+#else
     HPL_dgemv(
         blaspp2Hpl(layout),
         blaspp2Hpl(trans),
@@ -539,6 +625,7 @@ void blas::gemv<double, double, double>(
         beta,
         y,
         incy);
+#endif
 }
 
 template <>
@@ -584,6 +671,19 @@ void blas::ger<double, double, double>(
     double *A,
     int64_t lda)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::ger(
+        layout,
+        m,
+        n,
+        alpha,
+        x,
+        incx,
+        y,
+        incy,
+        A,
+        lda);
+#else
     HPL_dger(
         blaspp2Hpl(layout),
         m,
@@ -595,6 +695,7 @@ void blas::ger<double, double, double>(
         incy,
         A,
         lda);
+#endif
 }
 
 template <>
@@ -630,7 +731,11 @@ void blas::scal<double>(
     double *x,
     int64_t incx)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::scal(n, alpha, x, incx);
+#else
     HPL_dscal(n, alpha, x, incx);
+#endif
 }
 
 template <>
@@ -658,6 +763,21 @@ void blas::trsm<double, double>(
     double *B,
     int64_t ldb)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::trsm(
+        layout,
+        side,
+        uplo,
+        trans,
+        diag,
+        m,
+        n,
+        alpha,
+        A,
+        lda,
+        B,
+        ldb);
+#else
     HPL_dtrsm(
         blaspp2Hpl(layout),
         blaspp2Hpl(side),
@@ -671,6 +791,7 @@ void blas::trsm<double, double>(
         lda,
         B,
         ldb);
+#endif
 }
 
 #if defined(HPLAI_DEVICE_BLASPP_TRSM)
@@ -1444,6 +1565,18 @@ void blas::trsv<double, double>(
     double *x,
     int64_t incx)
 {
+#ifdef HPLAI_NO_HPL_BLASPP
+    blas::trsv(
+        layout,
+        uplo,
+        trans,
+        diag,
+        n,
+        A,
+        lda,
+        x,
+        incx);
+#else
     HPL_dtrsv(
         blaspp2Hpl(layout),
         blaspp2Hpl(uplo),
@@ -1454,6 +1587,7 @@ void blas::trsv<double, double>(
         lda,
         x,
         incx);
+#endif
 }
 
 #ifdef HPLAI_GEN_BLASPP_TRSV
