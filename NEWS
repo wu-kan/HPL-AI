@@ -5,6 +5,8 @@
  History
 
  - 03/14/2021 HPL-AI Public release of Version 2.3a
+ 
+  (deperated when n > 65536)
 
  Junkang Huang added the parallel GMRES and matrix construction
  part (<https://github.com/schuangs/hpl-ai-with-IR>) for HPL-AI.
@@ -23,7 +25,9 @@
  -- [M] testing/Makefile.am
 
  - 03/24/2021 HPL-AI Public release of Version 2.3b
-
+ 
+ (deperated when n > 65536)
+ 
  Kan Wu optimized the device blaspp routines through the
  strategy of buffering memory: the program will check whether
  the buffer size is sufficient at runtime, free and reallocate
@@ -33,7 +37,10 @@
  -- [M] src/blas/HPLAI_blas.cc
  -- [M] testing/ptest/HPLAI_pdinfo.cc
 
-  - 04/18/2021 HPL-AI Public release of Version 2.3c
+ - 04/18/2021 HPL-AI Public release of Version 2.3c
+
+ Kan Wu fixed the bug when n > 65536.
+ -- [M] src/pgesv/HPLAI_pdgesv.cc
 
  Kan Wu added an option to use the half-precision computeType
  in cublasGemmEx (cuda@11: is required):
