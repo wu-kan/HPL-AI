@@ -385,14 +385,21 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *dC = HPLAI_DEVICE_BLASPP_BUFFER;
     HPLAI_T_AFLOAT *dB = dC + dsC;
     HPLAI_T_AFLOAT *dA = dB + dsB;
-
+#if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->fork();
+#endif
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, dLDC, *HPLAI_DEVICE_BLASPP_QUEUE);
+#if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->revolve();
+#endif
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, dLDB, *HPLAI_DEVICE_BLASPP_QUEUE);
+#if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->revolve();
+#endif
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
+#if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->join();
+#endif
 
 #if defined(HPLAI_CUBLASGEMMEX_COMPUTETYPE)
     cublasGemmEx(
@@ -804,8 +811,17 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *dB = HPLAI_DEVICE_BLASPP_BUFFER;
     HPLAI_T_AFLOAT *dA = dB + dsB;
 
+#if defined(HPLAI_DEVICE_BLASPP_TRSM_MULTISTREAM)
+    HPLAI_DEVICE_BLASPP_QUEUE->fork();
+#endif
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rB, cB, B, LDB, dB, dLDB, *HPLAI_DEVICE_BLASPP_QUEUE);
+#if defined(HPLAI_DEVICE_BLASPP_TRSM_MULTISTREAM)
+    HPLAI_DEVICE_BLASPP_QUEUE->revolve();
+#endif
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
+#if defined(HPLAI_DEVICE_BLASPP_TRSM_MULTISTREAM)
+    HPLAI_DEVICE_BLASPP_QUEUE->join();
+#endif
 
     blas::trsm(
         layout,
