@@ -415,7 +415,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
 #if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->fork();
 #endif
-    blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, dLDC, *HPLAI_DEVICE_BLASPP_QUEUE);
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
 #if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->revolve();
 #endif
@@ -423,7 +423,23 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
 #if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->revolve();
 #endif
-    blas::device_setmatrix<HPLAI_T_AFLOAT>(rA, cA, A, LDA, dA, dLDA, *HPLAI_DEVICE_BLASPP_QUEUE);
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M1,
+        N1,
+        K2,
+        ALPHA,
+        A + K1 * LDA,
+        LDA,
+        B + K1,
+        LDB,
+        BETA,
+        C,
+        LDC);
+    BETA = HPLAI_rone;
+    blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, dLDC, *HPLAI_DEVICE_BLASPP_QUEUE);
 #if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->join();
 #endif
@@ -503,22 +519,6 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         LDC);
 
     HPLAI_DEVICE_BLASPP_QUEUE->sync();
-
-    blas::gemm(
-        layout,
-        TRANSA,
-        TRANSB,
-        M1,
-        N1,
-        K2,
-        ALPHA,
-        A + K1 * LDA,
-        LDA,
-        B + K1,
-        LDB,
-        BETA,
-        C,
-        LDC);
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
