@@ -358,25 +358,52 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
     }
 
-    int64_t padding_size = 128 / sizeof(HPLAI_T_AFLOAT);
-    if (padding_size < 1)
-        padding_size = 1;
+#if !defined(HPLAI_DEVICE_BLASPP_GEMM_USE_CPU)
+#define HPLAI_DEVICE_BLASPP_GEMM_USE_CPU 128
+#endif
+    const int64_t P = HPLAI_DEVICE_BLASPP_GEMM_USE_CPU;
+    if (M < P || N < P || K < P)
+    {
+        blas::gemm(
+            layout,
+            TRANSA,
+            TRANSB,
+            M,
+            N,
+            K,
+            ALPHA,
+            A,
+            LDA,
+            B,
+            LDB,
+            BETA,
+            C,
+            LDC);
+        return;
+    }
+    const int64_t
+        M2 = M % P,
+        N2 = N % P,
+        K2 = K % P,
+        M1 = M - M2,
+        N1 = N - N2,
+        K1 = K - K2;
 
     blas::Op TRANSC = blas::Op::NoTrans;
 
-    int64_t rC = TRANSC == blas::Op::NoTrans ? M : N;
-    int64_t cC = TRANSC == blas::Op::NoTrans ? N : M;
-    int64_t dLDC = (rC + padding_size - 1) / padding_size * padding_size;
+    int64_t rC = TRANSC == blas::Op::NoTrans ? M1 : N1;
+    int64_t cC = TRANSC == blas::Op::NoTrans ? N1 : M1;
+    int64_t dLDC = rC;
     int64_t dsC = cC * dLDC;
 
-    int64_t rB = TRANSB == blas::Op::NoTrans ? K : N;
-    int64_t cB = TRANSB == blas::Op::NoTrans ? N : K;
-    int64_t dLDB = (rB + padding_size - 1) / padding_size * padding_size;
+    int64_t rB = TRANSB == blas::Op::NoTrans ? K1 : N1;
+    int64_t cB = TRANSB == blas::Op::NoTrans ? N1 : K1;
+    int64_t dLDB = rB;
     int64_t dsB = cB * dLDB;
 
-    int64_t rA = TRANSA == blas::Op::NoTrans ? M : K;
-    int64_t cA = TRANSA == blas::Op::NoTrans ? K : M;
-    int64_t dLDA = (rA + padding_size - 1) / padding_size * padding_size;
+    int64_t rA = TRANSA == blas::Op::NoTrans ? M1 : K1;
+    int64_t cA = TRANSA == blas::Op::NoTrans ? K1 : M1;
+    int64_t dLDA = rA;
     int64_t dsA = cA * dLDA;
 
     if (HPLAI_DEVICE_BLASPP_BUFFER_SIZE < dsC + dsB + dsA)
@@ -406,9 +433,9 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         HPLAI_DEVICE_BLASPP_QUEUE->handle(),
         blas::device_trans_const(TRANSA),
         blas::device_trans_const(TRANSB),
-        M,
-        N,
-        K,
+        M1,
+        N1,
+        K1,
         &ALPHA,
         dA,
         HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
@@ -427,9 +454,9 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         layout,
         TRANSA,
         TRANSB,
-        M,
-        N,
-        K,
+        M1,
+        N1,
+        K1,
         ALPHA,
         dA,
         dLDA,
@@ -443,7 +470,55 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
 
     blas::device_getmatrix<HPLAI_T_AFLOAT>(rC, cC, dC, dLDC, C, LDC, *HPLAI_DEVICE_BLASPP_QUEUE);
 
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M,
+        N2,
+        K2,
+        ALPHA,
+        A + K1 * LDA,
+        LDA,
+        B + K1 + N1 * LDB,
+        LDB,
+        BETA,
+        C + N1 * LDC,
+        LDC);
+
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M2,
+        N1,
+        K2,
+        ALPHA,
+        A + M1 + K1 * LDA,
+        LDA,
+        B + K1,
+        LDB,
+        BETA,
+        C + M1,
+        LDC);
+
     HPLAI_DEVICE_BLASPP_QUEUE->sync();
+
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M1,
+        N1,
+        K2,
+        ALPHA,
+        A + K1 * LDA,
+        LDA,
+        B + K1,
+        LDB,
+        BETA,
+        C,
+        LDC);
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
@@ -766,6 +841,28 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT *B,
     int64_t LDB)
 {
+#if !defined(HPLAI_DEVICE_BLASPP_TRSM_USE_CPU)
+#define HPLAI_DEVICE_BLASPP_TRSM_USE_CPU 512
+#endif
+    const int64_t P = HPLAI_DEVICE_BLASPP_TRSM_USE_CPU;
+    if (M < P || N < P)
+    {
+        blas::trsm(
+            layout,
+            SIDE,
+            UPLO,
+            TRANS,
+            DIAG,
+            M,
+            N,
+            ALPHA,
+            A,
+            LDA,
+            B,
+            LDB);
+        return;
+    }
+
     //HPLAI_pabort( __LINE__, "blas::trsm", "Use HPLAI_DEVICE_BLASPP_TRSM" );
     if (layout != blas::Layout::ColMajor)
     {
