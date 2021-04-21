@@ -431,20 +431,20 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         N1,
         K2,
         ALPHA,
-        A + K1 * LDA,
+        TRANSA == blas::Op::NoTrans ? A + K1 * LDA : A + K1,
         LDA,
-        B + K1,
+        TRANSB == blas::Op::NoTrans ? B + K1 : B + K1 * LDB,
         LDB,
         BETA,
         C,
         LDC);
-    BETA = HPLAI_rone;
     blas::device_setmatrix<HPLAI_T_AFLOAT>(rC, cC, C, LDC, dC, dLDC, *HPLAI_DEVICE_BLASPP_QUEUE);
 #if defined(HPLAI_DEVICE_BLASPP_GEMM_MULTISTREAM)
     HPLAI_DEVICE_BLASPP_QUEUE->join();
 #endif
 
 #if defined(HPLAI_CUBLASGEMMEX_COMPUTETYPE)
+    HPLAI_T_AFLOAT rone = HPLAI_rone;
     cublasGemmEx(
         HPLAI_DEVICE_BLASPP_QUEUE->handle(),
         blas::device_trans_const(TRANSA),
@@ -459,7 +459,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         dB,
         HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
         dLDB,
-        &BETA,
+        &rone,
         dC,
         HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
         dLDC,
@@ -478,7 +478,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         dLDA,
         dB,
         dLDB,
-        BETA,
+        HPLAI_rone,
         dC,
         dLDC,
         *HPLAI_DEVICE_BLASPP_QUEUE);
@@ -492,11 +492,11 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         TRANSB,
         M,
         N2,
-        K2,
+        K,
         ALPHA,
-        A + K1 * LDA,
+        A,
         LDA,
-        B + K1 + N1 * LDB,
+        TRANSB == blas::Op::NoTrans ? B + N1 * LDB : B + N1,
         LDB,
         BETA,
         C + N1 * LDC,
@@ -508,17 +508,224 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         TRANSB,
         M2,
         N1,
-        K2,
+        K,
         ALPHA,
-        A + M1 + K1 * LDA,
+        TRANSA == blas::Op::NoTrans ? A + M1 : A + M1 * LDA,
         LDA,
-        B + K1,
+        B,
         LDB,
         BETA,
         C + M1,
         LDC);
 
     HPLAI_DEVICE_BLASPP_QUEUE->sync();
+}
+
+#elif defined(HPLAI_ACL_BLASPP_GEMM_JSON)
+
+#include <sys/file.h>
+
+static int64_t HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE = 0;
+static void *HPLAI_ACL_BLASPP_HOST_BUFFER = NULL;
+
+static void HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(int64_t NEW_SIZE)
+{
+    if (HPLAI_ACL_BLASPP_HOST_BUFFER != NULL)
+    {
+        free(HPLAI_ACL_BLASPP_HOST_BUFFER);
+        HPLAI_ACL_BLASPP_HOST_BUFFER = NULL;
+    }
+    HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE = NEW_SIZE;
+    if (HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE > 0)
+    {
+        HPLAI_ACL_BLASPP_HOST_BUFFER = malloc(HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE);
+        if (HPLAI_ACL_BLASPP_HOST_BUFFER == NULL)
+            HPLAI_pabort(
+                __LINE__,
+                "HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE",
+                "Memory allocation failed for HPLAI_ACL_BLASPP_HOST_BUFFER");
+    }
+}
+
+template <>
+void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
+    blas::Layout layout,
+    blas::Op TRANSA,
+    blas::Op TRANSB,
+    int64_t M,
+    int64_t N,
+    int64_t K,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> ALPHA,
+    HPLAI_T_AFLOAT const *A,
+    int64_t LDA,
+    HPLAI_T_AFLOAT const *B,
+    int64_t LDB,
+    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> BETA,
+    HPLAI_T_AFLOAT *C,
+    int64_t LDC)
+{
+    if (layout != blas::Layout::RowMajor)
+    {
+        blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
+            blas::Layout::RowMajor,
+            TRANSB, TRANSA, N, M, K, ALPHA, B, LDB, A, LDA, BETA, C, LDC);
+        return;
+    }
+    if ((M == 0) || (N == 0) ||
+        (((ALPHA == HPLAI_rzero) || (K == 0)) &&
+         (BETA == HPLAI_rone)))
+        return;
+
+#if !defined(HPLAI_ACL_BLASPP_GEMM_USE_CPU)
+#define HPLAI_ACL_BLASPP_GEMM_USE_CPU 128
+#endif
+    const int64_t P = HPLAI_ACL_BLASPP_GEMM_USE_CPU;
+    if (M < P || N < P || K < P)
+    {
+        blas::gemm(
+            layout,
+            TRANSA,
+            TRANSB,
+            M,
+            N,
+            K,
+            ALPHA,
+            A,
+            LDA,
+            B,
+            LDB,
+            BETA,
+            C,
+            LDC);
+        return;
+    }
+    const int64_t
+        M2 = M % P,
+        N2 = N % P,
+        K2 = K % P,
+        M1 = M - M2,
+        N1 = N - N2,
+        K1 = K - K2;
+
+    const int64_t
+        sAsize = (M1 * K1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32,
+        sBsize = (K1 * N1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32,
+        sCsize = (M1 * N1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32;
+
+    if (HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE < sAsize + sBsize)
+        HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(sAsize + sBsize);
+
+    if (HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE < sCsize)
+        HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(sCsize);
+
+    char *sChost = reinterpret_cast<char *>(HPLAI_ACL_BLASPP_HOST_BUFFER),
+         *sAhost = sChost, *sBhost = sAhost + sAsize;
+
+    if (TRANSA == blas::Op::NoTrans)
+    {
+        HPLAI_alacpy(
+            K1,
+            M1,
+            A,
+            LDA,
+            reinterpret_cast<HPLAI_T_AFLOAT *>(sAhost),
+            K1);
+    }
+    else
+    {
+        HPLAI_alatcpy(
+            K1,
+            M1,
+            A,
+            LDA,
+            reinterpret_cast<HPLAI_T_AFLOAT *>(sAhost),
+            K1);
+    }
+
+    if (TRANSB == blas::Op::NoTrans)
+    {
+        HPLAI_alacpy(
+            N1,
+            K1,
+            B,
+            LDB,
+            reinterpret_cast<HPLAI_T_AFLOAT *>(sBhost),
+            N1);
+    }
+    else
+    {
+        HPLAI_alatcpy(
+            N1,
+            K1,
+            B,
+            LDB,
+            reinterpret_cast<HPLAI_T_AFLOAT *>(sBhost),
+            N1);
+    }
+
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M2,
+        N,
+        K,
+        ALPHA,
+        TRANSA == blas::Op::NoTrans ? A + LDA * M1 : A + M1,
+        LDA,
+        B,
+        LDB,
+        BETA,
+        C + LDC * M1,
+        LDC);
+
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M1,
+        N2,
+        K,
+        ALPHA,
+        A,
+        LDA,
+        TRANSB == blas::Op::NoTrans ? B + N1 : B + LDB * N1,
+        LDB,
+        BETA,
+        C + N1,
+        LDC);
+
+    blas::gemm(
+        layout,
+        TRANSA,
+        TRANSB,
+        M1,
+        N1,
+        K2,
+        ALPHA,
+        TRANSA == blas::Op::NoTrans ? A + K1 : A + LDA * K1,
+        LDA,
+        TRANSB == blas::Op::NoTrans ? B + LDB * K1 : B + K1,
+        LDB,
+        BETA,
+        C,
+        LDC);
+
+    blas::gemm(
+        layout,
+        blas::Op::NoTrans,
+        blas::Op::NoTrans,
+        M1,
+        N1,
+        K1,
+        ALPHA,
+        sAhost,
+        LDA,
+        sBHost,
+        LDB,
+        HPLAI_rone,
+        C,
+        LDC);
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
@@ -1954,6 +2161,8 @@ void HPLAI_blas_init(RANK, SIZE)
 #if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
         HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(0);
         delete HPLAI_DEVICE_BLASPP_QUEUE;
+#elif defined(HPLAI_ACL_BLASPP_GEMM) || defined(HPLAI_ACL_BLASPP_GEMM_JSON)
+    HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(0);
 #endif
         MPI_Type_free(&HPLAI_MPI_AFLOAT);
     }
