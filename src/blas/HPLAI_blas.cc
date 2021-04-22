@@ -548,10 +548,6 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
 #define HPLAI_ACL_BLASPP_GEMM_MODEL_DIR "op_models"
 #endif
 
-#ifndef HPLAI_ACL_AFLOAT
-#define HPLAI_ACL_AFLOAT ACL_FLOAT
-#endif
-
 static aclrtStream HPLAI_ACL_BLASPP_STREAM[HPLAI_ACL_BLASPP_STREAM_SIZE];
 static aclrtContext HPLAI_ACL_BLASPP_CONTEXT;
 static aclrtRunMode HPLAI_ACL_BLASPP_RUNMODE;
@@ -617,8 +613,8 @@ static aclDataType HPLAI_GET_ACL_DataType(double a)
     return ACL_DOUBLE;
 }
 
-#if defined(HPLAI_ACL_BLASPP_GEMM_JSON)
-
+#if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
+#include <acl/acl_op_compiler.h>
 #include <sys/file.h>
 
 static void HPLAI_ACL_Cast_JSON(
@@ -715,6 +711,179 @@ static void HPLAI_ACL_MatMul_JSON(
 
 #endif
 
+static void HPLAI_ACL_Cast(
+    int64_t trans,
+    int64_t m,
+    int64_t n,
+    void *matrixA,
+    aclDataType dataTypeA,
+    aclFormat formatA,
+    void *matrixC,
+    aclDataType dataTypeC,
+    aclFormat formatC,
+    aclrtStream stream)
+{
+    aclopAttr *opAttr = aclopCreateAttr();
+    ACLCHECK(aclopSetAttrInt(opAttr, "dst_type", dataTypeC));
+    int64_t dim[] = {m, n};
+    if (trans)
+        std::swap(dim[0], dim[1]);
+    aclTensorDesc *aDesc = aclCreateTensorDesc(
+        dataTypeA,
+        2,
+        dim,
+        formatA);
+    aclTensorDesc *cDesc = aclCreateTensorDesc(
+        dataTypeC,
+        2,
+        dim,
+        formatC);
+    aclTensorDesc *inputDesc[] = {aDesc};
+    aclTensorDesc *outputDesc[] = {cDesc};
+    aclDataBuffer
+        *dataA = aclCreateDataBuffer(
+            matrixA, dim[0] * dim[1] * sizeof(dataTypeA)),
+        *dataC = aclCreateDataBuffer(
+            matrixC, dim[0] * dim[1] * sizeof(dataTypeC));
+    aclDataBuffer *
+        inputs[] = {dataA};
+    aclDataBuffer *
+        outputs[] = {dataC};
+
+#if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
+    ACLCHECK(aclopCompileAndExecute(
+        "Cast",
+        1,
+        inputDesc,
+        inputs,
+        1,
+        outputDesc,
+        outputs,
+        opAttr,
+        ACL_ENGINE_SYS,
+        ACL_COMPILE_SYS,
+        NULL,
+        stream));
+#else
+    ACLCHECK(aclopExecuteV2(
+        "Cast",
+        1,
+        inputDesc,
+        inputs,
+        1,
+        outputDesc,
+        outputs,
+        opAttr,
+        stream));
+#endif
+
+    ACLCHECK(aclDestroyDataBuffer(dataA));
+    ACLCHECK(aclDestroyDataBuffer(dataC));
+    aclDestroyTensorDesc(aDesc);
+    aclDestroyTensorDesc(cDesc);
+    aclopDestroyAttr(opAttr);
+}
+
+static void HPLAI_ACL_MatMul(
+    int64_t transA,
+    int64_t transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    void *matrixA,
+    aclDataType dataTypeA,
+    aclFormat formatA,
+    void *matrixB,
+    aclDataType dataTypeB,
+    aclFormat formatB,
+    void *matrixC,
+    aclDataType dataTypeC,
+    aclFormat formatC,
+    aclrtStream stream)
+{
+    aclopAttr *opAttr = aclopCreateAttr();
+    ACLCHECK(aclopSetAttrBool(opAttr, "transpose_x1", transA));
+    ACLCHECK(aclopSetAttrBool(opAttr, "transpose_x2", transB));
+    int64_t dima[] = {m, k}, dimb[] = {k, n}, dimc[] = {m, n};
+    if (transA)
+        std::swap(dima[0], dima[1]);
+    if (transB)
+        std::swap(dimb[0], dimb[1]);
+    aclTensorDesc *aDesc = aclCreateTensorDesc(
+        dataTypeA,
+        2,
+        dima,
+        formatA);
+    aclTensorDesc *bDesc = aclCreateTensorDesc(
+        dataTypeB,
+        2,
+        dimb,
+        formatB);
+    aclTensorDesc *cDesc = aclCreateTensorDesc(
+        dataTypeC,
+        2,
+        dimc,
+        formatC);
+    aclTensorDesc *inputDesc[] = {aDesc, bDesc};
+    aclTensorDesc *outputDesc[] = {cDesc};
+    aclDataBuffer
+        *dataA = aclCreateDataBuffer(
+            matrixA, dima[0] * dima[1] * sizeof(dataTypeA)),
+        *dataB = aclCreateDataBuffer(
+            matrixB, dimb[0] * dimb[1] * sizeof(dataTypeB)),
+        *dataC = aclCreateDataBuffer(
+            matrixC, dimc[0] * dimc[1] * sizeof(dataTypeC));
+    aclDataBuffer *
+        inputs[] = {dataA, dataB};
+    aclDataBuffer *
+        outputs[] = {dataC};
+#if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
+    do
+    {
+        int e = aclopCompileAndExecute(
+            "MatMulV2",
+            2,
+            inputDesc,
+            inputs,
+            1,
+            outputDesc,
+            outputs,
+            opAttr,
+            ACL_ENGINE_SYS,
+            ACL_COMPILE_SYS,
+            NULL,
+            stream);
+        if (e != ACL_ERROR_NONE)
+        {
+            char str[99];
+            sprintf(str, "%d %d %d %d", e, m, n, k);
+            HPLAI_pabort(
+                __LINE__,
+                "aclrt",
+                str);
+        }
+    } while (0);
+#else
+    ACLCHECK(aclopExecuteV2(
+        "MatMulV2",
+        2,
+        inputDesc,
+        inputs,
+        1,
+        outputDesc,
+        outputs,
+        opAttr,
+        stream));
+#endif
+    ACLCHECK(aclDestroyDataBuffer(dataA));
+    ACLCHECK(aclDestroyDataBuffer(dataB));
+    ACLCHECK(aclDestroyDataBuffer(dataC));
+    aclDestroyTensorDesc(aDesc);
+    aclDestroyTensorDesc(bDesc);
+    aclDestroyTensorDesc(cDesc);
+    aclopDestroyAttr(opAttr);
+}
+
 template <>
 void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     blas::Layout layout,
@@ -775,10 +944,52 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         N1 = N - N2,
         K1 = K - K2;
 
+#if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
+    HPLAI_ACL_Cast_JSON(
+        false,
+        M1,
+        K1,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND);
+    HPLAI_ACL_Cast_JSON(
+        false,
+        K1,
+        N1,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND);
+    HPLAI_ACL_MatMul_JSON(
+        false,
+        false,
+        M1,
+        N1,
+        K1,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND);
+    HPLAI_ACL_Cast_JSON(
+        false,
+        M1,
+        N1,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND);
+#endif
+
     const int64_t
         sAsize = (M1 * K1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32,
         sBsize = (K1 * N1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32,
-        sCsize = (M1 * N1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32;
+        sCsize = (M1 * N1 * sizeof(HPLAI_T_AFLOAT) + 63) / 32 * 32,
+        hAsize = (M1 * K1 * sizeof(aclFloat16) + 63) / 32 * 32,
+        hBsize = (K1 * N1 * sizeof(aclFloat16) + 63) / 32 * 32,
+        hCsize = (M1 * N1 * sizeof(aclFloat16) + 63) / 32 * 32;
 
     if (HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE < sAsize + sBsize)
         HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(sAsize + sBsize);
@@ -810,6 +1021,39 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
             K1);
     }
 
+    int64_t device_buffer_size = hCsize + hBsize + hAsize + sAsize + sBsize;
+    if (device_buffer_size < hCsize + sCsize)
+        device_buffer_size = hCsize + sCsize;
+    if (HPLAI_ACL_BLASPP_DEVICE_BUFFER_SIZE < device_buffer_size)
+        HPLAI_ACL_BLASPP_DEVICE_BUFFER_RESIZE(device_buffer_size);
+    char *hCdevice = reinterpret_cast<char *>(HPLAI_ACL_BLASPP_DEVICE_BUFFER);
+    char *hBdevice = hCdevice + hCsize;
+    char *hAdevice = hBdevice + hBsize;
+    char *sCdevice = hCdevice + hCsize;
+    char *sAdevice = hAdevice + hAsize;
+    char *sBdevice = sAdevice + sAsize;
+
+    if (HPLAI_ACL_BLASPP_RUNMODE == ACL_HOST)
+        ACLCHECK(aclrtMemcpyAsync(
+            reinterpret_cast<void *>(sAdevice),
+            sAsize,
+            reinterpret_cast<const void *>(sAhost),
+            sAsize,
+            ACL_MEMCPY_HOST_TO_DEVICE,
+            HPLAI_ACL_BLASPP_STREAM[0]));
+
+    HPLAI_ACL_Cast(
+        false,
+        M1,
+        K1,
+        sAdevice,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        hAdevice,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        HPLAI_ACL_BLASPP_STREAM[0]);
+
     if (TRANSB == blas::Op::NoTrans)
     {
         HPLAI_alacpy(
@@ -830,6 +1074,69 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
             reinterpret_cast<HPLAI_T_AFLOAT *>(sBhost),
             N1);
     }
+
+    if (HPLAI_ACL_BLASPP_RUNMODE == ACL_HOST)
+        ACLCHECK(aclrtMemcpyAsync(
+            reinterpret_cast<void *>(sBdevice),
+            sBsize,
+            reinterpret_cast<const void *>(sBhost),
+            sBsize,
+            ACL_MEMCPY_HOST_TO_DEVICE,
+            HPLAI_ACL_BLASPP_STREAM[HPLAI_ACL_BLASPP_STREAM_SIZE - 1]));
+
+    HPLAI_ACL_Cast(
+        false,
+        K1,
+        N1,
+        sBdevice,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        hBdevice,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        HPLAI_ACL_BLASPP_STREAM[HPLAI_ACL_BLASPP_STREAM_SIZE - 1]);
+
+#if HPLAI_ACL_BLASPP_STREAM_SIZE > 1
+    ACLCHECK(aclrtSynchronizeStream(HPLAI_ACL_BLASPP_STREAM[HPLAI_ACL_BLASPP_STREAM_SIZE - 1]));
+#endif
+
+    HPLAI_ACL_MatMul(
+        false,
+        false,
+        M1,
+        N1,
+        K1,
+        hAdevice,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        hBdevice,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        hCdevice,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        HPLAI_ACL_BLASPP_STREAM[0]);
+
+    HPLAI_ACL_Cast(
+        false,
+        M1,
+        N1,
+        hCdevice,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        sCdevice,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        HPLAI_ACL_BLASPP_STREAM[0]);
+
+    if (HPLAI_ACL_BLASPP_RUNMODE == ACL_HOST)
+        ACLCHECK(aclrtMemcpyAsync(
+            reinterpret_cast<void *>(sChost),
+            sCsize,
+            reinterpret_cast<const void *>(sCdevice),
+            sCsize,
+            ACL_MEMCPY_DEVICE_TO_HOST,
+            HPLAI_ACL_BLASPP_STREAM[0]));
 
     blas::gemm(
         layout,
@@ -879,44 +1186,14 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         C,
         LDC);
 
-#if defined(HPLAI_ACL_BLASPP_GEMM_JSON)
-    HPLAI_ACL_Cast_JSON(
-        false,
-        M1,
-        K1,
-        HPLAI_GET_ACL_DataType(HPLAI_rzero),
-        ACL_FORMAT_ND,
-        ACL_FLOAT16,
-        ACL_FORMAT_ND);
-    HPLAI_ACL_Cast_JSON(
-        false,
-        K1,
-        N1,
-        HPLAI_GET_ACL_DataType(HPLAI_rzero),
-        ACL_FORMAT_ND,
-        ACL_FLOAT16,
-        ACL_FORMAT_ND);
-    HPLAI_ACL_MatMul_JSON(
-        false,
-        false,
-        M1,
-        N1,
-        K1,
-        ACL_FLOAT16,
-        ACL_FORMAT_ND,
-        ACL_FLOAT16,
-        ACL_FORMAT_ND,
-        ACL_FLOAT16,
-        ACL_FORMAT_ND);
-    HPLAI_ACL_Cast_JSON(
-        false,
-        M1,
-        N1,
-        ACL_FLOAT16,
-        ACL_FORMAT_ND,
-        HPLAI_GET_ACL_DataType(HPLAI_rzero),
-        ACL_FORMAT_ND);
+    ACLCHECK(aclrtSynchronizeStream(HPLAI_ACL_BLASPP_STREAM[0]));
+    {
+        HPLAI_T_AFLOAT *C0 = C, *mC0 = reinterpret_cast<HPLAI_T_AFLOAT *>(sChost);
+        for (int64_t j = 0; j < M1; ++j, C0 += LDC, mC0 += N1)
+            blas::axpy<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(N1, ALPHA, mC0, 1, C0, 1);
+    }
 
+    /*
     blas::gemm(
         layout,
         blas::Op::NoTrans,
@@ -932,8 +1209,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         HPLAI_rone,
         C,
         LDC);
-
-#endif
+*/
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
@@ -2353,6 +2629,26 @@ void HPLAI_blas_init(RANK, SIZE)
         MPI_Comm_rank(local_comm, &local_rank);
         MPI_Comm_free(&local_comm);
         HPLAI_DEVICE_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
+#elif defined(HPLAI_ACL_BLASPP_GEMM)
+    MPI_Comm local_comm;
+    MPI_Comm_split_type(
+        MPI_COMM_WORLD,
+        MPI_COMM_TYPE_SHARED,
+        RANK,
+        MPI_INFO_NULL,
+        &local_comm);
+    int local_rank = -1;
+    MPI_Comm_rank(local_comm, &local_rank);
+    MPI_Comm_free(&local_comm);
+    ACLCHECK(aclInit(NULL));
+    uint32_t count = 0;
+    aclrtGetDeviceCount(&count);
+    ACLCHECK(aclrtCreateContext(&HPLAI_ACL_BLASPP_CONTEXT, RANK % count));
+    ACLCHECK(aclrtSetCurrentContext(HPLAI_ACL_BLASPP_CONTEXT));
+    ACLCHECK(aclrtGetRunMode(&HPLAI_ACL_BLASPP_RUNMODE));
+    ACLCHECK(aclopSetModelDir(HPLAI_ACL_BLASPP_GEMM_MODEL_DIR));
+    for (int i = 0; i < HPLAI_ACL_BLASPP_STREAM_SIZE; ++i)
+        ACLCHECK(aclrtCreateStream(HPLAI_ACL_BLASPP_STREAM + i));
 #endif
 
 #ifdef HPL_CALL_VSIPL
@@ -2371,6 +2667,11 @@ void HPLAI_blas_init(RANK, SIZE)
         delete HPLAI_DEVICE_BLASPP_QUEUE;
 #elif defined(HPLAI_ACL_BLASPP_GEMM)
     HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(0);
+    HPLAI_ACL_BLASPP_DEVICE_BUFFER_RESIZE(0);
+    for (int i = 0; i < HPLAI_ACL_BLASPP_STREAM_SIZE; ++i)
+        ACLCHECK(aclrtDestroyStream(HPLAI_ACL_BLASPP_STREAM[i]));
+    ACLCHECK(aclrtDestroyContext(HPLAI_ACL_BLASPP_CONTEXT));
+    ACLCHECK(aclFinalize());
 #endif
         MPI_Type_free(&HPLAI_MPI_AFLOAT);
     }
