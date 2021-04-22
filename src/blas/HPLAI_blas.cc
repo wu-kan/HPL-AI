@@ -454,14 +454,14 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         K1,
         &ALPHA,
         dA,
-        HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
+        HPLAI_GET_cudaDataType_t(HPLAI_rzero),
         dLDA,
         dB,
-        HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
+        HPLAI_GET_cudaDataType_t(HPLAI_rzero),
         dLDB,
         &rone,
         dC,
-        HPLAI_GET_cudaDataType_t(HPLAI_T_AFLOAT(0)),
+        HPLAI_GET_cudaDataType_t(HPLAI_rzero),
         dLDC,
         HPLAI_CUBLASGEMMEX_COMPUTETYPE,
         CUBLAS_GEMM_DEFAULT);
@@ -521,12 +521,44 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_DEVICE_BLASPP_QUEUE->sync();
 }
 
-#elif defined(HPLAI_ACL_BLASPP_GEMM_JSON)
+#elif defined(HPLAI_ACL_BLASPP_GEMM)
 
-#include <sys/file.h>
+#include <acl/acl.h>
 
+#define ACLCHECK(cmd)              \
+    do                             \
+    {                              \
+        int e = cmd;               \
+        if (e != ACL_ERROR_NONE)   \
+        {                          \
+            char str[9];           \
+            sprintf(str, "%d", e); \
+            HPLAI_pabort(          \
+                __LINE__,          \
+                "aclrt",           \
+                str);              \
+        }                          \
+    } while (0)
+
+#ifndef HPLAI_ACL_BLASPP_STREAM_SIZE
+#define HPLAI_ACL_BLASPP_STREAM_SIZE 1
+#endif
+
+#ifndef HPLAI_ACL_BLASPP_GEMM_MODEL_DIR
+#define HPLAI_ACL_BLASPP_GEMM_MODEL_DIR "op_models"
+#endif
+
+#ifndef HPLAI_ACL_AFLOAT
+#define HPLAI_ACL_AFLOAT ACL_FLOAT
+#endif
+
+static aclrtStream HPLAI_ACL_BLASPP_STREAM[HPLAI_ACL_BLASPP_STREAM_SIZE];
+static aclrtContext HPLAI_ACL_BLASPP_CONTEXT;
+static aclrtRunMode HPLAI_ACL_BLASPP_RUNMODE;
 static int64_t HPLAI_ACL_BLASPP_HOST_BUFFER_SIZE = 0;
 static void *HPLAI_ACL_BLASPP_HOST_BUFFER = NULL;
+static int64_t HPLAI_ACL_BLASPP_DEVICE_BUFFER_SIZE = 0;
+static void *HPLAI_ACL_BLASPP_DEVICE_BUFFER = NULL;
 
 static void HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(int64_t NEW_SIZE)
 {
@@ -546,6 +578,142 @@ static void HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(int64_t NEW_SIZE)
                 "Memory allocation failed for HPLAI_ACL_BLASPP_HOST_BUFFER");
     }
 }
+
+static void HPLAI_ACL_BLASPP_DEVICE_BUFFER_RESIZE(int64_t NEW_SIZE)
+{
+    if (HPLAI_ACL_BLASPP_DEVICE_BUFFER != NULL)
+    {
+        ACLCHECK(aclrtFree(HPLAI_ACL_BLASPP_DEVICE_BUFFER));
+        HPLAI_ACL_BLASPP_DEVICE_BUFFER = NULL;
+    }
+    HPLAI_ACL_BLASPP_DEVICE_BUFFER_SIZE = NEW_SIZE;
+    if (HPLAI_ACL_BLASPP_DEVICE_BUFFER_SIZE > 0)
+    {
+        ACLCHECK(aclrtMalloc(
+            &HPLAI_ACL_BLASPP_DEVICE_BUFFER,
+            HPLAI_ACL_BLASPP_DEVICE_BUFFER_SIZE,
+            ACL_MEM_MALLOC_HUGE_FIRST));
+
+        if (HPLAI_ACL_BLASPP_DEVICE_BUFFER == NULL)
+            HPLAI_pabort(
+                __LINE__,
+                "HPLAI_ACL_BLASPP_DEVICE_BUFFER_RESIZE",
+                "Memory allocation failed for HPLAI_ACL_BLASPP_DEVICE_BUFFER");
+    }
+}
+
+static aclDataType HPLAI_GET_ACL_DataType(aclFloat16 a)
+{
+    return ACL_FLOAT16;
+}
+
+static aclDataType HPLAI_GET_ACL_DataType(float a)
+{
+    return ACL_FLOAT;
+}
+
+static aclDataType HPLAI_GET_ACL_DataType(double a)
+{
+    return ACL_DOUBLE;
+}
+
+#if defined(HPLAI_ACL_BLASPP_GEMM_JSON)
+
+#include <sys/file.h>
+
+static void HPLAI_ACL_Cast_JSON(
+    int64_t trans,
+    int64_t m,
+    int64_t n,
+    aclDataType dataTypeA,
+    aclFormat formatA,
+    aclDataType dataTypeC,
+    aclFormat formatC)
+{
+    int64_t dim[] = {m, n};
+    if (trans)
+        std::swap(dim[0], dim[1]);
+    char filename[999];
+    sprintf(
+        filename,
+        "%s/0_Cast_%lld_2_%lld_%lld_%lld_2_%lld_%lld.json",
+        HPLAI_ACL_BLASPP_GEMM_MODEL_DIR,
+        dataTypeA,
+        dim[0],
+        dim[1],
+        dataTypeC,
+        dim[0],
+        dim[1]);
+    FILE *json = fopen(filename, "w");
+    flock(json->_fileno, LOCK_EX);
+    HPLAI_fprintf(
+        json,
+        "[{\"op\":\"Cast\",\"input_desc\":[{\"format\":\"ND\",\"shape\":[%lld,%lld],\"type\":\"%s\"}],\"output_desc\":[{\"format\":\"ND\",\"shape\":[%lld,%lld],\"type\":\"%s\"}],\"attr\":[{\"name\":\"dst_type\",\"type\":\"int\",\"value\":%lld}]}]",
+        dim[0],
+        dim[1],
+        dataTypeA == ACL_FLOAT     ? "float"
+        : dataTypeA == ACL_FLOAT16 ? "float16"
+        : dataTypeA == ACL_DOUBLE  ? "double"
+                                   : "undefined",
+        dim[0],
+        dim[1],
+        dataTypeC == ACL_FLOAT     ? "float"
+        : dataTypeC == ACL_FLOAT16 ? "float16"
+        : dataTypeC == ACL_DOUBLE  ? "double"
+                                   : "undefined",
+        dataTypeC);
+    fclose(json);
+    flock(json->_fileno, LOCK_UN);
+}
+
+static void HPLAI_ACL_MatMul_JSON(
+    int64_t transA,
+    int64_t transB,
+    int64_t m,
+    int64_t n,
+    int64_t k,
+    aclDataType dataTypeA,
+    aclFormat formatA,
+    aclDataType dataTypeB,
+    aclFormat formatB,
+    aclDataType dataTypeC,
+    aclFormat formatC)
+{
+    int64_t dima[] = {m, k}, dimb[] = {k, n}, dimc[] = {m, n};
+    if (transA)
+        std::swap(dima[0], dima[1]);
+    if (transB)
+        std::swap(dimb[0], dimb[1]);
+    //atc --soc_version=Ascend910 --output=op_models --singleop=op_models/MatMul.json
+    char filename[999];
+    sprintf(
+        filename,
+        "%s/0_MatMulV2_1_2_%lld_%lld_1_2_%lld_%lld_1_2_%lld_%lld.json",
+        HPLAI_ACL_BLASPP_GEMM_MODEL_DIR,
+        dima[0],
+        dima[1],
+        dimb[0],
+        dimb[1],
+        dimc[0],
+        dimc[1]);
+    FILE *json = fopen(filename, "w");
+    flock(json->_fileno, LOCK_EX);
+    HPLAI_fprintf(
+        json,
+        "[{\"op\":\"MatMulV2\",\"input_desc\":[{\"format\":\"ND\",\"shape\":[%lld,%lld],\"type\":\"float16\"},{\"format\":\"ND\",\"shape\":[%lld,%lld],\"type\":\"float16\"}],\"output_desc\":[{\"format\":\"ND\",\"shape\":[%lld,%lld],\"type\":\"float16\"}],\"attr\":[{\"name\":\"transpose_x1\",\"type\":\"bool\",\"value\":%s},{\"name\":\"transpose_x2\",\"type\":\"bool\",\"value\":%s}]}]",
+        dima[0],
+        dima[1],
+        dimb[0],
+        dimb[1],
+        dimc[0],
+        dimc[1],
+        transA ? "true" : "false",
+        transB ? "true" : "false");
+    fclose(json);
+    flock(json->_fileno, LOCK_UN);
+}
+
+#endif
 
 template <>
 void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
@@ -711,6 +879,44 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         C,
         LDC);
 
+#if defined(HPLAI_ACL_BLASPP_GEMM_JSON)
+    HPLAI_ACL_Cast_JSON(
+        false,
+        M1,
+        K1,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND);
+    HPLAI_ACL_Cast_JSON(
+        false,
+        K1,
+        N1,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND);
+    HPLAI_ACL_MatMul_JSON(
+        false,
+        false,
+        M1,
+        N1,
+        K1,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND);
+    HPLAI_ACL_Cast_JSON(
+        false,
+        M1,
+        N1,
+        ACL_FLOAT16,
+        ACL_FORMAT_ND,
+        HPLAI_GET_ACL_DataType(HPLAI_rzero),
+        ACL_FORMAT_ND);
+
     blas::gemm(
         layout,
         blas::Op::NoTrans,
@@ -719,13 +925,15 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         N1,
         K1,
         ALPHA,
-        sAhost,
-        LDA,
-        sBHost,
-        LDB,
+        reinterpret_cast<HPLAI_T_AFLOAT *>(sAhost),
+        K1,
+        reinterpret_cast<HPLAI_T_AFLOAT *>(sBhost),
+        N1,
         HPLAI_rone,
         C,
         LDC);
+
+#endif
 }
 
 #elif defined(HPLAI_GEN_BLASPP_GEMM)
@@ -2161,7 +2369,7 @@ void HPLAI_blas_init(RANK, SIZE)
 #if defined(HPLAI_DEVICE_BLASPP_GEMM) || defined(HPLAI_DEVICE_BLASPP_TRSM)
         HPLAI_DEVICE_BLASPP_BUFFER_RESIZE(0);
         delete HPLAI_DEVICE_BLASPP_QUEUE;
-#elif defined(HPLAI_ACL_BLASPP_GEMM) || defined(HPLAI_ACL_BLASPP_GEMM_JSON)
+#elif defined(HPLAI_ACL_BLASPP_GEMM)
     HPLAI_ACL_BLASPP_HOST_BUFFER_RESIZE(0);
 #endif
         MPI_Type_free(&HPLAI_MPI_AFLOAT);

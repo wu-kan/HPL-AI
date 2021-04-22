@@ -39,7 +39,7 @@ spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.2%gcc@7.5.0
 spack load openmpi@3.1.6%gcc@7.5.0~cxx~cxx_exceptions
-spack load blaspp@2020.10.02%gcc@7.5.0+openmp+cuda \
+spack load blaspp@2020.10.02%gcc@7.5.0+openmp \
     ^openblas%gcc@7.5.0 threads=openmp
 
 # Then boostrap the configuration files by typing:
