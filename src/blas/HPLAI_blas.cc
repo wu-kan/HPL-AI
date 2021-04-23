@@ -447,8 +447,8 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     HPLAI_T_AFLOAT rone = HPLAI_rone;
     cublasGemmEx(
         HPLAI_DEVICE_BLASPP_QUEUE->handle(),
-        blas::device_trans_const(TRANSA),
-        blas::device_trans_const(TRANSB),
+        blas::device::op2cublas(TRANSA),
+        blas::device::op2cublas(TRANSB),
         M1,
         N1,
         K1,
