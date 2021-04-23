@@ -1,5 +1,5 @@
 ==============================================================
-  HPL-AI Mixed-Precision Benchmark v2.3c  --  April 18, 2021
+  HPL-AI Mixed-Precision Benchmark v2.3d  --  April 23, 2021
 ==============================================================
 
  History
@@ -51,6 +51,18 @@
  -- [M] src/Makefile.am
  -- [M] testing/Makefile.am
 
- Kan Wu release the software at
+ Kan Wu released the software at
  <https://github.com/SYSU-SCC/sysu-scc-spack-repo>:
  -- [M] testing/ptest/HPLAI_pdinfo.cc
+
+ - 04/23/2021 HPL-AI Public release of Version 2.3d:
+
+ -- [M] testing/ptest/HPLAI_pdinfo.cc
+
+ Kan Wu added support for AscendCL, and added a new strategy
+ to enable GEMM to use CPU and GPU/NPU at the same time:
+ -- [M] src/pgesv/HPLAI_blas.cc
+
+ Kan Wu added added a compilation option BLAS_ILP64 to better
+ support ILP64/32 BLAS:
+ -- [M] src/pgesv/HPLAI_pdgesv.cc

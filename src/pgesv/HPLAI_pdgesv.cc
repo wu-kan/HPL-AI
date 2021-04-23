@@ -1220,7 +1220,19 @@ static void HPLAI_pmat_cpy(
     DST->mp = SRC->mp;
     DST->nq = SRC->nq;
     DST->info = SRC->info;
-    blas::copy((int64_t)SRC->nq * SRC->ld, SRC->A, 1, DST->A, 1);
+    int64_t len = SRC->nq * (int64_t)SRC->ld;
+#if !defined(BLAS_ILP64)
+    int64_t max_len = std::numeric_limits<int>::max();
+    if (len > max_len)
+    {
+        int64_t offset = len % max_len;
+        blas::copy(offset, SRC->A, 1, DST->A, 1);
+        for (int64_t i = offset; i + max_len <= len; i += max_len)
+            blas::copy(max_len, SRC->A + i, 1, DST->A + i, 1);
+    }
+    else
+#endif
+        blas::copy(len, SRC->A, 1, DST->A, 1);
     blas::copy(SRC->nq, SRC->X, 1, DST->X, 1);
 }
 
@@ -1286,7 +1298,11 @@ HPLAI_T_pmat *A;
         free(vptr_FA);
 #endif
 
-        HPL_pir(GRID, ALGO, A, &factors, 1e-14, 1, 50, 1, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));
+#ifdef HPLAI_NO_IR
+        HPLAI_pmat_cpy(A, &factors);
+#else
+    HPL_pir(GRID, ALGO, A, &factors, 1e-14, 1, 50, 1, DBL_EPSILON / 2.0 / ((double)A->n / 4.0));
+#endif
 
         if (vptr_factors)
             free(vptr_factors);

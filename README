@@ -1,7 +1,7 @@
 #!/bin/bash
 ##############################################################
 #
-# HPL-AI Mixed-Precision Benchmark v2.3c  --  April 18, 2021
+# HPL-AI Mixed-Precision Benchmark v2.3d  --  April 23, 2021
 #
 ##############################################################
 #
@@ -39,7 +39,7 @@ spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.2%gcc@7.5.0
 spack load openmpi@3.1.6%gcc@7.5.0~cxx~cxx_exceptions
-spack load blaspp@2020.10.02%gcc@7.5.0+openmp \
+spack load blaspp%gcc@7.5.0+openmp \
     ^openblas%gcc@7.5.0 threads=openmp
 
 # Then boostrap the configuration files by typing:
@@ -55,42 +55,37 @@ autoreconf -ivf
 #
 # CPPFLAGS=" -DHPLAI_DEVICE_BLASPP_TRSM "
 #
-# CPPFLAGS=" -DHPLAI_GEN_BLASPP_GEMM "
-#
 # CPPFLAGS=" -DHPLAI_GEN_BLASPP_TRSM "
-#
-# CPPFLAGS=" -DHPLAI_GEN_BLASPP_TRSV "
-#
-# CPPFLAGS=" -DHPLAI_PMAT_REGEN "
+# (generic trsm had not been implemented in blaspp@2021.04.00
 #
 # CPPFLAGS=" -DHPL_COPY_L "
 #
 # CPPFLAGS=" -DHPL_CALL_CBLAS "
 #
 # CPPFLAGS=" -DHPL_CALL_VSIPL "
-# (deperated)
+# (deperated
 #
 # CPPFLAGS=" -DHPL_DETAILED_TIMING "
-# (deperated)
+# (deperated
 #
 # To configure the build and prepare for compilation run:
 
-./configure
-
-# Note: to use device blaspp routines, you may need to enable
-# CUDA support of blaspp:
-#
-# spack load blaspp@2020.10.02%gcc@7.5.0+openmp+cuda
-#
-# and then:
-#
-# ./configure \
-#     LIBS=" -lcudart -lcublas " \
-#     CPPFLAGS=" -DBLASPP_WITH_CUBLAS \
-#         -DHPLAI_DEVICE_BLASPP_GEMM \
-#         -DHPLAI_CUBLASGEMMEX_COMPUTETYPE=CUDA_R_32F \
-#         -DHPLAI_DEVICE_BLASPP_TRSM "
-
+if true; then
+    ./configure
+else
+    # Note: to use device blaspp routines, you may need to
+    # enable device support of blaspp:
+    #
+    # spack load blaspp%gcc@7.5.0+openmp+cuda
+    #
+    # and then:
+    #
+    ./configure \
+        LIBS=" -lcudart -lcublas " \
+        CPPFLAGS=" -DBLASPP_WITH_CUBLAS \
+        -DHPLAI_DEVICE_BLASPP_GEMM \
+        -DHPLAI_DEVICE_BLASPP_TRSM "
+fi
 # Then compile:
 
 make -j
@@ -111,9 +106,9 @@ National Supercomputer Center in Guangzhou, Sun Yat-sen University
 HPL.out      output file name (if any)
 6            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-16384 32768  Ns
-1            # of NBs
-384 192 768  NBs
+16384 131072 Ns
+2            # of NBs
+192 384 4096 NBs
 0            PMAP process mapping (0=Row-,1=Column-major)
 1            # of process grids (P x Q)
 2            Ps
@@ -128,14 +123,14 @@ HPL.out      output file name (if any)
 1            # of recursive panel fact.
 2 1 0        RFACTs (0=left, 1=Crout, 2=Right)
 1            # of broadcast
-3 2          BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
+0 2          BCASTs (0=1rg,1=1rM,2=2rg,3=2rM,4=Lng,5=LnM)
 1            # of lookahead depth
-1 0          DEPTHs (>=0)
+1            DEPTHs (>=0)
 1            SWAP (0=bin-exch,1=long,2=mix)
 192          swapping threshold
 1            L1 in (0=transposed,1=no-transposed) form
 0            U  in (0=transposed,1=no-transposed) form
-0            Equilibration (0=no,1=yes)
+1            Equilibration (0=no,1=yes)
 16           memory alignment in HPLAI_T_AFLOAT (> 0)
 EOF
 fi

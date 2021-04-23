@@ -359,7 +359,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     }
 
 #if !defined(HPLAI_DEVICE_BLASPP_GEMM_USE_CPU)
-#define HPLAI_DEVICE_BLASPP_GEMM_USE_CPU 128
+#define HPLAI_DEVICE_BLASPP_GEMM_USE_CPU 64
 #endif
     const int64_t P = HPLAI_DEVICE_BLASPP_GEMM_USE_CPU;
     if (M < P || N < P || K < P)
@@ -614,7 +614,7 @@ static aclDataType HPLAI_GET_ACL_DataType(double a)
 }
 
 #if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
-#include <acl/acl_op_compiler.h>
+
 #include <sys/file.h>
 
 static void HPLAI_ACL_Cast_JSON(
@@ -711,6 +711,10 @@ static void HPLAI_ACL_MatMul_JSON(
 
 #endif
 
+#if !defined(HPLAI_ACL_BLASPP_GEMM_NO_COMPILE)
+#include <acl/acl_op_compiler.h>
+#endif
+
 static void HPLAI_ACL_Cast(
     int64_t trans,
     int64_t m,
@@ -750,7 +754,7 @@ static void HPLAI_ACL_Cast(
     aclDataBuffer *
         outputs[] = {dataC};
 
-#if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
+#if !defined(HPLAI_ACL_BLASPP_GEMM_NO_COMPILE)
     ACLCHECK(aclopCompileAndExecute(
         "Cast",
         1,
@@ -837,7 +841,7 @@ static void HPLAI_ACL_MatMul(
         inputs[] = {dataA, dataB};
     aclDataBuffer *
         outputs[] = {dataC};
-#if defined(HPLAI_ACL_BLASPP_GEMM_DEBUG)
+#if !defined(HPLAI_ACL_BLASPP_GEMM_NO_COMPILE)
     do
     {
         int e = aclopCompileAndExecute(
@@ -914,7 +918,7 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         return;
 
 #if !defined(HPLAI_ACL_BLASPP_GEMM_USE_CPU)
-#define HPLAI_ACL_BLASPP_GEMM_USE_CPU 128
+#define HPLAI_ACL_BLASPP_GEMM_USE_CPU 2048
 #endif
     const int64_t P = HPLAI_ACL_BLASPP_GEMM_USE_CPU;
     if (M < P || N < P || K < P)
@@ -1212,205 +1216,6 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
 */
 }
 
-#elif defined(HPLAI_GEN_BLASPP_GEMM)
-
-template <typename T>
-static void HPLAI_gemmNN(
-    const int64_t M,
-    const int64_t N,
-    const int64_t K,
-    const T ALPHA,
-    const T *A,
-    const int64_t LDA,
-    const T *B,
-    const int64_t LDB,
-    const T BETA,
-    T *C,
-    const int64_t LDC)
-{
-    register T t0;
-    int64_t i, iail, iblj, icij, j, jal, jbj, jcj, l;
-
-    for (j = 0, jbj = 0, jcj = 0; j < N; j++, jbj += LDB, jcj += LDC)
-    {
-        blas::scal<T>(M, BETA, C + jcj, 1);
-        for (l = 0, jal = 0, iblj = jbj; l < K; l++, jal += LDA, iblj += 1)
-        {
-            t0 = ALPHA * B[iblj];
-            for (i = 0, iail = jal, icij = jcj; i < M; i++, iail += 1, icij += 1)
-            {
-                C[icij] += A[iail] * t0;
-            }
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_gemmNT(
-    const int64_t M,
-    const int64_t N,
-    const int64_t K,
-    const T ALPHA,
-    const T *A,
-    const int64_t LDA,
-    const T *B,
-    const int64_t LDB,
-    const T BETA,
-    T *C,
-    const int64_t LDC)
-{
-    register T t0;
-    int64_t i, iail, ibj, ibjl, icij, j, jal, jcj, l;
-
-    for (j = 0, ibj = 0, jcj = 0; j < N; j++, ibj += 1, jcj += LDC)
-    {
-        blas::scal<T>(M, BETA, C + jcj, 1);
-        for (l = 0, jal = 0, ibjl = ibj; l < K; l++, jal += LDA, ibjl += LDB)
-        {
-            t0 = ALPHA * B[ibjl];
-            for (i = 0, iail = jal, icij = jcj; i < M; i++, iail += 1, icij += 1)
-            {
-                C[icij] += A[iail] * t0;
-            }
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_gemmTN(
-    const int64_t M,
-    const int64_t N,
-    const int64_t K,
-    const T ALPHA,
-    const T *A,
-    const int64_t LDA,
-    const T *B,
-    const int64_t LDB,
-    const T BETA,
-    T *C,
-    const int64_t LDC)
-{
-    register T t0;
-    int64_t i, iai, iail, iblj, icij, j, jbj, jcj, l;
-
-    for (j = 0, jbj = 0, jcj = 0; j < N; j++, jbj += LDB, jcj += LDC)
-    {
-        for (i = 0, icij = jcj, iai = 0; i < M; i++, icij += 1, iai += LDA)
-        {
-            t0 = HPLAI_rzero;
-            for (l = 0, iail = iai, iblj = jbj; l < K; l++, iail += 1, iblj += 1)
-            {
-                t0 += A[iail] * B[iblj];
-            }
-            if (BETA == HPLAI_rzero)
-                C[icij] = HPLAI_rzero;
-            else
-                C[icij] *= BETA;
-            C[icij] += ALPHA * t0;
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_gemmTT(
-    const int64_t M,
-    const int64_t N,
-    const int64_t K,
-    const T ALPHA,
-    const T *A,
-    const int64_t LDA,
-    const T *B,
-    const int64_t LDB,
-    const T BETA,
-    T *C,
-    const int64_t LDC)
-{
-    register T t0;
-    int64_t i, iali, ibj, ibjl, icij, j, jai, jcj, l;
-
-    for (j = 0, ibj = 0, jcj = 0; j < N; j++, ibj += 1, jcj += LDC)
-    {
-        for (i = 0, icij = jcj, jai = 0; i < M; i++, icij += 1, jai += LDA)
-        {
-            t0 = HPLAI_rzero;
-            for (l = 0, iali = jai, ibjl = ibj;
-                 l < K; l++, iali += 1, ibjl += LDB)
-                t0 += A[iali] * B[ibjl];
-            if (BETA == HPLAI_rzero)
-                C[icij] = HPLAI_rzero;
-            else
-                C[icij] *= BETA;
-            C[icij] += ALPHA * t0;
-        }
-    }
-}
-
-template <>
-void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
-    blas::Layout layout,
-    blas::Op TRANSA,
-    blas::Op TRANSB,
-    int64_t M,
-    int64_t N,
-    int64_t K,
-    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> ALPHA,
-    HPLAI_T_AFLOAT const *A,
-    int64_t LDA,
-    HPLAI_T_AFLOAT const *B,
-    int64_t LDB,
-    blas::scalar_type<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT> BETA,
-    HPLAI_T_AFLOAT *C,
-    int64_t LDC)
-{
-    //HPLAI_pabort( __LINE__, "blas::gemm", "Use HPLAI_GEN_BLASPP_GEMM" );
-    if (layout != blas::Layout::ColMajor)
-    {
-        blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
-            blas::Layout::ColMajor,
-            TRANSB, TRANSA, N, M, K, ALPHA, B, LDB, A, LDA, BETA, C, LDC);
-        return;
-    }
-    int64_t i, j;
-
-    if ((M == 0) || (N == 0) ||
-        (((ALPHA == HPLAI_rzero) || (K == 0)) &&
-         (BETA == HPLAI_rone)))
-        return;
-
-    if (ALPHA == HPLAI_rzero && BETA == HPLAI_rzero)
-    {
-        for (j = 0; j < N; j++)
-        {
-            for (i = 0; i < M; i++)
-                *(C + i + j * LDC) = HPLAI_rzero;
-        }
-        return;
-    }
-
-    if (TRANSB == blas::Op::NoTrans)
-    {
-        if (TRANSA == blas::Op::NoTrans)
-        {
-            HPLAI_gemmNN(M, N, K, ALPHA, A, LDA, B, LDB, BETA, C, LDC);
-        }
-        else
-        {
-            HPLAI_gemmTN(M, N, K, ALPHA, A, LDA, B, LDB, BETA, C, LDC);
-        }
-    }
-    else
-    {
-        if (TRANSA == blas::Op::NoTrans)
-        {
-            HPLAI_gemmNT(M, N, K, ALPHA, A, LDA, B, LDB, BETA, C, LDC);
-        }
-        else
-        {
-            HPLAI_gemmTT(M, N, K, ALPHA, A, LDA, B, LDB, BETA, C, LDC);
-        }
-    }
-}
-
 #else
 
 template <>
@@ -1533,7 +1338,7 @@ void blas::trsm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     int64_t LDB)
 {
 #if !defined(HPLAI_DEVICE_BLASPP_TRSM_USE_CPU)
-#define HPLAI_DEVICE_BLASPP_TRSM_USE_CPU 512
+#define HPLAI_DEVICE_BLASPP_TRSM_USE_CPU 256
 #endif
     const int64_t P = HPLAI_DEVICE_BLASPP_TRSM_USE_CPU;
     if (M < P || N < P)
@@ -2305,271 +2110,6 @@ void blas::trsm<float, float>(
 
 #endif
 
-#ifdef HPLAI_GEN_BLASPP_TRSV
-
-template <typename T>
-static void HPLAI_trsvLNN(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx, ldap1 = LDA + 1;
-    register T t0;
-
-    for (j = 0, jaj = 0, jx = 0; j < N; j++, jaj += ldap1, jx += INCX)
-    {
-        X[jx] /= A[jaj];
-        t0 = X[jx];
-        for (i = j + 1, iaij = jaj + 1, ix = jx + INCX;
-             i < N; i++, iaij += 1, ix += INCX)
-        {
-            X[ix] -= t0 * A[iaij];
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvLNU(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx, ldap1 = LDA + 1;
-    register T t0;
-
-    for (j = 0, jaj = 0, jx = 0; j < N; j++, jaj += ldap1, jx += INCX)
-    {
-        t0 = X[jx];
-        for (i = j + 1, iaij = jaj + 1, ix = jx + INCX;
-             i < N; i++, iaij += 1, ix += INCX)
-        {
-            X[ix] -= t0 * A[iaij];
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvLTN(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx, ldap1 = LDA + 1;
-    register T t0;
-
-    for (j = N - 1, jaj = (N - 1) * (ldap1), jx = (N - 1) * INCX;
-         j >= 0; j--, jaj -= ldap1, jx -= INCX)
-    {
-        t0 = X[jx];
-        for (i = j + 1, iaij = 1 + jaj, ix = jx + INCX;
-             i < N; i++, iaij += 1, ix += INCX)
-        {
-            t0 -= A[iaij] * X[ix];
-        }
-        t0 /= A[jaj];
-        X[jx] = t0;
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvLTU(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx, ldap1 = LDA + 1;
-    register T t0;
-
-    for (j = N - 1, jaj = (N - 1) * (ldap1), jx = (N - 1) * INCX;
-         j >= 0; j--, jaj -= ldap1, jx -= INCX)
-    {
-        t0 = X[jx];
-        for (i = j + 1, iaij = 1 + jaj, ix = jx + INCX;
-             i < N; i++, iaij += 1, ix += INCX)
-        {
-            t0 -= A[iaij] * X[ix];
-        }
-        X[jx] = t0;
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvUNN(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx;
-    register T t0;
-
-    for (j = N - 1, jaj = (N - 1) * LDA, jx = (N - 1) * INCX;
-         j >= 0; j--, jaj -= LDA, jx -= INCX)
-    {
-        X[jx] /= A[j + jaj];
-        t0 = X[jx];
-        for (i = 0, iaij = jaj, ix = 0; i < j; i++, iaij += 1, ix += INCX)
-        {
-            X[ix] -= t0 * A[iaij];
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvUNU(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx;
-    register T t0;
-
-    for (j = N - 1, jaj = (N - 1) * LDA, jx = (N - 1) * INCX;
-         j >= 0; j--, jaj -= LDA, jx -= INCX)
-    {
-        t0 = X[jx];
-        for (i = 0, iaij = jaj, ix = 0; i < j; i++, iaij += 1, ix += INCX)
-        {
-            X[ix] -= t0 * A[iaij];
-        }
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvUTN(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx;
-    register T t0;
-
-    for (j = 0, jaj = 0, jx = 0; j < N; j++, jaj += LDA, jx += INCX)
-    {
-        t0 = X[jx];
-        for (i = 0, iaij = jaj, ix = 0; i < j; i++, iaij += 1, ix += INCX)
-        {
-            t0 -= A[iaij] * X[ix];
-        }
-        t0 /= A[iaij];
-        X[jx] = t0;
-    }
-}
-
-template <typename T>
-static void HPLAI_trsvUTU(
-    const int64_t N,
-    const T *A,
-    const int64_t LDA,
-    T *X,
-    const int64_t INCX)
-{
-    int64_t i, iaij, ix, j, jaj, jx;
-    register T t0;
-
-    for (j = 0, jaj = 0, jx = 0; j < N; j++, jaj += LDA, jx += INCX)
-    {
-        t0 = X[jx];
-        for (i = 0, iaij = jaj, ix = 0; i < j; i++, iaij += 1, ix += INCX)
-        {
-            t0 -= A[iaij] * X[ix];
-        }
-        X[jx] = t0;
-    }
-}
-
-template <>
-void blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
-    blas::Layout layout,
-    blas::Uplo UPLO,
-    blas::Op TRANS,
-    blas::Diag DIAG,
-    int64_t N,
-    HPLAI_T_AFLOAT const *A,
-    int64_t LDA,
-    HPLAI_T_AFLOAT *X,
-    int64_t INCX)
-{
-    //HPLAI_pabort( __LINE__, "blas::trsv", "Use Use HPLAI_GEN_BLASPP_TRSV" );
-    if (layout != blas::Layout::ColMajor)
-    {
-        blas::trsv<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
-            blas::Layout::ColMajor,
-            (UPLO == blas::Uplo::Upper ? blas::Uplo::Lower : blas::Uplo::Upper),
-            (TRANS == blas::Op::NoTrans ? blas::Op::Trans : blas::Op::NoTrans),
-            DIAG, N, A, LDA, X, INCX);
-        return;
-    }
-    if (N == 0)
-        return;
-
-    if (UPLO == blas::Uplo::Upper)
-    {
-        if (TRANS == blas::Op::NoTrans)
-        {
-            if (DIAG == blas::Diag::NonUnit)
-            {
-                HPLAI_trsvUNN(N, A, LDA, X, INCX);
-            }
-            else
-            {
-                HPLAI_trsvUNU(N, A, LDA, X, INCX);
-            }
-        }
-        else
-        {
-            if (DIAG == blas::Diag::NonUnit)
-            {
-                HPLAI_trsvUTN(N, A, LDA, X, INCX);
-            }
-            else
-            {
-                HPLAI_trsvUTU(N, A, LDA, X, INCX);
-            }
-        }
-    }
-    else
-    {
-        if (TRANS == blas::Op::NoTrans)
-        {
-            if (DIAG == blas::Diag::NonUnit)
-            {
-                HPLAI_trsvLNN(N, A, LDA, X, INCX);
-            }
-            else
-            {
-                HPLAI_trsvLNU(N, A, LDA, X, INCX);
-            }
-        }
-        else
-        {
-            if (DIAG == blas::Diag::NonUnit)
-            {
-                HPLAI_trsvLTN(N, A, LDA, X, INCX);
-            }
-            else
-            {
-                HPLAI_trsvLTU(N, A, LDA, X, INCX);
-            }
-        }
-    }
-}
-
-#else
-
 template <>
 void blas::trsv<float, float>(
     blas::Layout layout,
@@ -2593,8 +2133,6 @@ void blas::trsv<float, float>(
         x,
         incx);
 }
-
-#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -2628,6 +2166,9 @@ void HPLAI_blas_init(RANK, SIZE)
         int local_rank = -1;
         MPI_Comm_rank(local_comm, &local_rank);
         MPI_Comm_free(&local_comm);
+#if BLASPP_VERSION >= 20210400
+        local_rank %= blas::get_device_count();
+#endif
         HPLAI_DEVICE_BLASPP_QUEUE = new blas::Queue(local_rank, 0); // batch_limit_ = batch_size = 0 // 无需 blas::batch
 #elif defined(HPLAI_ACL_BLASPP_GEMM)
     MPI_Comm local_comm;
@@ -2643,7 +2184,7 @@ void HPLAI_blas_init(RANK, SIZE)
     ACLCHECK(aclInit(NULL));
     uint32_t count = 0;
     aclrtGetDeviceCount(&count);
-    ACLCHECK(aclrtCreateContext(&HPLAI_ACL_BLASPP_CONTEXT, RANK % count));
+    ACLCHECK(aclrtCreateContext(&HPLAI_ACL_BLASPP_CONTEXT, local_rank % count));
     ACLCHECK(aclrtSetCurrentContext(HPLAI_ACL_BLASPP_CONTEXT));
     ACLCHECK(aclrtGetRunMode(&HPLAI_ACL_BLASPP_RUNMODE));
     ACLCHECK(aclopSetModelDir(HPLAI_ACL_BLASPP_GEMM_MODEL_DIR));
