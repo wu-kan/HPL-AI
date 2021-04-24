@@ -1002,7 +1002,12 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
         hBsize = (K1 * N1 * sizeof(aclFloat16) + 63) / 32 * 32,
         hCsize = (M1 * N1 * sizeof(aclFloat16) + 63) / 32 * 32;
 
-    int64_t device_buffer_size = hCsize + hBsize + hAsize + sAsize + sBsize;
+    int64_t device_buffer_size = hCsize + hBsize + hAsize + std::max(sAsize + sBsize);
+    if (HPLAI_ACL_BLASPP_STREAM_SIZE > 1 ||
+        HPLAI_ACL_BLASPP_RUNMODE != ACL_HOST)
+    {
+        device_buffer_size = hCsize + hBsize + hAsize + sAsize + sBsize;
+    }
     if (device_buffer_size < hCsize + sCsize)
         device_buffer_size = hCsize + sCsize;
     if (HPLAI_ACL_BLASPP_DEVICE_BUFFER_SIZE < device_buffer_size)
@@ -1013,7 +1018,10 @@ void blas::gemm<HPLAI_T_AFLOAT, HPLAI_T_AFLOAT, HPLAI_T_AFLOAT>(
     char *hAdevice = hBdevice + hBsize;
     char *sCdevice = hCdevice + hCsize;
     char *sAdevice = hAdevice + hAsize;
-    char *sBdevice = sAdevice + sAsize;
+    char *sBdevice = sAdevice;
+    if (HPLAI_ACL_BLASPP_STREAM_SIZE > 1 ||
+        HPLAI_ACL_BLASPP_RUNMODE != ACL_HOST)
+        sBdevice += sAsize;
     char *sChost = sCdevice;
     char *sAhost = sAdevice;
     char *sBhost = sBdevice;
