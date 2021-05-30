@@ -38,7 +38,7 @@ spack load gcc@7.5.0
 spack load autoconf@2.69%gcc@7.5.0
 spack load autoconf-archive@2019.01.06%gcc@7.5.0
 spack load automake@1.16.2%gcc@7.5.0
-spack load openmpi@3.1.6%gcc@7.5.0~cxx~cxx_exceptions
+spack load mpich@3.2.1%gcc@7.5.0
 spack load blaspp%gcc@7.5.0+openmp \
     ^openblas%gcc@7.5.0 threads=openmp
 
@@ -56,7 +56,7 @@ autoreconf -ivf
 # CPPFLAGS=" -DHPLAI_DEVICE_BLASPP_TRSM "
 #
 # CPPFLAGS=" -DHPLAI_GEN_BLASPP_TRSM "
-# (generic trsm had not been implemented in blaspp@2021.04.00
+# (generic trsm had not been implemented in blaspp@2021.04.01
 #
 # CPPFLAGS=" -DHPL_COPY_L "
 #
@@ -86,6 +86,7 @@ else
         -DHPLAI_DEVICE_BLASPP_GEMM \
         -DHPLAI_DEVICE_BLASPP_TRSM "
 fi
+
 # Then compile:
 
 make -j
@@ -97,9 +98,7 @@ make -j
 #
 # Most of the performance parameters can be tuned.
 
-if false; then
-    cp testing/ptest/HPL.dat HPL.dat
-else
+if true; then
     cat >HPL.dat <<EOF
 HPLinpack and HPL-AI benchmark input file
 National Supercomputer Center in Guangzhou, Sun Yat-sen University
@@ -133,12 +132,14 @@ HPL.out      output file name (if any)
 1            Equilibration (0=no,1=yes)
 16           memory alignment in HPLAI_T_AFLOAT (> 0)
 EOF
+else
+    cp testing/ptest/HPL.dat HPL.dat
 fi
 
 # Finally run and compare with the original hpl-2.3:
 
-mpirun -n 4 -x OMP_NUM_THREADS=2 testing/xhpl
-mpirun -n 4 -x OMP_NUM_THREADS=2 testing/xhpl_ai
+OMP_NUM_THREADS=2 $(which mpirun) -n 4 testing/xhpl
+OMP_NUM_THREADS=2 $(which mpirun) -n 4 testing/xhpl_ai
 
 # If you download HPL-AI via git, you can clean the builds by:
 

@@ -23,6 +23,16 @@
  */
 #ifndef HPLAI_MISC_HH
 #define HPLAI_MISC_HH
+
+// Remove CXX bindings
+#if !defined(MPICH_SKIP_MPICXX)
+#define MPICH_SKIP_MPICXX
+#endif
+
+#if !defined(OMPI_SKIP_MPICXX)
+#define OMPI_SKIP_MPICXX
+#endif
+
 /*
  * ---------------------------------------------------------------------
  * Include files
